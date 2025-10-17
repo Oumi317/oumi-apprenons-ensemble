@@ -5,12 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { AddChildDialog } from "@/components/AddChildDialog";
+import { ChildCard } from "@/components/ChildCard";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [children, setChildren] = useState<any[]>([]);
 
   useEffect(() => {
     checkUser();
@@ -22,8 +25,23 @@ const ParentDashboard = () => {
       navigate("/auth");
     } else {
       setUser(user);
+      await loadChildren(user.id);
     }
     setLoading(false);
+  };
+
+  const loadChildren = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("students")
+      .select("*")
+      .eq("parent_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error loading children:", error);
+    } else {
+      setChildren(data || []);
+    }
   };
 
   const handleLogout = async () => {
@@ -88,9 +106,9 @@ const ParentDashboard = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold">0</div>
+                <div className="text-3xl font-bold">{children.length}</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Aucun enfant ajouté
+                  {children.length === 0 ? "Aucun enfant ajouté" : `${children.length} enfant${children.length > 1 ? 's' : ''}`}
                 </p>
               </CardContent>
             </Card>
@@ -124,30 +142,49 @@ const ParentDashboard = () => {
             </Card>
           </div>
 
+          {/* Children List */}
+          {children.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-2xl font-bold">Mes enfants</h3>
+                  <p className="text-muted-foreground">
+                    Gérez l'éducation de chaque enfant individuellement
+                  </p>
+                </div>
+                <AddChildDialog onChildAdded={() => checkUser()} />
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {children.map((child) => (
+                  <ChildCard key={child.id} child={child} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Quick Actions */}
           <div className="grid md:grid-cols-2 gap-6">
-            <Card className="border-2 border-primary/20 hover:border-primary transition-colors cursor-pointer">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-primary" />
-                      Mes enfants
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      Ajoutez et gérez les profils de vos enfants
-                    </CardDescription>
+            {children.length === 0 && (
+              <Card className="border-2 border-primary/20 hover:border-primary transition-colors">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-primary" />
+                        Mes enfants
+                      </CardTitle>
+                      <CardDescription className="mt-2">
+                        Ajoutez et gérez les profils de vos enfants
+                      </CardDescription>
+                    </div>
+                    <Plus className="h-6 w-6 text-primary" />
                   </div>
-                  <Plus className="h-6 w-6 text-primary" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full bg-gradient-primary">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Ajouter un enfant
-                </Button>
-              </CardContent>
-            </Card>
+                </CardHeader>
+                <CardContent>
+                  <AddChildDialog onChildAdded={() => checkUser()} />
+                </CardContent>
+              </Card>
+            )}
 
             <Card className="border-2 hover:border-secondary transition-colors cursor-pointer">
               <CardHeader>

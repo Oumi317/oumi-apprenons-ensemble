@@ -14,7 +14,492 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      lessons: {
+        Row: {
+          alignement_socle_commun: string | null
+          contenu_url: string | null
+          created_at: string | null
+          description: string | null
+          difficulte: Database["public"]["Enums"]["difficulte"] | null
+          duree_estimee_minutes: number | null
+          gratuit: boolean | null
+          id: string
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          ordre_affichage: number | null
+          thumbnail_url: string | null
+          titre: string
+          type_contenu: Database["public"]["Enums"]["type_contenu"]
+          updated_at: string | null
+        }
+        Insert: {
+          alignement_socle_commun?: string | null
+          contenu_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulte?: Database["public"]["Enums"]["difficulte"] | null
+          duree_estimee_minutes?: number | null
+          gratuit?: boolean | null
+          id?: string
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          ordre_affichage?: number | null
+          thumbnail_url?: string | null
+          titre: string
+          type_contenu: Database["public"]["Enums"]["type_contenu"]
+          updated_at?: string | null
+        }
+        Update: {
+          alignement_socle_commun?: string | null
+          contenu_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulte?: Database["public"]["Enums"]["difficulte"] | null
+          duree_estimee_minutes?: number | null
+          gratuit?: boolean | null
+          id?: string
+          matiere?: string
+          niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
+          ordre_affichage?: number | null
+          thumbnail_url?: string | null
+          titre?: string
+          type_contenu?: Database["public"]["Enums"]["type_contenu"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      parents: {
+        Row: {
+          abonnement_actif: boolean | null
+          created_at: string | null
+          id: string
+          type_abonnement: Database["public"]["Enums"]["type_abonnement"] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          abonnement_actif?: boolean | null
+          created_at?: string | null
+          id?: string
+          type_abonnement?:
+            | Database["public"]["Enums"]["type_abonnement"]
+            | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          abonnement_actif?: boolean | null
+          created_at?: string | null
+          id?: string
+          type_abonnement?:
+            | Database["public"]["Enums"]["type_abonnement"]
+            | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "parents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payments: {
+        Row: {
+          created_at: string | null
+          date_transaction: string | null
+          devise: string | null
+          id: string
+          metadata: Json | null
+          methode_paiement: string
+          montant: number
+          pour_quoi: string
+          statut: Database["public"]["Enums"]["statut_paiement"] | null
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date_transaction?: string | null
+          devise?: string | null
+          id?: string
+          metadata?: Json | null
+          methode_paiement: string
+          montant: number
+          pour_quoi: string
+          statut?: Database["public"]["Enums"]["statut_paiement"] | null
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date_transaction?: string | null
+          devise?: string | null
+          id?: string
+          metadata?: Json | null
+          methode_paiement?: string
+          montant?: number
+          pour_quoi?: string
+          statut?: Database["public"]["Enums"]["statut_paiement"] | null
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string | null
+          date_naissance: string | null
+          derniere_connexion: string | null
+          email: string
+          fuseau_horaire: string | null
+          id: string
+          langue_preferee: string | null
+          nom: string
+          pays: string | null
+          prenom: string
+          role: Database["public"]["Enums"]["app_role"]
+          telephone: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_naissance?: string | null
+          derniere_connexion?: string | null
+          email: string
+          fuseau_horaire?: string | null
+          id: string
+          langue_preferee?: string | null
+          nom: string
+          pays?: string | null
+          prenom: string
+          role?: Database["public"]["Enums"]["app_role"]
+          telephone?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_naissance?: string | null
+          derniere_connexion?: string | null
+          email?: string
+          fuseau_horaire?: string | null
+          id?: string
+          langue_preferee?: string | null
+          nom?: string
+          pays?: string | null
+          prenom?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          telephone?: string | null
+        }
+        Relationships: []
+      }
+      sessions_tutorat: {
+        Row: {
+          commentaire_evaluation: string | null
+          created_at: string | null
+          date_heure_debut: string
+          duree_minutes: number
+          enregistrement_url: string | null
+          etudiant_id: string
+          evaluation_etudiant: number | null
+          id: string
+          lien_zoom: string | null
+          matiere: string
+          montant_paye: number | null
+          notes_tuteur: string | null
+          statut: Database["public"]["Enums"]["statut_session"] | null
+          tuteur_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          commentaire_evaluation?: string | null
+          created_at?: string | null
+          date_heure_debut: string
+          duree_minutes?: number
+          enregistrement_url?: string | null
+          etudiant_id: string
+          evaluation_etudiant?: number | null
+          id?: string
+          lien_zoom?: string | null
+          matiere: string
+          montant_paye?: number | null
+          notes_tuteur?: string | null
+          statut?: Database["public"]["Enums"]["statut_session"] | null
+          tuteur_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          commentaire_evaluation?: string | null
+          created_at?: string | null
+          date_heure_debut?: string
+          duree_minutes?: number
+          enregistrement_url?: string | null
+          etudiant_id?: string
+          evaluation_etudiant?: number | null
+          id?: string
+          lien_zoom?: string | null
+          matiere?: string
+          montant_paye?: number | null
+          notes_tuteur?: string | null
+          statut?: Database["public"]["Enums"]["statut_session"] | null
+          tuteur_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sessions_tutorat_etudiant_id_fkey"
+            columns: ["etudiant_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sessions_tutorat_tuteur_id_fkey"
+            columns: ["tuteur_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      student_progress: {
+        Row: {
+          created_at: string | null
+          date_completion: string | null
+          date_debut: string | null
+          etudiant_id: string
+          id: string
+          lesson_id: string
+          score_quiz: number | null
+          statut_completion: number | null
+          temps_passe_minutes: number | null
+          tentatives: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_completion?: string | null
+          date_debut?: string | null
+          etudiant_id: string
+          id?: string
+          lesson_id: string
+          score_quiz?: number | null
+          statut_completion?: number | null
+          temps_passe_minutes?: number | null
+          tentatives?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_completion?: string | null
+          date_debut?: string | null
+          etudiant_id?: string
+          id?: string
+          lesson_id?: string
+          score_quiz?: number | null
+          statut_completion?: number | null
+          temps_passe_minutes?: number | null
+          tentatives?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_progress_etudiant_id_fkey"
+            columns: ["etudiant_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          besoins_specifiques: string | null
+          created_at: string | null
+          date_naissance: string
+          id: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs_apprentissage: string | null
+          parent_id: string
+          prenom: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          besoins_specifiques?: string | null
+          created_at?: string | null
+          date_naissance: string
+          id?: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs_apprentissage?: string | null
+          parent_id: string
+          prenom: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          besoins_specifiques?: string | null
+          created_at?: string | null
+          date_naissance?: string
+          id?: string
+          niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs_apprentissage?: string | null
+          parent_id?: string
+          prenom?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "students_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "students_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          created_at: string | null
+          date_debut: string | null
+          date_fin: string | null
+          id: string
+          montant_mensuel: number
+          parent_id: string
+          statut: Database["public"]["Enums"]["statut_abonnement"] | null
+          stripe_subscription_id: string | null
+          type: Database["public"]["Enums"]["type_abonnement"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          date_debut?: string | null
+          date_fin?: string | null
+          id?: string
+          montant_mensuel: number
+          parent_id: string
+          statut?: Database["public"]["Enums"]["statut_abonnement"] | null
+          stripe_subscription_id?: string | null
+          type: Database["public"]["Enums"]["type_abonnement"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          date_debut?: string | null
+          date_fin?: string | null
+          id?: string
+          montant_mensuel?: number
+          parent_id?: string
+          statut?: Database["public"]["Enums"]["statut_abonnement"] | null
+          stripe_subscription_id?: string | null
+          type?: Database["public"]["Enums"]["type_abonnement"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "parents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutors: {
+        Row: {
+          annees_experience: number
+          bio: string | null
+          certifications: string[] | null
+          created_at: string | null
+          diplomes: string[]
+          disponibilites: Json | null
+          id: string
+          matieres_enseignees: string[]
+          nombre_sessions: number | null
+          note_moyenne: number | null
+          notes_admin: string | null
+          statut_approbation:
+            | Database["public"]["Enums"]["statut_tuteur"]
+            | null
+          tarif_horaire_eur: number
+          updated_at: string | null
+          user_id: string
+          verification_casier: boolean | null
+        }
+        Insert: {
+          annees_experience: number
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          diplomes: string[]
+          disponibilites?: Json | null
+          id?: string
+          matieres_enseignees: string[]
+          nombre_sessions?: number | null
+          note_moyenne?: number | null
+          notes_admin?: string | null
+          statut_approbation?:
+            | Database["public"]["Enums"]["statut_tuteur"]
+            | null
+          tarif_horaire_eur: number
+          updated_at?: string | null
+          user_id: string
+          verification_casier?: boolean | null
+        }
+        Update: {
+          annees_experience?: number
+          bio?: string | null
+          certifications?: string[] | null
+          created_at?: string | null
+          diplomes?: string[]
+          disponibilites?: Json | null
+          id?: string
+          matieres_enseignees?: string[]
+          nombre_sessions?: number | null
+          note_moyenne?: number | null
+          notes_admin?: string | null
+          statut_approbation?:
+            | Database["public"]["Enums"]["statut_tuteur"]
+            | null
+          tarif_horaire_eur?: number
+          updated_at?: string | null
+          user_id?: string
+          verification_casier?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +508,27 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      app_role: "parent" | "student" | "tutor" | "admin"
+      difficulte: "facile" | "moyen" | "difficile"
+      niveau_scolaire:
+        | "CP"
+        | "CE1"
+        | "CE2"
+        | "CM1"
+        | "CM2"
+        | "6eme"
+        | "5eme"
+        | "4eme"
+        | "3eme"
+        | "Seconde"
+        | "Premiere"
+        | "Terminale"
+      statut_abonnement: "actif" | "annule" | "expire"
+      statut_paiement: "reussi" | "echec" | "en_attente"
+      statut_session: "programmee" | "completee" | "annulee"
+      statut_tuteur: "en_attente" | "approuve" | "refuse" | "suspendu"
+      type_abonnement: "gratuit" | "premium_individuel" | "premium_famille"
+      type_contenu: "video" | "exercice" | "quiz" | "document"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +655,29 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["parent", "student", "tutor", "admin"],
+      difficulte: ["facile", "moyen", "difficile"],
+      niveau_scolaire: [
+        "CP",
+        "CE1",
+        "CE2",
+        "CM1",
+        "CM2",
+        "6eme",
+        "5eme",
+        "4eme",
+        "3eme",
+        "Seconde",
+        "Premiere",
+        "Terminale",
+      ],
+      statut_abonnement: ["actif", "annule", "expire"],
+      statut_paiement: ["reussi", "echec", "en_attente"],
+      statut_session: ["programmee", "completee", "annulee"],
+      statut_tuteur: ["en_attente", "approuve", "refuse", "suspendu"],
+      type_abonnement: ["gratuit", "premium_individuel", "premium_famille"],
+      type_contenu: ["video", "exercice", "quiz", "document"],
+    },
   },
 } as const
