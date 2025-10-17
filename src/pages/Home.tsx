@@ -29,6 +29,9 @@ const Home = () => {
             <Link to="/lessons">
               <Button variant="ghost">Ressources</Button>
             </Link>
+            <Link to="/tutors">
+              <Button variant="ghost">Tuteurs</Button>
+            </Link>
             <Link to="/auth">
               <Button variant="outline">Connexion</Button>
             </Link>
@@ -403,17 +406,17 @@ const Home = () => {
             <div>
               <h5 className="font-semibold mb-4">Plateforme</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">Tuteurs</a></li>
-                <li><a href="#" className="hover:text-foreground">Ressources</a></li>
-                <li><a href="#" className="hover:text-foreground">Tarifs</a></li>
+                <li><Link to="/tutors" className="hover:text-foreground">Tuteurs</Link></li>
+                <li><Link to="/lessons" className="hover:text-foreground">Ressources</Link></li>
+                <li><a href="#pricing" className="hover:text-foreground">Tarifs</a></li>
               </ul>
             </div>
             <div>
               <h5 className="font-semibold mb-4">Entreprise</h5>
               <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">À propos</a></li>
+                <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
                 <li><a href="#" className="hover:text-foreground">Contact</a></li>
-                <li><a href="#" className="hover:text-foreground">Devenir tuteur</a></li>
+                <li><Link to="/tutor-signup" className="hover:text-foreground">Devenir tuteur</Link></li>
               </ul>
             </div>
             <div>

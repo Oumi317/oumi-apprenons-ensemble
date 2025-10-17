@@ -7,6 +7,9 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import ParentDashboard from "./pages/ParentDashboard";
 import Lessons from "./pages/Lessons";
+import Tutors from "./pages/Tutors";
+import TutorSignup from "./pages/TutorSignup";
+import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +25,9 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/parent" element={<ParentDashboard />} />
           <Route path="/lessons" element={<Lessons />} />
+          <Route path="/tutors" element={<Tutors />} />
+          <Route path="/tutor-signup" element={<TutorSignup />} />
+          <Route path="/faq" element={<FAQ />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

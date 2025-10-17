@@ -186,7 +186,7 @@ const ParentDashboard = () => {
               </Card>
             )}
 
-            <Card className="border-2 hover:border-secondary transition-colors cursor-pointer">
+            <Card className="border-2 hover:border-secondary transition-all hover:shadow-lg">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -201,9 +201,11 @@ const ParentDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
-                  Parcourir les tuteurs
-                </Button>
+                <Link to="/tutors">
+                  <Button variant="outline" className="w-full">
+                    Parcourir les tuteurs
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
