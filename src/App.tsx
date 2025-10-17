@@ -12,6 +12,7 @@ import StudentProgress from "./pages/StudentProgress";
 import Tutors from "./pages/Tutors";
 import TutorSignup from "./pages/TutorSignup";
 import TutorDashboard from "./pages/TutorDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import FAQ from "./pages/FAQ";
 import NotFound from "./pages/NotFound";
 
@@ -27,12 +28,13 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/parent" element={<ParentDashboard />} />
+          <Route path="/dashboard/tutor" element={<TutorDashboard />} />
+          <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/lessons" element={<Lessons />} />
           <Route path="/lessons/:id" element={<LessonDetail />} />
           <Route path="/students/:studentId/progress" element={<StudentProgress />} />
           <Route path="/tutors" element={<Tutors />} />
           <Route path="/tutor-signup" element={<TutorSignup />} />
-          <Route path="/dashboard/tutor" element={<TutorDashboard />} />
           <Route path="/faq" element={<FAQ />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
