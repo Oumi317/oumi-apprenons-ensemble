@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus } from "lucide-react";
@@ -207,7 +207,7 @@ const ParentDashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-success transition-colors cursor-pointer">
+            <Card className="border-2 hover:border-success transition-all hover:shadow-lg">
               <CardHeader>
                 <div className="flex items-start justify-between">
                   <div>
@@ -222,9 +222,11 @@ const ParentDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full">
-                  Explorer les ressources
-                </Button>
+                <Link to="/lessons">
+                  <Button variant="outline" className="w-full">
+                    Explorer les ressources
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 

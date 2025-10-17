@@ -26,6 +26,9 @@ const Home = () => {
             <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors">
               Tarifs
             </a>
+            <Link to="/lessons">
+              <Button variant="ghost">Ressources</Button>
+            </Link>
             <Link to="/auth">
               <Button variant="outline">Connexion</Button>
             </Link>
