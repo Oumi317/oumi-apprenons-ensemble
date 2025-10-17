@@ -14,6 +14,7 @@ import {
 import { GraduationCap, Search, Star, Award, Calendar, Clock, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import BookingDialog from "@/components/BookingDialog";
 
 const matieres = [
   "Toutes", "Français", "Mathématiques", "Histoire-Géographie", 
@@ -30,6 +31,19 @@ const Tutors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState("Toutes");
   const [maxTarif, setMaxTarif] = useState(100);
+  const [bookingDialog, setBookingDialog] = useState<{
+    open: boolean;
+    tutorId: string;
+    tutorName: string;
+    subject: string;
+    hourlyRate: number;
+  }>({
+    open: false,
+    tutorId: "",
+    tutorName: "",
+    subject: "",
+    hourlyRate: 0
+  });
 
   useEffect(() => {
     checkUser();
@@ -297,7 +311,16 @@ const Tutors = () => {
                         </p>
                         <p className="text-xs text-muted-foreground">par heure</p>
                       </div>
-                      <Button className="bg-gradient-primary">
+                      <Button 
+                        className="bg-gradient-primary"
+                        onClick={() => setBookingDialog({
+                          open: true,
+                          tutorId: tutor.id,
+                          tutorName: `${tutor.profiles?.prenom} ${tutor.profiles?.nom}`,
+                          subject: tutor.matieres_enseignees?.[0] || "Matière",
+                          hourlyRate: Number(tutor.tarif_horaire_eur)
+                        })}
+                      >
                         <Calendar className="h-4 w-4 mr-2" />
                         Réserver
                       </Button>
@@ -326,6 +349,15 @@ const Tutors = () => {
           </Card>
         </div>
       </main>
+
+      <BookingDialog
+        open={bookingDialog.open}
+        onOpenChange={(open) => setBookingDialog({ ...bookingDialog, open })}
+        tutorId={bookingDialog.tutorId}
+        tutorName={bookingDialog.tutorName}
+        subject={bookingDialog.subject}
+        hourlyRate={bookingDialog.hourlyRate}
+      />
     </div>
   );
 };
