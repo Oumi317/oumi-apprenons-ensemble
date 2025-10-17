@@ -260,6 +260,7 @@ const Lessons = () => {
                   <Card
                     key={lesson.id}
                     className="hover:shadow-lg transition-all hover:border-primary/50 cursor-pointer animate-fade-in"
+                    onClick={() => navigate(`/lessons/${lesson.id}`)}
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between mb-2">
@@ -306,6 +307,10 @@ const Lessons = () => {
                         className={`w-full ${lesson.gratuit ? "bg-gradient-primary" : ""}`}
                         variant={lesson.gratuit ? "default" : "outline"}
                         disabled={!lesson.gratuit && !user}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/lessons/${lesson.id}`);
+                        }}
                       >
                         {lesson.gratuit ? "Commencer" : user ? "Accéder" : "Connexion requise"}
                       </Button>

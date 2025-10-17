@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { User, Calendar, BookOpen, TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface ChildCardProps {
   child: {
@@ -73,11 +74,13 @@ export function ChildCard({ child }: ChildCardProps) {
         <div className="pt-2 flex gap-2">
           <Button variant="outline" size="sm" className="flex-1">
             <Calendar className="h-4 w-4 mr-2" />
-            Réserver session
+            Réserver
           </Button>
-          <Button variant="outline" size="sm" className="flex-1">
-            Voir profil
-          </Button>
+          <Link to={`/students/${child.id}/progress`} className="flex-1">
+            <Button variant="outline" size="sm" className="w-full">
+              Voir profil
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

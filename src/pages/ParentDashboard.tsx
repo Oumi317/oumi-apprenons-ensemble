@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AddChildDialog } from "@/components/AddChildDialog";
 import { ChildCard } from "@/components/ChildCard";
+import { UpcomingSessions } from "@/components/UpcomingSessions";
+import { RecentActivity } from "@/components/RecentActivity";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -265,7 +267,7 @@ const ParentDashboard = () => {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
                     1
                   </div>
                   <div>
@@ -276,7 +278,7 @@ const ParentDashboard = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
                     2
                   </div>
                   <div>
@@ -287,7 +289,7 @@ const ParentDashboard = () => {
                   </div>
                 </div>
                 <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
                     3
                   </div>
                   <div>
@@ -300,6 +302,12 @@ const ParentDashboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Upcoming Sessions & Recent Activity */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <UpcomingSessions sessions={[]} />
+            <RecentActivity activities={[]} />
+          </div>
         </div>
       </main>
     </div>

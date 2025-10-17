@@ -1,0 +1,372 @@
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useParams } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { GraduationCap, ArrowLeft, TrendingUp, Clock, BookOpen, Star, Calendar, Award } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+
+const StudentProgress = () => {
+  const { studentId } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [student, setStudent] = useState<any>(null);
+  const [progress, setProgress] = useState<any[]>([]);
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadStudentData();
+  }, [studentId]);
+
+  const loadStudentData = async () => {
+    if (!studentId) return;
+
+    // Charger les infos de l'étudiant
+    const { data: studentData } = await supabase
+      .from("students")
+      .select("*")
+      .eq("id", studentId)
+      .single();
+
+    if (studentData) {
+      setStudent(studentData);
+    }
+
+    // Charger la progression
+    const { data: progressData } = await supabase
+      .from("student_progress")
+      .select(`
+        *,
+        lessons:lesson_id (
+          titre,
+          matiere,
+          niveau_scolaire,
+          type_contenu
+        )
+      `)
+      .eq("etudiant_id", studentId)
+      .order("date_debut", { ascending: false });
+
+    if (progressData) {
+      setProgress(progressData);
+    }
+
+    // Charger les sessions
+    const { data: sessionsData } = await supabase
+      .from("sessions_tutorat")
+      .select(`
+        *,
+        tutors:tuteur_id (
+          profiles:user_id (
+            prenom,
+            nom
+          )
+        )
+      `)
+      .eq("etudiant_id", studentId)
+      .order("date_heure_debut", { ascending: false })
+      .limit(10);
+
+    if (sessionsData) {
+      setSessions(sessionsData);
+    }
+
+    setLoading(false);
+  };
+
+  const calculateStats = () => {
+    const completedLessons = progress.filter((p) => p.statut_completion === 100).length;
+    const inProgressLessons = progress.filter(
+      (p) => p.statut_completion > 0 && p.statut_completion < 100
+    ).length;
+    const totalTimeMinutes = progress.reduce((sum, p) => sum + (p.temps_passe_minutes || 0), 0);
+    const averageScore = progress.length > 0
+      ? progress.reduce((sum, p) => sum + (p.score_quiz || 0), 0) / progress.length
+      : 0;
+
+    return {
+      completedLessons,
+      inProgressLessons,
+      totalTimeMinutes,
+      totalTimeHours: Math.floor(totalTimeMinutes / 60),
+      averageScore: Math.round(averageScore),
+      totalSessions: sessions.length,
+    };
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!student) {
+    return null;
+  }
+
+  const stats = calculateStats();
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b bg-card sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to="/dashboard/parent" className="flex items-center gap-2">
+            <GraduationCap className="h-8 w-8 text-primary" />
+            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
+              Oumi'School
+            </h1>
+          </Link>
+          <Link to="/dashboard/parent">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+          </Link>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto space-y-8">
+          {/* Student Header */}
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-3xl font-bold mb-2">Progrès de {student.prenom}</h2>
+              <div className="flex items-center gap-3">
+                <Badge variant="secondary" className="bg-primary/10 text-primary">
+                  {student.niveau_scolaire}
+                </Badge>
+                {student.besoins_specifiques && (
+                  <Badge variant="secondary">
+                    {student.besoins_specifiques}
+                  </Badge>
+                )}
+              </div>
+            </div>
+            <Button className="bg-gradient-primary">
+              <Calendar className="h-4 w-4 mr-2" />
+              Télécharger le rapport
+            </Button>
+          </div>
+
+          {/* Stats Grid */}
+          <div className="grid md:grid-cols-4 gap-6">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Leçons complétées
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-success">{stats.completedLessons}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.inProgressLessons} en cours
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Temps d'étude
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-primary">{stats.totalTimeHours}h</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.totalTimeMinutes % 60}min
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <Star className="h-4 w-4" />
+                  Score moyen
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-secondary">{stats.averageScore}%</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Sur les quiz complétés
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
+                  <GraduationCap className="h-4 w-4" />
+                  Sessions tutorat
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{stats.totalSessions}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Sessions complétées
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Progress by Subject */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Progression par matière</CardTitle>
+              <CardDescription>
+                Vue d'ensemble des matières étudiées
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {["Français", "Mathématiques", "Histoire-Géographie", "Sciences"].map((matiere) => {
+                const matiereLessons = progress.filter(
+                  (p) => p.lessons?.matiere === matiere
+                );
+                const completed = matiereLessons.filter((p) => p.statut_completion === 100).length;
+                const total = matiereLessons.length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                return (
+                  <div key={matiere} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <span className="font-semibold">{matiere}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {completed}/{total} leçons
+                        </Badge>
+                      </div>
+                      <span className="text-sm font-semibold text-primary">{percentage}%</span>
+                    </div>
+                    <Progress value={percentage} className="h-2" />
+                  </div>
+                );
+              })}
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Recent Lessons */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Leçons récentes</CardTitle>
+                <CardDescription>Dernières leçons étudiées</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {progress.slice(0, 5).map((item) => (
+                  <div key={item.id} className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm">{item.lessons?.titre}</h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant="secondary" className="text-xs">
+                          {item.lessons?.matiere}
+                        </Badge>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(item.date_debut).toLocaleDateString('fr-FR')}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="font-semibold text-sm">{item.statut_completion}%</div>
+                      {item.statut_completion === 100 && (
+                        <Award className="h-4 w-4 text-success inline" />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {progress.length === 0 && (
+                  <div className="text-center py-8">
+                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">
+                      Aucune leçon commencée pour le moment
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Recent Sessions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Sessions de tutorat</CardTitle>
+                <CardDescription>Historique des sessions</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {sessions.slice(0, 5).map((session) => (
+                  <div key={session.id} className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm">{session.matiere}</h4>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        avec {session.tutors?.profiles?.prenom} {session.tutors?.profiles?.nom}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(session.date_heure_debut).toLocaleDateString('fr-FR')}
+                        </span>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            session.statut === "completee"
+                              ? "bg-success/10 text-success text-xs"
+                              : "text-xs"
+                          }
+                        >
+                          {session.statut}
+                        </Badge>
+                      </div>
+                    </div>
+                    {session.evaluation_etudiant && (
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-secondary text-secondary" />
+                        <span className="text-sm font-semibold">{session.evaluation_etudiant}</span>
+                      </div>
+                    )}
+                  </div>
+                ))}
+                {sessions.length === 0 && (
+                  <div className="text-center py-8">
+                    <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-sm text-muted-foreground">
+                      Aucune session réservée pour le moment
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Recommendations */}
+          <Card className="bg-gradient-primary text-white border-0">
+            <CardContent className="py-8">
+              <div className="flex items-start gap-4">
+                <TrendingUp className="h-8 w-8 flex-shrink-0" />
+                <div>
+                  <h3 className="text-xl font-bold mb-2">Recommandations</h3>
+                  <p className="text-white/90 mb-4">
+                    Continuez sur cette lancée ! Voici quelques suggestions pour progresser encore plus :
+                  </p>
+                  <ul className="space-y-2 text-sm text-white/90">
+                    <li>• Complétez les leçons en cours en Mathématiques</li>
+                    <li>• Réservez une session de révision avant le prochain contrôle</li>
+                    <li>• Explorez les leçons de niveau supérieur pour approfondir</li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default StudentProgress;

@@ -7,6 +7,8 @@ import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import ParentDashboard from "./pages/ParentDashboard";
 import Lessons from "./pages/Lessons";
+import LessonDetail from "./pages/LessonDetail";
+import StudentProgress from "./pages/StudentProgress";
 import Tutors from "./pages/Tutors";
 import TutorSignup from "./pages/TutorSignup";
 import FAQ from "./pages/FAQ";
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/dashboard/parent" element={<ParentDashboard />} />
           <Route path="/lessons" element={<Lessons />} />
+          <Route path="/lessons/:id" element={<LessonDetail />} />
+          <Route path="/students/:studentId/progress" element={<StudentProgress />} />
           <Route path="/tutors" element={<Tutors />} />
           <Route path="/tutor-signup" element={<TutorSignup />} />
           <Route path="/faq" element={<FAQ />} />
