@@ -3,6 +3,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { NavigationHeader } from "@/components/NavigationHeader";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import ParentDashboard from "./pages/ParentDashboard";
@@ -24,18 +26,47 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <NavigationHeader />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard/parent" element={<ParentDashboard />} />
-          <Route path="/dashboard/tutor" element={<TutorDashboard />} />
-          <Route path="/dashboard/admin" element={<AdminDashboard />} />
           <Route path="/lessons" element={<Lessons />} />
           <Route path="/lessons/:id" element={<LessonDetail />} />
-          <Route path="/students/:studentId/progress" element={<StudentProgress />} />
           <Route path="/tutors" element={<Tutors />} />
           <Route path="/tutor-signup" element={<TutorSignup />} />
           <Route path="/faq" element={<FAQ />} />
+          <Route 
+            path="/dashboard/parent" 
+            element={
+              <ProtectedRoute requiredRole="parent">
+                <ParentDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/tutor" 
+            element={
+              <ProtectedRoute requiredRole="tutor">
+                <TutorDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/dashboard/admin" 
+            element={
+              <ProtectedRoute requiredRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/students/:studentId/progress" 
+            element={
+              <ProtectedRoute requiredRole="parent">
+                <StudentProgress />
+              </ProtectedRoute>
+            } 
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
