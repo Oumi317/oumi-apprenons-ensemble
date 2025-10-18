@@ -19,6 +19,7 @@ import Messages from "./pages/Messages";
 import VideoSession from "./pages/VideoSession";
 import Payment from "./pages/Payment";
 import AITutor from "./pages/AITutor";
+import Notifications from "./pages/Notifications";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -106,6 +107,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <AITutor />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/notifications" 
+            element={
+              <ProtectedRoute>
+                <Notifications />
               </ProtectedRoute>
             } 
           />
