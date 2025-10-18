@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, LayoutDashboard, BookOpen, Users, HelpCircle } from "lucide-react";
+import { NotificationsDropdown } from "@/components/NotificationsDropdown";
 
 export function NavigationHeader() {
   const [user, setUser] = useState<any>(null);
@@ -74,6 +75,7 @@ export function NavigationHeader() {
         <div className="flex items-center gap-4">
           {user ? (
             <>
+              <NotificationsDropdown />
               <Button
                 variant="ghost"
                 size="sm"
