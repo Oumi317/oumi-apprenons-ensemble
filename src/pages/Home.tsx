@@ -556,17 +556,105 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Matières Disponibles - Inspiré GoStudent */}
+      <section className="py-20 bg-muted/50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              📚 Nos matières
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">
+              Tutorat en ligne pour toutes les matières scolaires
+            </h3>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              +15 matières disponibles, tous niveaux d'apprentissage
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+            {[
+              { name: "Mathématiques", icon: "📐" },
+              { name: "Français", icon: "📖" },
+              { name: "Anglais", icon: "🇬🇧" },
+              { name: "Sciences", icon: "🔬" },
+              { name: "Histoire", icon: "🏛️" },
+              { name: "Géographie", icon: "🌍" },
+              { name: "Physique", icon: "⚛️" },
+              { name: "Chimie", icon: "🧪" },
+              { name: "Philosophie", icon: "💭" },
+              { name: "Arabe", icon: "📚" }
+            ].map((subject, index) => (
+              <Card 
+                key={index} 
+                className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
+                <h4 className="font-semibold text-sm">{subject.name}</h4>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/lessons">
+              <Button variant="outline" size="lg" className="group">
+                Voir toutes les matières
+                <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Badges de Confiance - Inspiré GoStudent */}
+      <section className="py-16 bg-background border-y">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            <div className="text-center space-y-2 animate-fade-in">
+              <div className="h-16 w-16 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-3">
+                <Shield className="h-8 w-8 text-success" />
+              </div>
+              <h4 className="font-bold">Paiement sécurisé</h4>
+              <p className="text-sm text-muted-foreground">Transaction 100% sécurisée</p>
+            </div>
+            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="h-16 w-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-3">
+                <Clock className="h-8 w-8 text-primary" />
+              </div>
+              <h4 className="font-bold">Support 24/7</h4>
+              <p className="text-sm text-muted-foreground">Assistance disponible</p>
+            </div>
+            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="h-16 w-16 mx-auto bg-secondary/10 rounded-full flex items-center justify-center mb-3">
+                <Award className="h-8 w-8 text-secondary" />
+              </div>
+              <h4 className="font-bold">Tuteurs certifiés</h4>
+              <p className="text-sm text-muted-foreground">Sélection rigoureuse</p>
+            </div>
+            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="h-16 w-16 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-3">
+                <BarChart3 className="h-8 w-8 text-success" />
+              </div>
+              <h4 className="font-bold">Suivi des progrès</h4>
+              <p className="text-sm text-muted-foreground">Rapports détaillés</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <Badge className="mb-4">Questions fréquentes</Badge>
-              <h3 className="text-3xl md:text-5xl font-bold mb-4">
-                Vous avez des questions ?
+            <div className="text-center mb-12 animate-fade-in">
+              <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                ❓ FAQ
+              </div>
+              <h3 className="text-4xl md:text-5xl font-bold mb-4">
+                Questions fréquentes
               </h3>
-              <p className="text-lg text-muted-foreground">
-                Nous avons les réponses
+              <p className="text-xl text-muted-foreground">
+                Tout ce que vous devez savoir sur Oumi'School
               </p>
             </div>
 
@@ -668,46 +756,76 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t bg-card py-12">
+      {/* Footer - Enrichi style GoStudent */}
+      <footer className="bg-gradient-to-b from-card to-card/50 border-t py-16">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <GraduationCap className="h-6 w-6 text-primary" />
-                <span className="font-bold text-lg">Oumi'School</span>
+          <div className="grid md:grid-cols-5 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-6">
+                <GraduationCap className="h-8 w-8 text-primary" />
+                <span className="font-bold text-2xl bg-gradient-hero bg-clip-text text-transparent">Oumi'School</span>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Excellence éducative francophone pour familles du monde entier.
+              <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+                Plateforme de tutorat en ligne pour les familles francophones du monde entier. 
+                Excellence académique et valeurs éthiques.
               </p>
+              <div className="flex gap-4">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
+                  <MessageSquare className="h-5 w-5 text-primary" />
+                </div>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
+                  <Video className="h-5 w-5 text-primary" />
+                </div>
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
+                  <Globe className="h-5 w-5 text-primary" />
+                </div>
+              </div>
             </div>
+
             <div>
-              <h5 className="font-semibold mb-4">Plateforme</h5>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/tutors" className="hover:text-foreground">Tuteurs</Link></li>
-                <li><Link to="/lessons" className="hover:text-foreground">Ressources</Link></li>
-                <li><a href="#pricing" className="hover:text-foreground">Tarifs</a></li>
+              <h4 className="font-bold mb-4 text-foreground">Pour les familles</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#segments" className="text-muted-foreground hover:text-primary transition-colors">Familles IEF</a></li>
+                <li><a href="#segments" className="text-muted-foreground hover:text-primary transition-colors">Expatriés</a></li>
+                <li><a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Tarifs & formules</a></li>
+                <li><Link to="/lessons" className="text-muted-foreground hover:text-primary transition-colors">Matières disponibles</Link></li>
+                <li><Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">Questions fréquentes</Link></li>
               </ul>
             </div>
+
             <div>
-              <h5 className="font-semibold mb-4">Entreprise</h5>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link to="/faq" className="hover:text-foreground">FAQ</Link></li>
-                <li><a href="#" className="hover:text-foreground">Contact</a></li>
-                <li><Link to="/tutor-signup" className="hover:text-foreground">Devenir tuteur</Link></li>
+              <h4 className="font-bold mb-4 text-foreground">Pour les tuteurs</h4>
+              <ul className="space-y-3 text-sm">
+                <li><Link to="/tutor-signup" className="text-muted-foreground hover:text-primary transition-colors">Devenir tuteur</Link></li>
+                <li><Link to="/tutors" className="text-muted-foreground hover:text-primary transition-colors">Nos tuteurs</Link></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Avantages tuteurs</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Code de conduite</a></li>
               </ul>
             </div>
+
             <div>
-              <h5 className="font-semibold mb-4">Légal</h5>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><a href="#" className="hover:text-foreground">CGU</a></li>
-                <li><a href="#" className="hover:text-foreground">Politique de confidentialité</a></li>
-                <li><a href="#" className="hover:text-foreground">Mentions légales</a></li>
+              <h4 className="font-bold mb-4 text-foreground">Support</h4>
+              <ul className="space-y-3 text-sm">
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Centre d'aide</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Contactez-nous</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Conditions générales</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Politique de confidentialité</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Mentions légales</a></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-            <p>&copy; 2025 Oumi'School. Tous droits réservés. Conforme RGPD.</p>
+
+          <div className="border-t border-border pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-sm text-muted-foreground">
+                &copy; 2025 Oumi'School. Tous droits réservés.
+              </p>
+              <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                <a href="#" className="hover:text-primary transition-colors">Conditions d'utilisation</a>
+                <a href="#" className="hover:text-primary transition-colors">Confidentialité</a>
+                <a href="#" className="hover:text-primary transition-colors">Cookies</a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
