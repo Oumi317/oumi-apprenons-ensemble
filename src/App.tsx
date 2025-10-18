@@ -17,6 +17,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import FAQ from "./pages/FAQ";
 import Messages from "./pages/Messages";
 import VideoSession from "./pages/VideoSession";
+import Payment from "./pages/Payment";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -80,6 +81,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <VideoSession />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/payment" 
+            element={
+              <ProtectedRoute>
+                <Payment />
               </ProtectedRoute>
             } 
           />
