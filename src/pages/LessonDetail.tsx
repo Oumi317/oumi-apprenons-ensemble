@@ -9,6 +9,9 @@ import { GraduationCap, Clock, BookOpen, ArrowLeft, Play, CheckCircle, Star, Awa
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Quiz } from "@/components/Quiz";
+import { VideoPlayer } from "@/components/VideoPlayer";
+import { LessonNotes } from "@/components/LessonNotes";
+import { LessonResources } from "@/components/LessonResources";
 
 const difficulteColors = {
   facile: "bg-success/10 text-success",
@@ -26,6 +29,7 @@ const LessonDetail = () => {
   const [loading, setLoading] = useState(true);
   const [children, setChildren] = useState<any[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
 
   useEffect(() => {
     checkUser();
@@ -134,32 +138,41 @@ const LessonDetail = () => {
     }
   };
 
-  const handleCompleteLesson = async () => {
-    if (!selectedChild) return;
+  const handleMarkComplete = async () => {
+    if (!selectedChild || !id) return;
 
-    const { error } = await supabase
-      .from("student_progress")
-      .upsert({
-        etudiant_id: selectedChild,
+    try {
+      const { error } = await supabase
+        .from("student_progress")
+        .upsert({
+          etudiant_id: selectedChild,
+          lesson_id: id,
+          statut_completion: 100,
+          date_completion: new Date().toISOString(),
+        }, {
+          onConflict: "etudiant_id,lesson_id"
+        });
+
+      if (error) throw error;
+
+      // Create study session
+      await supabase.from("study_sessions").insert({
+        student_id: selectedChild,
         lesson_id: id,
-        statut_completion: 100,
-        date_completion: new Date().toISOString(),
-      }, {
-        onConflict: "etudiant_id,lesson_id"
+        session_type: "lesson",
+        matiere: lesson.matiere,
+        duration_minutes: lesson.duree_estimee_minutes || 30,
+        completed: true,
       });
 
-    if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de marquer comme complétée",
-        variant: "destructive",
+        title: "Leçon terminée !",
+        description: "Félicitations pour avoir complété cette leçon",
       });
-    } else {
-      toast({
-        title: "Félicitations ! 🎉",
-        description: "Leçon terminée avec succès !",
-      });
+
       await loadProgress(selectedChild);
+    } catch (error) {
+      console.error("Error marking complete:", error);
     }
   };
 
@@ -258,30 +271,30 @@ const LessonDetail = () => {
                   <TabsTrigger value="quiz">Quiz</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="lesson" className="mt-6">
-                  <Card>
-                    <CardContent className="pt-6">
-                      {lesson.contenu_url ? (
+                <TabsContent value="lesson" className="mt-6 space-y-6">
+                  {lesson.contenu_url && lesson.type_contenu === "video" ? (
+                    <VideoPlayer
+                      videoUrl={lesson.contenu_url}
+                      onTimeUpdate={(currentTime) => setCurrentVideoTime(currentTime)}
+                      onComplete={() => handleMarkComplete()}
+                      initialTime={progress?.temps_passe_minutes ? progress.temps_passe_minutes * 60 : 0}
+                    />
+                  ) : lesson.contenu_url ? (
+                    <Card>
+                      <CardContent className="pt-6">
                         <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                          {lesson.type_contenu === "video" ? (
-                            <video
-                              src={lesson.contenu_url}
-                              controls
-                              className="w-full h-full"
-                              poster={lesson.thumbnail_url || undefined}
-                            >
-                              Votre navigateur ne supporte pas la lecture vidéo.
-                            </video>
-                          ) : (
-                            <iframe
-                              src={lesson.contenu_url}
-                              className="w-full h-full"
-                              title={lesson.titre}
-                              allowFullScreen
-                            />
-                          )}
+                          <iframe
+                            src={lesson.contenu_url}
+                            className="w-full h-full"
+                            title={lesson.titre}
+                            allowFullScreen
+                          />
                         </div>
-                      ) : (
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <Card>
+                      <CardContent className="pt-6">
                         <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
                           <div className="text-center space-y-4">
                             <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
@@ -290,14 +303,52 @@ const LessonDetail = () => {
                             <div>
                               <h3 className="font-semibold mb-2">Contenu de la leçon</h3>
                               <p className="text-sm text-muted-foreground">
-                                Le lecteur vidéo sera disponible prochainement
+                                Le contenu de cette leçon sera disponible prochainement
                               </p>
                             </div>
                           </div>
                         </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Lesson Description */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Description</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground">{lesson.description}</p>
+                      {lesson.alignement_socle_commun && (
+                        <div className="mt-4 pt-4 border-t">
+                          <h4 className="font-semibold mb-2 text-sm">Alignement socle commun</h4>
+                          <p className="text-sm text-muted-foreground">{lesson.alignement_socle_commun}</p>
+                        </div>
                       )}
                     </CardContent>
                   </Card>
+
+                  {/* Lesson Resources */}
+                  <LessonResources
+                    resources={[
+                      {
+                        id: "1",
+                        titre: "Fiche de révision - " + lesson.titre,
+                        type: "pdf",
+                        url: "#",
+                        taille: "2.5 MB",
+                        description: "Résumé des points clés de la leçon",
+                      },
+                      {
+                        id: "2",
+                        titre: "Exercices pratiques",
+                        type: "document",
+                        url: "#",
+                        taille: "1.8 MB",
+                        description: "Exercices d'application pour s'entraîner",
+                      },
+                    ]}
+                  />
                 </TabsContent>
 
                 <TabsContent value="quiz" className="mt-6">
@@ -413,7 +464,7 @@ const LessonDetail = () => {
                         <Button
                           variant="outline"
                           className="w-full"
-                          onClick={handleCompleteLesson}
+                          onClick={handleMarkComplete}
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Marquer comme complétée
@@ -436,6 +487,15 @@ const LessonDetail = () => {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Lesson Notes */}
+              {selectedChild && lesson.type_contenu === "video" && (
+                <LessonNotes
+                  lessonId={id!}
+                  studentId={selectedChild}
+                  currentVideoTime={currentVideoTime}
+                />
+              )}
 
               {/* Related Lessons */}
               <Card>
