@@ -199,76 +199,94 @@ const Home = () => {
 
       <section id="segments" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">Pour qui ?</h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              🎯 Notre mission
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">Pour qui ?</h3>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Oumi'School accompagne les familles francophones du monde entier
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="border-2 hover:border-primary transition-all hover:shadow-lg">
-              <CardContent className="pt-6 space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <BookOpen className="h-6 w-6 text-primary" />
+            <Card className="group border-2 hover:border-primary transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
+              <CardContent className="pt-8 space-y-4 relative">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <BookOpen className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <h4 className="text-xl font-bold">Familles IEF en France</h4>
-                <p className="text-muted-foreground">
+                <h4 className="text-2xl font-bold">Familles IEF en France</h4>
+                <p className="text-muted-foreground leading-relaxed">
                   Accompagnement personnalisé aligné avec le socle commun de connaissances 
                   pour l'Instruction En Famille.
                 </p>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                <ul className="space-y-3 pt-2">
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Suivi conforme aux exigences du rectorat</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Ressources alignées programme officiel</span>
                   </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-secondary transition-all hover:shadow-lg">
-              <CardContent className="pt-6 space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-secondary/10 flex items-center justify-center">
-                  <Globe className="h-6 w-6 text-secondary" />
+            <Card className="group border-2 hover:border-secondary transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
+              <CardContent className="pt-8 space-y-4 relative">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-warm flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Globe className="h-7 w-7 text-secondary-foreground" />
                 </div>
-                <h4 className="text-xl font-bold">Expatriés francophones</h4>
-                <p className="text-muted-foreground">
+                <h4 className="text-2xl font-bold">Expatriés francophones</h4>
+                <p className="text-muted-foreground leading-relaxed">
                   Maintenez le lien avec la culture et le système éducatif français, 
                   où que vous soyez.
                 </p>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                <ul className="space-y-3 pt-2">
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Horaires adaptés à tous les fuseaux</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Préparation retour en France</span>
                   </li>
                 </ul>
               </CardContent>
             </Card>
 
-            <Card className="border-2 hover:border-success transition-all hover:shadow-lg">
-              <CardContent className="pt-6 space-y-4">
-                <div className="h-12 w-12 rounded-lg bg-success/10 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-success" />
+            <Card className="group border-2 hover:border-success transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
+              <CardContent className="pt-8 space-y-4 relative">
+                <div className="h-14 w-14 rounded-2xl bg-gradient-success flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                  <Users className="h-7 w-7 text-success-foreground" />
                 </div>
-                <h4 className="text-xl font-bold">Familles recherchant des valeurs éthiques</h4>
-                <p className="text-muted-foreground">
+                <h4 className="text-2xl font-bold">Familles recherchant des valeurs éthiques</h4>
+                <p className="text-muted-foreground leading-relaxed">
                   Éducation de qualité respectant vos convictions, avec des tuteurs sensibles 
                   à vos besoins spécifiques.
                 </p>
-                <ul className="space-y-2">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                <ul className="space-y-3 pt-2">
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Environnement bienveillant</span>
                   </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
+                  <li className="flex items-start gap-3">
+                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                    </div>
                     <span className="text-sm">Excellence académique</span>
                   </li>
                 </ul>
