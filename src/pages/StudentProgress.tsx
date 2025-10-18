@@ -10,6 +10,8 @@ import { ProgressCharts } from "@/components/ProgressCharts";
 import { useToast } from "@/hooks/use-toast";
 import { AchievementBadges } from "@/components/AchievementBadges";
 import { StudyStreak } from "@/components/StudyStreak";
+import { LevelProgress } from "@/components/LevelProgress";
+import { WeeklyChallenges } from "@/components/WeeklyChallenges";
 
 const StudentProgress = () => {
   const { studentId } = useParams();
@@ -305,6 +307,16 @@ const StudentProgress = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Level & Challenges */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <LevelProgress 
+              level={student.niveau || 1}
+              experience={student.experience_points || 0}
+              studentName={student.prenom}
+            />
+            <WeeklyChallenges studentId={studentId!} />
           </div>
 
           {/* Progress Charts & Achievements */}

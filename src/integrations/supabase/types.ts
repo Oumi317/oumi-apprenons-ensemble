@@ -595,6 +595,51 @@ export type Database = {
           },
         ]
       }
+      student_challenges: {
+        Row: {
+          challenge_id: string
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          progression: number | null
+          student_id: string
+        }
+        Insert: {
+          challenge_id: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          progression?: number | null
+          student_id: string
+        }
+        Update: {
+          challenge_id?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          progression?: number | null
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_challenges_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "weekly_challenges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_challenges_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       student_progress: {
         Row: {
           created_at: string | null
@@ -656,8 +701,12 @@ export type Database = {
         Row: {
           besoins_specifiques: string | null
           created_at: string | null
+          current_streak: number | null
           date_naissance: string
+          experience_points: number | null
           id: string
+          longest_streak: number | null
+          niveau: number | null
           niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage: string | null
           parent_id: string
@@ -668,8 +717,12 @@ export type Database = {
         Insert: {
           besoins_specifiques?: string | null
           created_at?: string | null
+          current_streak?: number | null
           date_naissance: string
+          experience_points?: number | null
           id?: string
+          longest_streak?: number | null
+          niveau?: number | null
           niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage?: string | null
           parent_id: string
@@ -680,8 +733,12 @@ export type Database = {
         Update: {
           besoins_specifiques?: string | null
           created_at?: string | null
+          current_streak?: number | null
           date_naissance?: string
+          experience_points?: number | null
           id?: string
+          longest_streak?: number | null
+          niveau?: number | null
           niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage?: string | null
           parent_id?: string
@@ -902,11 +959,58 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_challenges: {
+        Row: {
+          created_at: string | null
+          date_debut: string
+          date_fin: string
+          description: string
+          icone: string | null
+          id: string
+          objectif: number
+          points_recompense: number
+          titre: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          date_debut?: string
+          date_fin?: string
+          description: string
+          icone?: string | null
+          id?: string
+          objectif: number
+          points_recompense?: number
+          titre: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          date_debut?: string
+          date_fin?: string
+          description?: string
+          icone?: string | null
+          id?: string
+          objectif?: number
+          points_recompense?: number
+          titre?: string
+          type?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      award_experience: {
+        Args: { student_uuid: string; xp_amount: number }
+        Returns: undefined
+      }
+      calculate_level: {
+        Args: { xp: number }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
