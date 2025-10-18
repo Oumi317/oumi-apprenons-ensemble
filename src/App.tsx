@@ -16,6 +16,7 @@ import TutorDashboard from "./pages/TutorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import FAQ from "./pages/FAQ";
 import Messages from "./pages/Messages";
+import VideoSession from "./pages/VideoSession";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,6 +72,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Messages />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/video-session/:sessionId" 
+            element={
+              <ProtectedRoute>
+                <VideoSession />
               </ProtectedRoute>
             } 
           />

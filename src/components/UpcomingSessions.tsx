@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Video, User } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
 
 interface Session {
   id: string;
@@ -27,6 +28,7 @@ interface Session {
 }
 
 export function UpcomingSessions() {
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -139,14 +141,13 @@ export function UpcomingSessions() {
                   </div>
                 </div>
               </div>
-              {session.lien_zoom && (
-                <Button size="sm" asChild>
-                  <a href={session.lien_zoom} target="_blank" rel="noopener noreferrer">
-                    <Video className="h-4 w-4 mr-2" />
-                    Rejoindre
-                  </a>
-                </Button>
-              )}
+              <Button 
+                size="sm" 
+                onClick={() => navigate(`/video-session/${session.id}`)}
+              >
+                <Video className="h-4 w-4 mr-2" />
+                Rejoindre
+              </Button>
             </div>
           ))}
         </div>
