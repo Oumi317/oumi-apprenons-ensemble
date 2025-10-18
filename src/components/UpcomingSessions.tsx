@@ -1,39 +1,109 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, Video, User } from "lucide-react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 interface Session {
   id: string;
-  tutorName: string;
-  subject: string;
-  date: string;
-  time: string;
-  duration: number;
-  studentName: string;
+  date_heure_debut: string;
+  duree_minutes: number;
+  matiere: string;
+  statut: string;
+  lien_zoom?: string;
+  students: {
+    prenom: string;
+  };
+  tutors: {
+    user_id: string;
+    profiles: {
+      prenom: string;
+      nom: string;
+    };
+  };
 }
 
-interface UpcomingSessionsProps {
-  sessions?: Session[];
-}
+export function UpcomingSessions() {
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export function UpcomingSessions({ sessions = [] }: UpcomingSessionsProps) {
+  useEffect(() => {
+    fetchSessions();
+  }, []);
+
+  const fetchSessions = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: students } = await supabase
+        .from("students")
+        .select("id")
+        .eq("parent_id", user.id);
+
+      if (!students || students.length === 0) {
+        setLoading(false);
+        return;
+      }
+
+      const studentIds = students.map(s => s.id);
+
+      const { data, error } = await supabase
+        .from("sessions_tutorat")
+        .select(`
+          id,
+          date_heure_debut,
+          duree_minutes,
+          matiere,
+          statut,
+          lien_zoom,
+          students (prenom),
+          tutors (
+            user_id,
+            profiles:user_id (prenom, nom)
+          )
+        `)
+        .in("etudiant_id", studentIds)
+        .eq("statut", "programmee")
+        .gte("date_heure_debut", new Date().toISOString())
+        .order("date_heure_debut", { ascending: true })
+        .limit(3);
+
+      if (error) throw error;
+      setSessions(data || []);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Sessions à venir</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">Chargement...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (sessions.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Prochaines sessions</CardTitle>
-          <CardDescription>Aucune session programmée</CardDescription>
+          <CardTitle>Sessions à venir</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
             <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground mb-4">
-              Vous n'avez pas encore de sessions programmées
-            </p>
-            <Button variant="outline" size="sm">
-              Réserver une session
-            </Button>
+            <p className="text-sm text-muted-foreground">Aucune session programmée</p>
           </div>
         </CardContent>
       </Card>
@@ -43,47 +113,43 @@ export function UpcomingSessions({ sessions = [] }: UpcomingSessionsProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Prochaines sessions</CardTitle>
-        <CardDescription>
-          {sessions.length} session{sessions.length > 1 ? "s" : ""} à venir
-        </CardDescription>
+        <CardTitle>Sessions à venir</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {sessions.map((session) => (
-          <div
-            key={session.id}
-            className="p-4 border rounded-lg hover:border-primary transition-colors space-y-3"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <h4 className="font-semibold">{session.subject}</h4>
-                <p className="text-sm text-muted-foreground flex items-center gap-2 mt-1">
-                  <User className="h-3 w-3" />
-                  {session.tutorName} • {session.studentName}
-                </p>
+      <CardContent>
+        <div className="space-y-4">
+          {sessions.map((session) => (
+            <div key={session.id} className="flex items-start justify-between p-4 border rounded-lg">
+              <div className="space-y-2 flex-1">
+                <div className="flex items-center gap-2">
+                  <Badge>{session.matiere}</Badge>
+                  <span className="text-sm font-medium">{session.students.prenom}</span>
+                </div>
+                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-4 w-4" />
+                    {format(new Date(session.date_heure_debut), "dd MMM yyyy", { locale: fr })}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4" />
+                    {format(new Date(session.date_heure_debut), "HH:mm", { locale: fr })}
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <User className="h-4 w-4" />
+                    {session.tutors.profiles.prenom} {session.tutors.profiles.nom}
+                  </div>
+                </div>
               </div>
-              <Badge variant="secondary" className="bg-success/10 text-success">
-                Confirmée
-              </Badge>
+              {session.lien_zoom && (
+                <Button size="sm" asChild>
+                  <a href={session.lien_zoom} target="_blank" rel="noopener noreferrer">
+                    <Video className="h-4 w-4 mr-2" />
+                    Rejoindre
+                  </a>
+                </Button>
+              )}
             </div>
-            
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" />
-                <span>{session.date}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
-                <span>{session.time} ({session.duration}min)</span>
-              </div>
-            </div>
-
-            <Button size="sm" className="w-full bg-gradient-primary">
-              <Video className="h-4 w-4 mr-2" />
-              Rejoindre la session
-            </Button>
-          </div>
-        ))}
+          ))}
+        </div>
       </CardContent>
     </Card>
   );

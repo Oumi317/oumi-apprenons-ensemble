@@ -248,23 +248,45 @@ const LessonDetail = () => {
 
           {/* Main Content Area */}
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* Video/Content Player */}
+          {/* Video/Content Player */}
             <div className="lg:col-span-2 space-y-6">
               <Card>
                 <CardContent className="pt-6">
-                  <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                    <div className="text-center space-y-4">
-                      <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                        <Play className="h-10 w-10 text-primary" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold mb-2">Contenu de la leçon</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Le lecteur vidéo sera disponible prochainement
-                        </p>
+                  {lesson.contenu_url ? (
+                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                      {lesson.type_contenu === "video" ? (
+                        <video
+                          src={lesson.contenu_url}
+                          controls
+                          className="w-full h-full"
+                          poster={lesson.thumbnail_url || undefined}
+                        >
+                          Votre navigateur ne supporte pas la lecture vidéo.
+                        </video>
+                      ) : (
+                        <iframe
+                          src={lesson.contenu_url}
+                          className="w-full h-full"
+                          title={lesson.titre}
+                          allowFullScreen
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                      <div className="text-center space-y-4">
+                        <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                          <Play className="h-10 w-10 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold mb-2">Contenu de la leçon</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Le lecteur vidéo sera disponible prochainement
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
 

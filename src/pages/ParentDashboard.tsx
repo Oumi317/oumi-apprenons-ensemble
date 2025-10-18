@@ -305,8 +305,8 @@ const ParentDashboard = () => {
 
           {/* Upcoming Sessions & Recent Activity */}
           <div className="grid md:grid-cols-2 gap-6">
-            <UpcomingSessions sessions={[]} />
-            <RecentActivity activities={[]} />
+            <UpcomingSessions />
+            <RecentActivity />
           </div>
         </div>
       </main>
