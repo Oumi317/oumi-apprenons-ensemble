@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, Users, Globe, GraduationCap, CheckCircle, Star, 
   Award, TrendingUp, Calendar, Video, MessageSquare, Target,
-  Play, ChevronDown
+  Play, ChevronDown, Search, Clock, BarChart3, Shield
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -229,85 +229,87 @@ const Home = () => {
       </section>
 
       {/* Comment ça marche - Simplifié en 3 étapes */}
-      <section id="how-it-works" className="py-20 bg-background">
+      <section id="how-it-works" className="py-20 bg-gradient-to-b from-background to-muted/20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <Badge className="mb-4">Simple et efficace</Badge>
-            <h3 className="text-3xl md:text-5xl font-bold mb-4">
-              Commencer est aussi simple que 1-2-3
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              🚀 Simple et rapide
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">
+              Comment ça marche ?
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Rejoignez notre plateforme de tutorat primée en 3 étapes faciles
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Trois étapes simples pour démarrer votre parcours d'apprentissage
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            <div 
-              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
-              style={{ animationDelay: '0s' }}
-            >
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
-                <CardContent className="pt-8 pb-8 space-y-4 text-center">
-                  <div className="h-20 w-20 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Calendar className="h-10 w-10 text-primary" />
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Step 1 */}
+            <div className="relative group animate-fade-in" style={{ animationDelay: '0.1s' }}>
+              <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
+              <Card className="p-8 text-center h-full border-2 hover:border-primary/40 transition-all hover:shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
+                <div className="mb-6 relative">
+                  <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Search className="w-10 h-10 text-primary-foreground" />
                   </div>
-                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
                     1
                   </div>
-                  <h4 className="font-bold text-xl">Réservez un essai</h4>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Partagez vos besoins d'apprentissage pour être jumelé avec le tuteur idéal, basé sur la personnalité, le niveau et les objectifs.
-                  </p>
-                </CardContent>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 relative">Trouvez votre tuteur parfait</h3>
+                <p className="text-muted-foreground relative leading-relaxed">
+                  Parcourez +50 tuteurs certifiés. Filtrez par matière, niveau et disponibilité pour trouver le match idéal.
+                </p>
               </Card>
-              <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-primary to-transparent" />
+              <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent"></div>
             </div>
 
-            <div 
-              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
-              style={{ animationDelay: '0.15s' }}
-            >
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
-                <CardContent className="pt-8 pb-8 space-y-4 text-center">
-                  <div className="h-20 w-20 mx-auto rounded-2xl bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Video className="h-10 w-10 text-secondary" />
+            {/* Step 2 */}
+            <div className="relative group animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <div className="absolute inset-0 bg-gradient-warm opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
+              <Card className="p-8 text-center h-full border-2 hover:border-secondary/40 transition-all hover:shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16"></div>
+                <div className="mb-6 relative">
+                  <div className="w-20 h-20 bg-gradient-warm rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <Calendar className="w-10 h-10 text-secondary-foreground" />
                   </div>
-                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
                     2
                   </div>
-                  <h4 className="font-bold text-xl">Essayez gratuitement</h4>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Rejoignez un cours d'essai gratuit et sans engagement. Aucune carte bancaire requise.
-                  </p>
-                </CardContent>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 relative">Réservez en 2 clics</h3>
+                <p className="text-muted-foreground relative leading-relaxed">
+                  Essai gratuit inclus ! Choisissez votre créneau flexible et commencez quand vous voulez, où vous voulez.
+                </p>
               </Card>
-              <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-primary to-transparent" />
+              <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-secondary to-transparent"></div>
             </div>
 
-            <div 
-              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
-              style={{ animationDelay: '0.3s' }}
-            >
-              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
-                <CardContent className="pt-8 pb-8 space-y-4 text-center">
-                  <div className="h-20 w-20 mx-auto rounded-2xl bg-success/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <TrendingUp className="h-10 w-10 text-success" />
+            {/* Step 3 */}
+            <div className="relative group animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="absolute inset-0 bg-gradient-success opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
+              <Card className="p-8 text-center h-full border-2 hover:border-success/40 transition-all hover:shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16"></div>
+                <div className="mb-6 relative">
+                  <div className="w-20 h-20 bg-gradient-success rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
+                    <TrendingUp className="w-10 h-10 text-success-foreground" />
                   </div>
-                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-success text-success-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
                     3
                   </div>
-                  <h4 className="font-bold text-xl">Commencez à apprendre</h4>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Réservez un forfait personnalisé pour démarrer avec un plan sur mesure visant à améliorer les notes et la confiance.
-                  </p>
-                </CardContent>
+                </div>
+                <h3 className="text-2xl font-bold mb-3 relative">Suivez vos progrès</h3>
+                <p className="text-muted-foreground relative leading-relaxed">
+                  Tableaux de bord personnalisés, rapports détaillés et évolution en temps réel de vos résultats.
+                </p>
               </Card>
             </div>
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
             <Link to="/auth?mode=signup">
-              <Button size="lg" className="bg-gradient-primary hover:scale-105 transition-transform">
+              <Button size="lg" className="bg-gradient-primary hover:scale-105 transition-transform shadow-xl">
                 Réserver un cours d'essai gratuit
               </Button>
             </Link>
@@ -316,64 +318,54 @@ const Home = () => {
       </section>
 
       {/* Success Features */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-5xl font-bold mb-4">
-              Comment nous assurons la réussite des élèves
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-success/10 text-success px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              ✨ Nos avantages
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">
+              Ce qui fait notre succès
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Une approche complète pour garantir l'excellence académique
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Une approche complète et personnalisée pour chaque élève
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
             {[
               {
-                icon: Target,
-                title: "Apprentissage personnalisé",
-                description: "Chaque cours est adapté au niveau, au style d'apprentissage et aux objectifs uniques de votre enfant."
-              },
-              {
-                icon: Award,
-                title: "Tuteurs d'excellence",
-                description: "Nos tuteurs sont rigoureusement sélectionnés et certifiés pour garantir la meilleure qualité d'enseignement."
-              },
-              {
-                icon: MessageSquare,
-                title: "Suivi régulier",
-                description: "Rapports de progression détaillés et communication constante avec les parents."
-              },
-              {
-                icon: BookOpen,
-                title: "Programme français",
-                description: "Contenu 100% aligné avec le programme de l'Éducation nationale française."
+                icon: Shield,
+                title: "Tuteurs certifiés",
+                description: "100% vérifiés avec +5 ans d'expérience moyenne en pédagogie",
               },
               {
                 icon: Video,
-                title: "Classe interactive",
-                description: "Outils numériques engageants : tableau blanc, partage d'écran, exercices interactifs."
+                title: "Salle interactive",
+                description: "Tableau blanc, partage d'écran et outils pédagogiques avancés",
               },
               {
-                icon: CheckCircle,
-                title: "Résultats garantis",
-                description: "92% de nos élèves constatent une amélioration significative en 3 mois."
-              }
+                icon: Clock,
+                title: "Horaires flexibles",
+                description: "7j/7 de 8h à 22h, annulation gratuite jusqu'à 24h avant",
+              },
+              {
+                icon: BarChart3,
+                title: "Suivi détaillé",
+                description: "Rapports hebdomadaires et tableaux de bord en temps réel",
+              },
             ].map((feature, index) => (
               <Card 
-                key={index} 
-                className="border hover:border-primary/50 hover:shadow-lg transition-all animate-fade-in"
+                key={index}
+                className="group p-8 hover:shadow-xl transition-all animate-fade-in border-2 hover:border-primary/40 relative overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardContent className="pt-6 space-y-4">
-                  <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center">
-                    <feature.icon className="h-7 w-7 text-primary" />
-                  </div>
-                  <h4 className="font-bold text-lg">{feature.title}</h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </CardContent>
+                <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity"></div>
+                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <feature.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 relative">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed relative">{feature.description}</p>
               </Card>
             ))}
           </div>
@@ -492,15 +484,17 @@ const Home = () => {
       </section>
 
       {/* Témoignages */}
-      <section className="py-20 bg-background">
+      <section className="py-20 bg-gradient-to-b from-muted/30 to-background">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <Badge className="mb-4">Témoignages</Badge>
-            <h3 className="text-3xl md:text-5xl font-bold mb-4">
-              Des familles satisfaites partout dans le monde
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              ⭐ Témoignages
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">
+              +1 000 familles nous font confiance
             </h3>
-            <p className="text-lg text-muted-foreground">
-              Découvrez les succès de nos élèves
+            <p className="text-xl text-muted-foreground">
+              Découvrez leurs histoires de réussite
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -508,49 +502,54 @@ const Home = () => {
               {
                 name: "Amina K.",
                 location: "Paris, France",
-                text: "Ma fille a gagné 3 points de moyenne en mathématiques en seulement 2 mois ! Le tuteur est exceptionnel et très pédagogue.",
+                text: "Ma fille a gagné 3 points de moyenne en mathématiques en seulement 2 mois ! Le tuteur est exceptionnel et vraiment pédagogue. Elle aime enfin les maths !",
                 rating: 5,
-                improvement: "+3 pts en maths"
+                improvement: "+3 pts en maths",
+                avatar: "A"
               },
               {
                 name: "Mohamed B.",
                 location: "Montréal, Canada",
-                text: "Parfait pour maintenir le français avec nos enfants expatriés. Les horaires flexibles sont un vrai plus.",
+                text: "Parfait pour maintenir le français avec nos enfants expatriés. Les horaires flexibles s'adaptent au décalage horaire. Un vrai plus pour nous !",
                 rating: 5,
-                improvement: "Bilinguisme réussi"
+                improvement: "Bilinguisme réussi",
+                avatar: "M"
               },
               {
                 name: "Sarah L.",
                 location: "Casablanca, Maroc",
-                text: "Une plateforme qui respecte nos valeurs. Mon fils est passé de 12 à 16 de moyenne générale. Merci Oumi'School !",
+                text: "Une plateforme qui respecte nos valeurs. Mon fils est passé de 12 à 16 de moyenne générale en un trimestre. Merci Oumi'School !",
                 rating: 5,
-                improvement: "+4 pts moyenne"
+                improvement: "+4 pts moyenne",
+                avatar: "S"
               }
             ].map((testimonial, index) => (
               <Card 
                 key={index}
-                className="border-2 hover:border-primary/50 hover:shadow-xl transition-all animate-fade-in"
+                className="p-8 animate-fade-in hover:shadow-xl transition-all border-2 hover:border-success/30 relative group overflow-hidden"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CardContent className="pt-6 space-y-4">
-                  <div className="flex gap-1 mb-2">
-                    {Array.from({ length: testimonial.rating }).map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-secondary text-secondary" />
-                    ))}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
+                <div className="flex mb-4 relative">
+                  {Array.from({ length: testimonial.rating }).map((_, i) => (
+                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-foreground mb-6 italic leading-relaxed relative">
+                  "{testimonial.text}"
+                </p>
+                <div className="flex items-center gap-3 relative">
+                  <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg shadow-md">
+                    {testimonial.avatar}
                   </div>
-                  <p className="text-foreground leading-relaxed">"{testimonial.text}"</p>
-                  <div className="pt-4 border-t">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold">{testimonial.name}</p>
-                        <p className="text-sm text-muted-foreground">{testimonial.location}</p>
-                      </div>
-                      <Badge variant="secondary" className="bg-success/10 text-success border-success/20">
-                        {testimonial.improvement}
-                      </Badge>
-                    </div>
+                  <div className="flex-1">
+                    <p className="font-bold">{testimonial.name}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.location}</p>
                   </div>
-                </CardContent>
+                  <Badge className="bg-success/10 text-success border-success/20">
+                    {testimonial.improvement}
+                  </Badge>
+                </div>
               </Card>
             ))}
           </div>
