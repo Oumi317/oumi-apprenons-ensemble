@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { NavigationHeader } from "@/components/NavigationHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -134,36 +135,7 @@ const Lessons = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to={user ? "/dashboard/parent" : "/"} className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              Oumi'School
-            </h1>
-          </Link>
-          <div className="flex items-center gap-4">
-            {user && (
-              <>
-                <Link to="/dashboard/parent">
-                  <Button variant="outline" size="sm">
-                    Mon tableau de bord
-                  </Button>
-                </Link>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                  Déconnexion
-                </Button>
-              </>
-            )}
-            {!user && (
-              <Link to="/auth">
-                <Button className="bg-gradient-primary">Se connecter</Button>
-              </Link>
-            )}
-          </div>
-        </div>
-      </header>
+      <NavigationHeader />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
