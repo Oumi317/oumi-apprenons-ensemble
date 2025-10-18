@@ -242,51 +242,67 @@ const Home = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-            {[
-              {
-                step: "1",
-                icon: Calendar,
-                title: "Réservez un essai",
-                description: "Partagez vos besoins d'apprentissage pour être jumelé avec le tuteur idéal, basé sur la personnalité, le niveau et les objectifs.",
-                color: "primary"
-              },
-              {
-                step: "2",
-                icon: Video,
-                title: "Essayez gratuitement",
-                description: "Rejoignez un cours d'essai gratuit et sans engagement. Aucune carte bancaire requise.",
-                color: "secondary"
-              },
-              {
-                step: "3",
-                icon: TrendingUp,
-                title: "Commencez à apprendre",
-                description: "Réservez un forfait personnalisé pour démarrer avec un plan sur mesure visant à améliorer les notes et la confiance.",
-                color: "success"
-              }
-            ].map((item, index) => (
-              <div 
-                key={index} 
-                className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
-                  <CardContent className="pt-8 pb-8 space-y-4 text-center">
-                    <div className={`h-20 w-20 mx-auto rounded-2xl bg-${item.color}/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                      <item.icon className={`h-10 w-10 text-${item.color}`} />
-                    </div>
-                    <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
-                      {item.step}
-                    </div>
-                    <h4 className="font-bold text-xl">{item.title}</h4>
-                    <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-                  </CardContent>
-                </Card>
-                {index < 2 && (
-                  <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-primary to-transparent" />
-                )}
-              </div>
-            ))}
+            <div 
+              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
+              style={{ animationDelay: '0s' }}
+            >
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
+                <CardContent className="pt-8 pb-8 space-y-4 text-center">
+                  <div className="h-20 w-20 mx-auto rounded-2xl bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Calendar className="h-10 w-10 text-primary" />
+                  </div>
+                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                    1
+                  </div>
+                  <h4 className="font-bold text-xl">Réservez un essai</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Partagez vos besoins d'apprentissage pour être jumelé avec le tuteur idéal, basé sur la personnalité, le niveau et les objectifs.
+                  </p>
+                </CardContent>
+              </Card>
+              <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-primary to-transparent" />
+            </div>
+
+            <div 
+              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
+              style={{ animationDelay: '0.15s' }}
+            >
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
+                <CardContent className="pt-8 pb-8 space-y-4 text-center">
+                  <div className="h-20 w-20 mx-auto rounded-2xl bg-secondary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Video className="h-10 w-10 text-secondary" />
+                  </div>
+                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                    2
+                  </div>
+                  <h4 className="font-bold text-xl">Essayez gratuitement</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Rejoignez un cours d'essai gratuit et sans engagement. Aucune carte bancaire requise.
+                  </p>
+                </CardContent>
+              </Card>
+              <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-primary to-transparent" />
+            </div>
+
+            <div 
+              className="relative group animate-fade-in hover:scale-105 transition-transform duration-300"
+              style={{ animationDelay: '0.3s' }}
+            >
+              <Card className="border-2 hover:border-primary hover:shadow-xl transition-all h-full">
+                <CardContent className="pt-8 pb-8 space-y-4 text-center">
+                  <div className="h-20 w-20 mx-auto rounded-2xl bg-success/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <TrendingUp className="h-10 w-10 text-success" />
+                  </div>
+                  <div className="h-12 w-12 mx-auto -mt-2 mb-4 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                    3
+                  </div>
+                  <h4 className="font-bold text-xl">Commencez à apprendre</h4>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Réservez un forfait personnalisé pour démarrer avec un plan sur mesure visant à améliorer les notes et la confiance.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
           </div>
 
           <div className="text-center mt-12">
