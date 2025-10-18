@@ -13,6 +13,7 @@ import { StudyStreak } from "@/components/StudyStreak";
 import { LevelProgress } from "@/components/LevelProgress";
 import { WeeklyChallenges } from "@/components/WeeklyChallenges";
 import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
+import { LearningRecommendations } from "@/components/LearningRecommendations";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StudentProgress = () => {
@@ -407,9 +408,10 @@ const StudentProgress = () => {
 
           {/* Tabs for different views */}
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
               <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
               <TabsTrigger value="activity">Activité</TabsTrigger>
             </TabsList>
 
@@ -471,6 +473,29 @@ const StudentProgress = () => {
 
             <TabsContent value="analytics">
               <PerformanceAnalytics data={performanceData} />
+            </TabsContent>
+
+            <TabsContent value="recommendations">
+              <LearningRecommendations
+                studentId={studentId!}
+                currentLevel={student.niveau_scolaire}
+                weakSubjects={
+                  performanceData.subjectPerformance
+                    .filter((s) => s.average < 70)
+                    .map((s) => s.matiere)
+                }
+                strongSubjects={
+                  performanceData.subjectPerformance
+                    .filter((s) => s.average >= 80)
+                    .map((s) => s.matiere)
+                }
+                recentScores={
+                  progress
+                    .filter((p) => p.score_quiz !== null)
+                    .slice(0, 5)
+                    .map((p) => p.score_quiz || 0)
+                }
+              />
             </TabsContent>
 
             <TabsContent value="activity" className="space-y-6">
