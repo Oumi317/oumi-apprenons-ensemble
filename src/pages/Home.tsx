@@ -142,9 +142,9 @@ const Home = () => {
                 <div className="h-12 w-12 rounded-lg bg-success/10 flex items-center justify-center">
                   <Users className="h-6 w-6 text-success" />
                 </div>
-                <h4 className="text-xl font-bold">Communautés musulmanes</h4>
+                <h4 className="text-xl font-bold">Familles recherchant des valeurs éthiques</h4>
                 <p className="text-muted-foreground">
-                  Éducation de qualité respectant vos valeurs, avec des tuteurs sensibles 
+                  Éducation de qualité respectant vos convictions, avec des tuteurs sensibles 
                   à vos besoins spécifiques.
                 </p>
                 <ul className="space-y-2">
