@@ -19,33 +19,58 @@ serve(async (req) => {
       throw new Error('Braintree credentials not configured');
     }
 
+    // Create Base64 encoded authorization
     const auth = btoa(`${publicKey}:${privateKey}`);
-    const environment = 'sandbox'; // Change to 'production' when ready
+    const environment = Deno.env.get('BRAINTREE_ENVIRONMENT') === 'production' 
+      ? 'production' 
+      : 'sandbox';
 
-    // Generate client token
-    const response = await fetch(
-      `https://api.${environment}.braintreegateway.com/merchants/${merchantId}/client_token`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          client_token: {}
-        }),
+    const apiUrl = environment === 'production'
+      ? 'https://payments.braintree-api.com/graphql'
+      : 'https://payments.sandbox.braintree-api.com/graphql';
+
+    // GraphQL mutation to create client token
+    const query = `
+      mutation {
+        createClientToken(input: {
+          clientToken: {}
+        }) {
+          clientToken
+        }
       }
-    );
+    `;
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Braintree-Version': '2019-01-01',
+      },
+      body: JSON.stringify({ query }),
+    });
 
     if (!response.ok) {
       const error = await response.text();
+      console.error('Braintree API error response:', error);
       throw new Error(`Braintree API error: ${error}`);
     }
 
     const data = await response.json();
+    
+    if (data.errors) {
+      console.error('GraphQL errors:', data.errors);
+      throw new Error(data.errors[0]?.message || 'GraphQL error');
+    }
+
+    const clientToken = data.data?.createClientToken?.clientToken;
+    
+    if (!clientToken) {
+      throw new Error('No client token in response');
+    }
 
     return new Response(
-      JSON.stringify({ clientToken: data.clientToken }),
+      JSON.stringify({ clientToken }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

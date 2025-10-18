@@ -26,43 +26,78 @@ serve(async (req) => {
       throw new Error('Braintree credentials not configured');
     }
 
+    // Create Base64 encoded authorization
     const auth = btoa(`${publicKey}:${privateKey}`);
-    const environment = 'sandbox'; // Change to 'production' when ready
+    const environment = Deno.env.get('BRAINTREE_ENVIRONMENT') === 'production' 
+      ? 'production' 
+      : 'sandbox';
 
-    // Process payment
-    const response = await fetch(
-      `https://api.${environment}.braintreegateway.com/merchants/${merchantId}/transactions`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Basic ${auth}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          transaction: {
-            type: 'sale',
-            amount: amount,
-            paymentMethodNonce: paymentMethodNonce,
-            options: {
-              submitForSettlement: true
+    const apiUrl = environment === 'production'
+      ? 'https://payments.braintree-api.com/graphql'
+      : 'https://payments.sandbox.braintree-api.com/graphql';
+
+    // GraphQL mutation to charge payment method
+    const query = `
+      mutation ChargePaymentMethod($input: ChargePaymentMethodInput!) {
+        chargePaymentMethod(input: $input) {
+          transaction {
+            id
+            legacyId
+            status
+            amount {
+              value
             }
           }
-        }),
+        }
       }
-    );
+    `;
+
+    const variables = {
+      input: {
+        paymentMethodId: paymentMethodNonce,
+        transaction: {
+          amount: amount.toString(),
+        },
+        options: {
+          submitForSettlement: true,
+        },
+      },
+    };
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Basic ${auth}`,
+        'Content-Type': 'application/json',
+        'Braintree-Version': '2019-01-01',
+      },
+      body: JSON.stringify({ query, variables }),
+    });
 
     if (!response.ok) {
       const error = await response.text();
+      console.error('Braintree API error response:', error);
       throw new Error(`Braintree transaction error: ${error}`);
     }
 
     const result = await response.json();
+    
+    if (result.errors) {
+      console.error('GraphQL errors:', result.errors);
+      throw new Error(result.errors[0]?.message || 'Transaction failed');
+    }
+
+    const transaction = result.data?.chargePaymentMethod?.transaction;
+    
+    if (!transaction) {
+      throw new Error('No transaction in response');
+    }
 
     // Record payment in database
     const authHeader = req.headers.get('Authorization');
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_PUBLISHABLE_KEY') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: authHeader! } } }
     );
 
@@ -71,11 +106,11 @@ serve(async (req) => {
     if (user) {
       await supabaseClient.from('payments').insert({
         user_id: user.id,
-        montant: amount,
+        montant: parseFloat(amount),
         pour_quoi: description || 'Payment via Braintree',
         methode_paiement: 'braintree',
-        statut: result.transaction.status === 'submitted_for_settlement' ? 'complete' : 'en_attente',
-        transaction_id: result.transaction.id,
+        statut: transaction.status === 'SUBMITTED_FOR_SETTLEMENT' ? 'complete' : 'en_attente',
+        transaction_id: transaction.legacyId,
         metadata: { braintreeResult: result }
       });
     }
@@ -83,8 +118,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true,
-        transactionId: result.transaction.id,
-        status: result.transaction.status 
+        transactionId: transaction.legacyId,
+        status: transaction.status 
       }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
