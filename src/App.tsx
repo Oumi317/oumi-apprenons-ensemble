@@ -45,6 +45,14 @@ const App = () => (
             } 
           />
           <Route 
+            path="/parent-dashboard" 
+            element={
+              <ProtectedRoute requiredRole="parent">
+                <ParentDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
             path="/dashboard/tutor" 
             element={
               <ProtectedRoute requiredRole="tutor">
