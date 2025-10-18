@@ -146,7 +146,57 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Segments Cibles */}
+      {/* Matières Disponibles - Placé en haut pour plus de visibilité */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16 animate-fade-in">
+            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+              📚 Nos matières
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-4">
+              Tutorat en ligne pour toutes les matières scolaires
+            </h3>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              +15 matières disponibles, tous niveaux d'apprentissage
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+            {[
+              { name: "Mathématiques", icon: "📐" },
+              { name: "Français", icon: "📖" },
+              { name: "Anglais", icon: "🇬🇧" },
+              { name: "Sciences", icon: "🔬" },
+              { name: "Histoire", icon: "🏛️" },
+              { name: "Géographie", icon: "🌍" },
+              { name: "Physique", icon: "⚛️" },
+              { name: "Chimie", icon: "🧪" },
+              { name: "Philosophie", icon: "💭" },
+              { name: "Arabe", icon: "📚" }
+            ].map((subject, index) => (
+              <Card 
+                key={index} 
+                className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
+              >
+                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
+                <h4 className="font-semibold text-sm">{subject.name}</h4>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <Link to="/lessons">
+              <Button variant="outline" size="lg" className="group">
+                Voir toutes les matières
+                <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+
       <section id="segments" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -552,56 +602,6 @@ const Home = () => {
                 </div>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Matières Disponibles - Inspiré GoStudent */}
-      <section className="py-20 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              📚 Nos matières
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              Tutorat en ligne pour toutes les matières scolaires
-            </h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              +15 matières disponibles, tous niveaux d'apprentissage
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
-            {[
-              { name: "Mathématiques", icon: "📐" },
-              { name: "Français", icon: "📖" },
-              { name: "Anglais", icon: "🇬🇧" },
-              { name: "Sciences", icon: "🔬" },
-              { name: "Histoire", icon: "🏛️" },
-              { name: "Géographie", icon: "🌍" },
-              { name: "Physique", icon: "⚛️" },
-              { name: "Chimie", icon: "🧪" },
-              { name: "Philosophie", icon: "💭" },
-              { name: "Arabe", icon: "📚" }
-            ].map((subject, index) => (
-              <Card 
-                key={index} 
-                className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
-                <h4 className="font-semibold text-sm">{subject.name}</h4>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link to="/lessons">
-              <Button variant="outline" size="lg" className="group">
-                Voir toutes les matières
-                <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
