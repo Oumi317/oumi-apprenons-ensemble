@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GraduationCap, Clock, BookOpen, ArrowLeft, Play, CheckCircle, Star, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Quiz } from "@/components/Quiz";
 
 const difficulteColors = {
   facile: "bg-success/10 text-success",
@@ -250,45 +252,72 @@ const LessonDetail = () => {
           <div className="grid lg:grid-cols-3 gap-8">
           {/* Video/Content Player */}
             <div className="lg:col-span-2 space-y-6">
-              <Card>
-                <CardContent className="pt-6">
-                  {lesson.contenu_url ? (
-                    <div className="aspect-video bg-muted rounded-lg overflow-hidden">
-                      {lesson.type_contenu === "video" ? (
-                        <video
-                          src={lesson.contenu_url}
-                          controls
-                          className="w-full h-full"
-                          poster={lesson.thumbnail_url || undefined}
-                        >
-                          Votre navigateur ne supporte pas la lecture vidéo.
-                        </video>
+              <Tabs defaultValue="lesson" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="lesson">Leçon</TabsTrigger>
+                  <TabsTrigger value="quiz">Quiz</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="lesson" className="mt-6">
+                  <Card>
+                    <CardContent className="pt-6">
+                      {lesson.contenu_url ? (
+                        <div className="aspect-video bg-muted rounded-lg overflow-hidden">
+                          {lesson.type_contenu === "video" ? (
+                            <video
+                              src={lesson.contenu_url}
+                              controls
+                              className="w-full h-full"
+                              poster={lesson.thumbnail_url || undefined}
+                            >
+                              Votre navigateur ne supporte pas la lecture vidéo.
+                            </video>
+                          ) : (
+                            <iframe
+                              src={lesson.contenu_url}
+                              className="w-full h-full"
+                              title={lesson.titre}
+                              allowFullScreen
+                            />
+                          )}
+                        </div>
                       ) : (
-                        <iframe
-                          src={lesson.contenu_url}
-                          className="w-full h-full"
-                          title={lesson.titre}
-                          allowFullScreen
-                        />
+                        <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                          <div className="text-center space-y-4">
+                            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
+                              <Play className="h-10 w-10 text-primary" />
+                            </div>
+                            <div>
+                              <h3 className="font-semibold mb-2">Contenu de la leçon</h3>
+                              <p className="text-sm text-muted-foreground">
+                                Le lecteur vidéo sera disponible prochainement
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       )}
-                    </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="quiz" className="mt-6">
+                  {selectedChild ? (
+                    <Quiz
+                      lessonId={id!}
+                      studentId={selectedChild}
+                      onComplete={() => loadProgress(selectedChild)}
+                    />
                   ) : (
-                    <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                      <div className="text-center space-y-4">
-                        <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                          <Play className="h-10 w-10 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold mb-2">Contenu de la leçon</h3>
-                          <p className="text-sm text-muted-foreground">
-                            Le lecteur vidéo sera disponible prochainement
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <Card>
+                      <CardContent className="p-8 text-center">
+                        <p className="text-muted-foreground">
+                          Veuillez sélectionner un enfant pour accéder au quiz
+                        </p>
+                      </CardContent>
+                    </Card>
                   )}
-                </CardContent>
-              </Card>
+                </TabsContent>
+              </Tabs>
 
               {/* Lesson Details */}
               <Card>
