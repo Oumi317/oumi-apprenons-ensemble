@@ -12,6 +12,8 @@ import { AchievementBadges } from "@/components/AchievementBadges";
 import { StudyStreak } from "@/components/StudyStreak";
 import { LevelProgress } from "@/components/LevelProgress";
 import { WeeklyChallenges } from "@/components/WeeklyChallenges";
+import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const StudentProgress = () => {
   const { studentId } = useParams();
@@ -186,6 +188,89 @@ const StudentProgress = () => {
     return { current: currentStreak, longest: longestStreak };
   };
 
+  const preparePerformanceData = () => {
+    // Group progress by subject
+    const subjectMap = new Map();
+    progress.forEach((item) => {
+      const matiere = item.lessons?.matiere || "Autre";
+      if (!subjectMap.has(matiere)) {
+        subjectMap.set(matiere, { total: 0, sum: 0, count: 0 });
+      }
+      const subj = subjectMap.get(matiere);
+      subj.sum += item.score_quiz || 0;
+      subj.count += item.score_quiz ? 1 : 0;
+      subj.total += 1;
+    });
+
+    const subjectPerformance = Array.from(subjectMap.entries()).map(([matiere, data]) => {
+      const average = data.count > 0 ? Math.round(data.sum / data.count) : 0;
+      // Simple trend calculation based on recent vs older sessions
+      const recentSessions = progress.filter(p => p.lessons?.matiere === matiere).slice(0, 3);
+      const olderSessions = progress.filter(p => p.lessons?.matiere === matiere).slice(3, 6);
+      const recentAvg = recentSessions.length > 0
+        ? recentSessions.reduce((sum, p) => sum + (p.score_quiz || 0), 0) / recentSessions.length
+        : 0;
+      const olderAvg = olderSessions.length > 0
+        ? olderSessions.reduce((sum, p) => sum + (p.score_quiz || 0), 0) / olderSessions.length
+        : 0;
+      
+      const trend: "up" | "down" | "stable" = recentAvg > olderAvg + 5 ? "up" : recentAvg < olderAvg - 5 ? "down" : "stable";
+
+      return {
+        matiere,
+        average,
+        trend,
+        sessionsCount: data.total,
+      };
+    });
+
+    // Weekly activity
+    const weeklyMap = new Map();
+    studySessions.forEach((session) => {
+      const date = new Date(session.created_at);
+      const weekStart = new Date(date);
+      weekStart.setDate(date.getDate() - date.getDay());
+      const weekKey = weekStart.toISOString().split('T')[0];
+      
+      if (!weeklyMap.has(weekKey)) {
+        weeklyMap.set(weekKey, { sessions: 0, xpEarned: 0 });
+      }
+      const week = weeklyMap.get(weekKey);
+      week.sessions += 1;
+      week.xpEarned += session.score || 0;
+    });
+
+    const weeklyActivity = Array.from(weeklyMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-8)
+      .map(([week, data]) => ({
+        week: new Date(week).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' }),
+        ...data,
+      }));
+
+    // Quiz performance trend
+    const quizPerformance = progress
+      .filter((p) => p.score_quiz !== null)
+      .slice(0, 10)
+      .reverse()
+      .map((p) => ({
+        date: new Date(p.date_debut).toLocaleDateString('fr-FR', { month: 'short', day: 'numeric' }),
+        score: p.score_quiz || 0,
+      }));
+
+    return {
+      subjectPerformance,
+      weeklyActivity,
+      quizPerformance,
+      totalStats: {
+        totalSessions: studySessions.length,
+        totalXP: student.experience_points || 0,
+        averageScore: stats.averageScore,
+        studyHours: stats.totalTimeHours,
+      },
+    };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -201,6 +286,7 @@ const StudentProgress = () => {
   const stats = calculateStats();
   const { current: currentStreak, longest: longestStreak } = calculateStreak();
   const studyDays = studySessions.map(s => s.created_at);
+  const performanceData = preparePerformanceData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -319,150 +405,167 @@ const StudentProgress = () => {
             <WeeklyChallenges studentId={studentId!} />
           </div>
 
-          {/* Progress Charts & Achievements */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
-              <ProgressCharts 
-                studySessions={studySessions}
-                achievements={achievements}
-                studentName={student.prenom}
-              />
-            </div>
-            <StudyStreak 
-              currentStreak={currentStreak}
-              longestStreak={longestStreak}
-              studyDays={studyDays}
-            />
-          </div>
+          {/* Tabs for different views */}
+          <Tabs defaultValue="overview" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="overview">Vue d'ensemble</TabsTrigger>
+              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="activity">Activité</TabsTrigger>
+            </TabsList>
 
-          {/* Achievements */}
-          <AchievementBadges achievements={achievements} />
+            <TabsContent value="overview" className="space-y-6">
+              {/* Progress Charts & Achievements */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                  <ProgressCharts 
+                    studySessions={studySessions}
+                    achievements={achievements}
+                    studentName={student.prenom}
+                  />
+                </div>
+                <StudyStreak 
+                  currentStreak={currentStreak}
+                  longestStreak={longestStreak}
+                  studyDays={studyDays}
+                />
+              </div>
 
-          {/* Progress by Subject */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Progression par matière</CardTitle>
-              <CardDescription>
-                Vue d'ensemble des matières étudiées
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {["Français", "Mathématiques", "Histoire-Géographie", "Sciences"].map((matiere) => {
-                const matiereLessons = progress.filter(
-                  (p) => p.lessons?.matiere === matiere
-                );
-                const completed = matiereLessons.filter((p) => p.statut_completion === 100).length;
-                const total = matiereLessons.length;
-                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+              {/* Achievements */}
+              <AchievementBadges achievements={achievements} />
 
-                return (
-                  <div key={matiere} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <span className="font-semibold">{matiere}</span>
-                        <Badge variant="secondary" className="text-xs">
-                          {completed}/{total} leçons
-                        </Badge>
+              {/* Progress by Subject */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Progression par matière</CardTitle>
+                  <CardDescription>
+                    Vue d'ensemble des matières étudiées
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {["Français", "Mathématiques", "Histoire-Géographie", "Sciences"].map((matiere) => {
+                    const matiereLessons = progress.filter(
+                      (p) => p.lessons?.matiere === matiere
+                    );
+                    const completed = matiereLessons.filter((p) => p.statut_completion === 100).length;
+                    const total = matiereLessons.length;
+                    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+                    return (
+                      <div key={matiere} className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <span className="font-semibold">{matiere}</span>
+                            <Badge variant="secondary" className="text-xs">
+                              {completed}/{total} leçons
+                            </Badge>
+                          </div>
+                          <span className="text-sm font-semibold text-primary">{percentage}%</span>
+                        </div>
+                        <Progress value={percentage} className="h-2" />
                       </div>
-                      <span className="text-sm font-semibold text-primary">{percentage}%</span>
-                    </div>
-                    <Progress value={percentage} className="h-2" />
-                  </div>
-                );
-              })}
-            </CardContent>
-          </Card>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          {/* Recent Activity */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Recent Lessons */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Leçons récentes</CardTitle>
-                <CardDescription>Dernières leçons étudiées</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {progress.slice(0, 5).map((item) => (
-                  <div key={item.id} className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm">{item.lessons?.titre}</h4>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant="secondary" className="text-xs">
-                          {item.lessons?.matiere}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(item.date_debut).toLocaleDateString('fr-FR')}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="font-semibold text-sm">{item.statut_completion}%</div>
-                      {item.statut_completion === 100 && (
-                        <Award className="h-4 w-4 text-success inline" />
-                      )}
-                    </div>
-                  </div>
-                ))}
-                {progress.length === 0 && (
-                  <div className="text-center py-8">
-                    <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      Aucune leçon commencée pour le moment
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <TabsContent value="analytics">
+              <PerformanceAnalytics data={performanceData} />
+            </TabsContent>
 
-            {/* Recent Sessions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Sessions de tutorat</CardTitle>
-                <CardDescription>Historique des sessions</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {sessions.slice(0, 5).map((session) => (
-                  <div key={session.id} className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-sm">{session.matiere}</h4>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        avec {session.tutors?.profiles?.prenom} {session.tutors?.profiles?.nom}
-                      </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(session.date_heure_debut).toLocaleDateString('fr-FR')}
-                        </span>
-                        <Badge
-                          variant="secondary"
-                          className={
-                            session.statut === "completee"
-                              ? "bg-success/10 text-success text-xs"
-                              : "text-xs"
-                          }
-                        >
-                          {session.statut}
-                        </Badge>
+            <TabsContent value="activity" className="space-y-6">
+              {/* Recent Activity */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Recent Lessons */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Leçons récentes</CardTitle>
+                    <CardDescription>Dernières leçons étudiées</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {progress.slice(0, 5).map((item) => (
+                      <div key={item.id} className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm">{item.lessons?.titre}</h4>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant="secondary" className="text-xs">
+                              {item.lessons?.matiere}
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(item.date_debut).toLocaleDateString('fr-FR')}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-semibold text-sm">{item.statut_completion}%</div>
+                          {item.statut_completion === 100 && (
+                            <Award className="h-4 w-4 text-success inline" />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    {session.evaluation_etudiant && (
-                      <div className="flex items-center gap-1">
-                        <Star className="h-4 w-4 fill-secondary text-secondary" />
-                        <span className="text-sm font-semibold">{session.evaluation_etudiant}</span>
+                    ))}
+                    {progress.length === 0 && (
+                      <div className="text-center py-8">
+                        <BookOpen className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">
+                          Aucune leçon commencée pour le moment
+                        </p>
                       </div>
                     )}
-                  </div>
-                ))}
-                {sessions.length === 0 && (
-                  <div className="text-center py-8">
-                    <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      Aucune session réservée pour le moment
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+                  </CardContent>
+                </Card>
+
+                {/* Recent Sessions */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Sessions de tutorat</CardTitle>
+                    <CardDescription>Historique des sessions</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {sessions.slice(0, 5).map((session) => (
+                      <div key={session.id} className="flex items-start justify-between gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-sm">{session.matiere}</h4>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            avec {session.tutors?.profiles?.prenom} {session.tutors?.profiles?.nom}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(session.date_heure_debut).toLocaleDateString('fr-FR')}
+                            </span>
+                            <Badge
+                              variant="secondary"
+                              className={
+                                session.statut === "completee"
+                                  ? "bg-success/10 text-success text-xs"
+                                  : "text-xs"
+                              }
+                            >
+                              {session.statut}
+                            </Badge>
+                          </div>
+                        </div>
+                        {session.evaluation_etudiant && (
+                          <div className="flex items-center gap-1">
+                            <Star className="h-4 w-4 fill-secondary text-secondary" />
+                            <span className="text-sm font-semibold">{session.evaluation_etudiant}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {sessions.length === 0 && (
+                      <div className="text-center py-8">
+                        <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">
+                          Aucune session réservée pour le moment
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
 
           {/* Recommendations */}
           <Card className="bg-gradient-primary text-white border-0">
