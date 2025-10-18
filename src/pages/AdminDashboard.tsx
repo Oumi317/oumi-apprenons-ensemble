@@ -184,43 +184,55 @@ export default function AdminDashboard() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Utilisateurs</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalUsers}</div>
+              <div className="text-2xl font-bold text-primary">{stats.totalUsers}</div>
+              <p className="text-xs text-muted-foreground mt-1">Total inscrits</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Tuteurs</CardTitle>
-              <GraduationCap className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 bg-secondary/10 rounded-lg">
+                <GraduationCap className="h-4 w-4 text-secondary" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalTutors}</div>
+              <div className="text-2xl font-bold text-secondary">{stats.totalTutors}</div>
+              <p className="text-xs text-muted-foreground mt-1">Enseignants actifs</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Leçons</CardTitle>
-              <BookOpen className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 bg-success/10 rounded-lg">
+                <BookOpen className="h-4 w-4 text-success" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalLessons}</div>
+              <div className="text-2xl font-bold text-success">{stats.totalLessons}</div>
+              <p className="text-xs text-muted-foreground mt-1">Ressources disponibles</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Sessions</CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <div className="p-2 bg-accent/10 rounded-lg">
+                <Calendar className="h-4 w-4 text-accent" />
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalSessions}</div>
+              <div className="text-2xl font-bold text-accent">{stats.totalSessions}</div>
+              <p className="text-xs text-muted-foreground mt-1">Sessions complétées</p>
             </CardContent>
           </Card>
         </div>
