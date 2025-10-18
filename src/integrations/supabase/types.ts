@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          description: string
+          icon: string | null
+          id: string
+          points: number
+          student_id: string
+          title: string
+          type: string
+          unlocked_at: string
+        }
+        Insert: {
+          description: string
+          icon?: string | null
+          id?: string
+          points?: number
+          student_id: string
+          title: string
+          type: string
+          unlocked_at?: string
+        }
+        Update: {
+          description?: string
+          icon?: string | null
+          id?: string
+          points?: number
+          student_id?: string
+          title?: string
+          type?: string
+          unlocked_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievements_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -493,6 +534,63 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_sessions: {
+        Row: {
+          completed: boolean
+          created_at: string
+          duration_minutes: number
+          id: string
+          lesson_id: string | null
+          matiere: string
+          notes: string | null
+          score: number | null
+          session_type: string
+          student_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          lesson_id?: string | null
+          matiere: string
+          notes?: string | null
+          score?: number | null
+          session_type: string
+          student_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          lesson_id?: string | null
+          matiere?: string
+          notes?: string | null
+          score?: number | null
+          session_type?: string
+          student_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_sessions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "study_sessions_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
             referencedColumns: ["id"]
           },
         ]

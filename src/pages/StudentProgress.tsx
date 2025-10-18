@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { GraduationCap, ArrowLeft, TrendingUp, Clock, BookOpen, Star, Calendar, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { ProgressCharts } from "@/components/ProgressCharts";
 import { useToast } from "@/hooks/use-toast";
 
 const StudentProgress = () => {
@@ -15,6 +16,8 @@ const StudentProgress = () => {
   const [student, setStudent] = useState<any>(null);
   const [progress, setProgress] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [studySessions, setStudySessions] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,6 +75,28 @@ const StudentProgress = () => {
 
     if (sessionsData) {
       setSessions(sessionsData);
+    }
+
+    // Charger les sessions d'étude
+    const { data: studySessionsData } = await supabase
+      .from("study_sessions")
+      .select("*")
+      .eq("student_id", studentId)
+      .order("created_at", { ascending: false });
+
+    if (studySessionsData) {
+      setStudySessions(studySessionsData);
+    }
+
+    // Charger les succès
+    const { data: achievementsData } = await supabase
+      .from("achievements")
+      .select("*")
+      .eq("student_id", studentId)
+      .order("unlocked_at", { ascending: false });
+
+    if (achievementsData) {
+      setAchievements(achievementsData);
     }
 
     setLoading(false);
@@ -217,6 +242,13 @@ const StudentProgress = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Progress Charts */}
+          <ProgressCharts 
+            studySessions={studySessions}
+            achievements={achievements}
+            studentName={student.prenom}
+          />
 
           {/* Progress by Subject */}
           <Card>
