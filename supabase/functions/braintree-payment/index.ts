@@ -58,9 +58,6 @@ serve(async (req) => {
         transaction: {
           amount: amount.toString(),
         },
-        options: {
-          submitForSettlement: true,
-        },
       },
     };
 
