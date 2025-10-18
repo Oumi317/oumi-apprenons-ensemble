@@ -8,6 +8,8 @@ import { GraduationCap, ArrowLeft, TrendingUp, Clock, BookOpen, Star, Calendar, 
 import { supabase } from "@/integrations/supabase/client";
 import { ProgressCharts } from "@/components/ProgressCharts";
 import { useToast } from "@/hooks/use-toast";
+import { AchievementBadges } from "@/components/AchievementBadges";
+import { StudyStreak } from "@/components/StudyStreak";
 
 const StudentProgress = () => {
   const { studentId } = useParams();
@@ -122,6 +124,66 @@ const StudentProgress = () => {
     };
   };
 
+  const calculateStreak = () => {
+    if (studySessions.length === 0) return { current: 0, longest: 0 };
+    
+    const studyDays = studySessions.map(s => s.created_at);
+    const sortedDays = [...studyDays].sort((a, b) => 
+      new Date(b).getTime() - new Date(a).getTime()
+    );
+    
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 1;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const lastStudy = new Date(sortedDays[0]);
+    lastStudy.setHours(0, 0, 0, 0);
+    
+    const daysDiff = Math.floor((today.getTime() - lastStudy.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (daysDiff <= 1) {
+      currentStreak = 1;
+      
+      for (let i = 1; i < sortedDays.length; i++) {
+        const current = new Date(sortedDays[i]);
+        current.setHours(0, 0, 0, 0);
+        const prev = new Date(sortedDays[i - 1]);
+        prev.setHours(0, 0, 0, 0);
+        
+        const diff = Math.floor((prev.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
+        
+        if (diff === 1) {
+          currentStreak++;
+        } else if (diff > 1) {
+          break;
+        }
+      }
+    }
+    
+    for (let i = 1; i < sortedDays.length; i++) {
+      const current = new Date(sortedDays[i]);
+      current.setHours(0, 0, 0, 0);
+      const prev = new Date(sortedDays[i - 1]);
+      prev.setHours(0, 0, 0, 0);
+      
+      const diff = Math.floor((prev.getTime() - current.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (diff === 1) {
+        tempStreak++;
+        longestStreak = Math.max(longestStreak, tempStreak);
+      } else if (diff > 1) {
+        tempStreak = 1;
+      }
+    }
+    
+    longestStreak = Math.max(longestStreak, currentStreak, tempStreak);
+    
+    return { current: currentStreak, longest: longestStreak };
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -135,6 +197,8 @@ const StudentProgress = () => {
   }
 
   const stats = calculateStats();
+  const { current: currentStreak, longest: longestStreak } = calculateStreak();
+  const studyDays = studySessions.map(s => s.created_at);
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,12 +307,24 @@ const StudentProgress = () => {
             </Card>
           </div>
 
-          {/* Progress Charts */}
-          <ProgressCharts 
-            studySessions={studySessions}
-            achievements={achievements}
-            studentName={student.prenom}
-          />
+          {/* Progress Charts & Achievements */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <ProgressCharts 
+                studySessions={studySessions}
+                achievements={achievements}
+                studentName={student.prenom}
+              />
+            </div>
+            <StudyStreak 
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+              studyDays={studyDays}
+            />
+          </div>
+
+          {/* Achievements */}
+          <AchievementBadges achievements={achievements} />
 
           {/* Progress by Subject */}
           <Card>
