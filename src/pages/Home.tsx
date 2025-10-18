@@ -473,9 +473,11 @@ const Home = () => {
                     <span className="text-sm">1 session gratuite</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full">
-                  Commencer gratuitement
-                </Button>
+                <Link to="/auth?mode=signup" className="block">
+                  <Button variant="outline" className="w-full">
+                    Commencer gratuitement
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -509,9 +511,11 @@ const Home = () => {
                     <span className="text-sm">Rapports mensuels</span>
                   </li>
                 </ul>
-                <Button className="w-full bg-gradient-primary">
-                  Choisir Premium
-                </Button>
+                <Link to="/auth?mode=signup" className="block">
+                  <Button className="w-full bg-gradient-primary">
+                    Choisir Premium
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
 
@@ -542,9 +546,11 @@ const Home = () => {
                     <span className="text-sm">Support prioritaire</span>
                   </li>
                 </ul>
-                <Button variant="outline" className="w-full">
-                  Choisir Famille
-                </Button>
+                <Link to="/auth?mode=signup" className="block">
+                  <Button variant="outline" className="w-full">
+                    Choisir Famille
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
