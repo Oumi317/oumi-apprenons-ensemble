@@ -68,6 +68,9 @@ const Lessons = () => {
   const [lessons, setLessons] = useState<any[]>([]);
   const [filteredLessons, setFilteredLessons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [inProgressLessons, setInProgressLessons] = useState<any[]>([]);
+  const [recommendedLessons, setRecommendedLessons] = useState<any[]>([]);
+  const [children, setChildren] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNiveau, setSelectedNiveau] = useState("Tous");
   const [selectedMatiere, setSelectedMatiere] = useState("Toutes");
@@ -83,12 +86,60 @@ const Lessons = () => {
   }, []);
 
   useEffect(() => {
+    if (user) {
+      loadPersonalizedData();
+    }
+  }, [user, lessons]);
+
+  useEffect(() => {
     filterLessons();
   }, [lessons, searchQuery, selectedNiveau, selectedMatiere, selectedDifficulte, selectedType, sortBy, showOnlyFree]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     setUser(user);
+    if (user) {
+      await loadChildren(user.id);
+    }
+  };
+
+  const loadChildren = async (userId: string) => {
+    const { data } = await supabase
+      .from("students")
+      .select("*")
+      .eq("parent_id", userId);
+    
+    if (data) {
+      setChildren(data);
+    }
+  };
+
+  const loadPersonalizedData = async () => {
+    if (!children.length || !lessons.length) return;
+
+    // Load in-progress lessons
+    const { data: progressData } = await supabase
+      .from("student_progress")
+      .select("*, lessons(*)")
+      .in("etudiant_id", children.map(c => c.id))
+      .gt("statut_completion", 0)
+      .lt("statut_completion", 100)
+      .order("updated_at", { ascending: false })
+      .limit(3);
+
+    if (progressData) {
+      const uniqueLessons = Array.from(
+        new Map(progressData.map(p => [p.lessons.id, { ...p.lessons, progress: p.statut_completion }])).values()
+      );
+      setInProgressLessons(uniqueLessons);
+    }
+
+    // Get recommended lessons based on children's levels
+    const childLevels = [...new Set(children.map(c => c.niveau_scolaire))];
+    const recommended = lessons
+      .filter(l => childLevels.includes(l.niveau_scolaire) && l.gratuit)
+      .slice(0, 6);
+    setRecommendedLessons(recommended);
   };
 
   const loadLessons = async () => {
@@ -208,6 +259,68 @@ const Lessons = () => {
               </Badge>
             </div>
           </div>
+
+          {/* Continue Learning Section */}
+          {user && inProgressLessons.length > 0 && (
+            <Card className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-primary/20">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5 text-primary" />
+                      Continuer l'apprentissage
+                    </CardTitle>
+                    <CardDescription>Reprenez là où vous vous êtes arrêté</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {inProgressLessons.map((lesson) => (
+                    <LessonCard
+                      key={lesson.id}
+                      lesson={lesson}
+                      user={user}
+                      progress={{
+                        completion: lesson.progress || 0,
+                        lastAccessed: new Date().toISOString(),
+                      }}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Recommended Section */}
+          {user && recommendedLessons.length > 0 && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-secondary" />
+                      Recommandé pour vous
+                    </CardTitle>
+                    <CardDescription>
+                      Basé sur le niveau de {children.length > 1 ? 'vos enfants' : 'votre enfant'}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+                  {recommendedLessons.map((lesson) => (
+                    <LessonCard
+                      key={lesson.id}
+                      lesson={lesson}
+                      user={user}
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Filters */}
           <Card>
