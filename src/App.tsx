@@ -18,6 +18,7 @@ import FAQ from "./pages/FAQ";
 import Messages from "./pages/Messages";
 import VideoSession from "./pages/VideoSession";
 import Payment from "./pages/Payment";
+import AITutor from "./pages/AITutor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -97,6 +98,14 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <Payment />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/ai-tutor/:studentId" 
+            element={
+              <ProtectedRoute>
+                <AITutor />
               </ProtectedRoute>
             } 
           />

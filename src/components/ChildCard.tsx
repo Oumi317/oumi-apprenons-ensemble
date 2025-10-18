@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Calendar, BookOpen, TrendingUp } from "lucide-react";
+import { User, Calendar, BookOpen, TrendingUp, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface ChildCardProps {
@@ -71,14 +71,22 @@ export function ChildCard({ child }: ChildCardProps) {
           </div>
         </div>
 
-        <div className="pt-2 flex gap-2">
-          <Button variant="outline" size="sm" className="flex-1">
-            <Calendar className="h-4 w-4 mr-2" />
-            Réserver
-          </Button>
-          <Link to={`/students/${child.id}/progress`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full">
-              Voir profil
+        <div className="pt-2 space-y-2">
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" className="flex-1">
+              <Calendar className="h-4 w-4 mr-2" />
+              Réserver
+            </Button>
+            <Link to={`/students/${child.id}/progress`} className="flex-1">
+              <Button variant="outline" size="sm" className="w-full">
+                Voir profil
+              </Button>
+            </Link>
+          </div>
+          <Link to={`/ai-tutor/${child.id}`} className="block">
+            <Button variant="secondary" size="sm" className="w-full">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Assistant IA
             </Button>
           </Link>
         </div>
