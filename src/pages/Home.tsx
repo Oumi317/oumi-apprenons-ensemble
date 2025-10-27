@@ -103,7 +103,7 @@ const Home = () => {
                   </Button>
                 </Link>
                 <Link to="/tutors" className="inline-block">
-                  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 h-14 px-8 font-semibold">
+                  <Button size="lg" variant="outline" className="border-2 border-white !text-white hover:bg-white/10 hover:!text-white h-14 px-8 font-semibold backdrop-blur-sm bg-white/5">
                     Voir nos tuteurs
                   </Button>
                 </Link>
