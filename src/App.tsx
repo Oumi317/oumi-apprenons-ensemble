@@ -11,6 +11,7 @@ import Lessons from "./pages/Lessons";
 import LessonDetail from "./pages/LessonDetail";
 import StudentProgress from "./pages/StudentProgress";
 import Tutors from "./pages/Tutors";
+import TutorProfile from "./pages/TutorProfile";
 import TutorSignup from "./pages/TutorSignup";
 import TutorDashboard from "./pages/TutorDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -35,8 +36,9 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/lessons" element={<Lessons />} />
           <Route path="/lessons/:id" element={<LessonDetail />} />
-          <Route path="/tutors" element={<Tutors />} />
-          <Route path="/tutor-signup" element={<TutorSignup />} />
+            <Route path="/tutors" element={<Tutors />} />
+            <Route path="/tutors/:id" element={<TutorProfile />} />
+            <Route path="/tutor-signup" element={<TutorSignup />} />
           <Route path="/faq" element={<FAQ />} />
           <Route 
             path="/dashboard/parent" 

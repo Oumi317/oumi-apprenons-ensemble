@@ -221,6 +221,7 @@ const Tutors = () => {
                 <Card
                   key={tutor.id}
                   className="hover:shadow-lg transition-all hover:border-primary/50 cursor-pointer animate-fade-in"
+                  onClick={() => navigate(`/tutors/${tutor.id}`)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between mb-3">
@@ -285,13 +286,16 @@ const Tutors = () => {
                       </div>
                       <Button 
                         className="bg-gradient-primary"
-                        onClick={() => setBookingDialog({
-                          open: true,
-                          tutorId: tutor.id,
-                          tutorName: `${tutor.profiles?.prenom} ${tutor.profiles?.nom}`,
-                          subject: tutor.matieres_enseignees?.[0] || "Matière",
-                          hourlyRate: Number(tutor.tarif_horaire_eur)
-                        })}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setBookingDialog({
+                            open: true,
+                            tutorId: tutor.id,
+                            tutorName: `${tutor.profiles?.prenom} ${tutor.profiles?.nom}`,
+                            subject: tutor.matieres_enseignees?.[0] || "Matière",
+                            hourlyRate: Number(tutor.tarif_horaire_eur)
+                          });
+                        }}
                       >
                         <Calendar className="h-4 w-4 mr-2" />
                         Réserver
