@@ -7,7 +7,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { GraduationCap, Loader2, Upload, CheckCircle } from "lucide-react";
+import { 
+  GraduationCap, 
+  Loader2, 
+  CheckCircle,
+  Shield,
+  Calendar,
+  DollarSign,
+  Users,
+  TrendingUp,
+  Award,
+  Clock
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -466,41 +477,126 @@ const TutorSignup = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <GraduationCap className="h-10 w-10 text-white" />
-            <span className="text-3xl font-bold text-white">Oumi'School</span>
+    <div className="min-h-screen bg-background">
+      <div className="grid lg:grid-cols-2 min-h-screen">
+        {/* Left Side - Benefits */}
+        <div className="bg-gradient-hero text-white p-8 lg:p-12 flex flex-col justify-center">
+          <Link to="/" className="inline-flex items-center gap-2 mb-8">
+            <GraduationCap className="h-8 w-8" />
+            <span className="text-2xl font-bold">Oumi'School</span>
           </Link>
-          <p className="text-white/90">Devenir tuteur certifié</p>
+          
+          <div className="space-y-8 max-w-lg">
+            <div>
+              <h1 className="text-4xl font-bold mb-4">
+                Rejoignez notre équipe de tuteurs d'excellence
+              </h1>
+              <p className="text-xl text-white/90">
+                Partagez votre passion de l'enseignement et accompagnez des milliers d'élèves vers la réussite
+              </p>
+            </div>
+
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <DollarSign className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Rémunération attractive</h3>
+                  <p className="text-white/80">Fixez vos propres tarifs (30-50€/h en moyenne) et soyez payé rapidement</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Horaires flexibles</h3>
+                  <p className="text-white/80">Choisissez vos disponibilités et travaillez quand ça vous arrange</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <Users className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Plateforme moderne</h3>
+                  <p className="text-white/80">Outils de visioconférence intégrés, gestion simplifiée des sessions</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Développement professionnel</h3>
+                  <p className="text-white/80">Formations continues et communauté active d'enseignants</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="bg-white/10 p-3 rounded-lg">
+                  <Shield className="h-6 w-6" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">Sélection rigoureuse</h3>
+                  <p className="text-white/80">Faites partie d'une équipe d'élite, tous nos tuteurs sont certifiés</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-white/20">
+              <div className="grid grid-cols-3 gap-4 text-center">
+                <div>
+                  <div className="text-3xl font-bold">300+</div>
+                  <div className="text-sm text-white/80">Tuteurs actifs</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">98%</div>
+                  <div className="text-sm text-white/80">Satisfaction</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold">45€</div>
+                  <div className="text-sm text-white/80">Tarif moyen</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Candidature tuteur</CardTitle>
-            <CardDescription>
-              Étape {currentStep} sur 3
-            </CardDescription>
-            <div className="flex gap-2 mt-4">
-              <div className={`h-2 flex-1 rounded-full ${currentStep >= 1 ? "bg-primary" : "bg-muted"}`} />
-              <div className={`h-2 flex-1 rounded-full ${currentStep >= 2 ? "bg-primary" : "bg-muted"}`} />
-              <div className={`h-2 flex-1 rounded-full ${currentStep >= 3 ? "bg-primary" : "bg-muted"}`} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit}>
-              {currentStep === 1 && renderStep1()}
-              {currentStep === 2 && renderStep2()}
-              {currentStep === 3 && renderStep3()}
-            </form>
-          </CardContent>
-        </Card>
+        {/* Right Side - Form */}
+        <div className="p-8 lg:p-12 flex flex-col justify-center overflow-y-auto">
+          <div className="max-w-lg mx-auto w-full">
+            <Card className="border-none shadow-none">
+              <CardHeader className="px-0">
+                <CardTitle className="text-2xl">Candidature tuteur</CardTitle>
+                <CardDescription className="text-base">
+                  Étape {currentStep} sur 3 - Complétez votre profil
+                </CardDescription>
+                <div className="flex gap-2 mt-4">
+                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 1 ? "bg-primary" : "bg-muted"}`} />
+                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 2 ? "bg-primary" : "bg-muted"}`} />
+                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 3 ? "bg-primary" : "bg-muted"}`} />
+                </div>
+              </CardHeader>
+              <CardContent className="px-0">
+                <form onSubmit={handleSubmit}>
+                  {currentStep === 1 && renderStep1()}
+                  {currentStep === 2 && renderStep2()}
+                  {currentStep === 3 && renderStep3()}
+                </form>
+              </CardContent>
+            </Card>
 
-        <div className="text-center mt-4">
-          <Link to="/" className="text-sm text-white hover:underline">
-            Retour à l'accueil
-          </Link>
+            <div className="text-center mt-6">
+              <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
+                Retour à l'accueil
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
