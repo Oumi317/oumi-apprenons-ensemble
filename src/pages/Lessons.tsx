@@ -2,64 +2,26 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { LessonCard } from "@/components/LessonCard";
+import { SearchBar } from "@/components/SearchBar";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { 
   GraduationCap, 
   BookOpen, 
   Clock, 
-  Search, 
-  Filter, 
-  Lock, 
-  Play, 
-  FileText, 
-  HelpCircle,
   Grid3x3,
   List,
   TrendingUp,
-  Star,
-  Sparkles
+  Sparkles,
+  Target,
+  Video,
+  FileQuestion
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const niveauxScolaires = [
-  "Tous", "CP", "CE1", "CE2", "CM1", "CM2",
-  "6eme", "5eme", "4eme", "3eme",
-  "Seconde", "Premiere", "Terminale"
-];
-
-const matieres = [
-  "Toutes", "Français", "Mathématiques", "Histoire-Géographie", 
-  "Sciences", "Anglais", "Philosophie"
-];
-
-const types = [
-  "Tous", "video", "exercice", "quiz", "document"
-];
-
-const typeIcons = {
-  video: Play,
-  exercice: FileText,
-  quiz: HelpCircle,
-  document: BookOpen,
-};
-
-const difficulteColors = {
-  facile: "bg-success/10 text-success",
-  moyen: "bg-secondary/10 text-secondary",
-  difficile: "bg-destructive/10 text-destructive",
-};
 
 const Lessons = () => {
   const navigate = useNavigate();
@@ -71,14 +33,13 @@ const Lessons = () => {
   const [inProgressLessons, setInProgressLessons] = useState<any[]>([]);
   const [recommendedLessons, setRecommendedLessons] = useState<any[]>([]);
   const [children, setChildren] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedNiveau, setSelectedNiveau] = useState("Tous");
-  const [selectedMatiere, setSelectedMatiere] = useState("Toutes");
-  const [selectedDifficulte, setSelectedDifficulte] = useState("Toutes");
-  const [selectedType, setSelectedType] = useState("Tous");
-  const [sortBy, setSortBy] = useState("recent");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showOnlyFree, setShowOnlyFree] = useState(false);
+  const [filters, setFilters] = useState({
+    niveau: "",
+    matiere: "",
+    difficulte: "",
+    type: ""
+  });
 
   useEffect(() => {
     checkUser();
@@ -93,7 +54,7 @@ const Lessons = () => {
 
   useEffect(() => {
     filterLessons();
-  }, [lessons, searchQuery, selectedNiveau, selectedMatiere, selectedDifficulte, selectedType, sortBy, showOnlyFree]);
+  }, [lessons, filters]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -165,56 +126,52 @@ const Lessons = () => {
   const filterLessons = () => {
     let filtered = [...lessons];
 
-    // Filtre par recherche
-    if (searchQuery) {
+    if (filters.niveau) {
+      filtered = filtered.filter((lesson) => lesson.niveau_scolaire === filters.niveau);
+    }
+
+    if (filters.matiere) {
+      filtered = filtered.filter((lesson) => lesson.matiere === filters.matiere);
+    }
+
+    if (filters.difficulte) {
+      filtered = filtered.filter((lesson) => lesson.difficulte === filters.difficulte);
+    }
+
+    if (filters.type) {
+      filtered = filtered.filter((lesson) => lesson.type_contenu === filters.type);
+    }
+
+    setFilteredLessons(filtered);
+  };
+
+  const handleSearch = (query: string) => {
+    let filtered = [...lessons];
+
+    if (query) {
       filtered = filtered.filter(
         (lesson) =>
-          lesson.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          lesson.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          lesson.matiere.toLowerCase().includes(searchQuery.toLowerCase())
+          lesson.titre.toLowerCase().includes(query.toLowerCase()) ||
+          lesson.description?.toLowerCase().includes(query.toLowerCase()) ||
+          lesson.matiere.toLowerCase().includes(query.toLowerCase())
       );
     }
 
-    // Filtre par niveau
-    if (selectedNiveau !== "Tous") {
-      filtered = filtered.filter((lesson) => lesson.niveau_scolaire === selectedNiveau);
+    // Apply existing filters
+    if (filters.niveau) {
+      filtered = filtered.filter((lesson) => lesson.niveau_scolaire === filters.niveau);
     }
 
-    // Filtre par matière
-    if (selectedMatiere !== "Toutes") {
-      filtered = filtered.filter((lesson) => lesson.matiere === selectedMatiere);
+    if (filters.matiere) {
+      filtered = filtered.filter((lesson) => lesson.matiere === filters.matiere);
     }
 
-    // Filtre par difficulté
-    if (selectedDifficulte !== "Toutes") {
-      filtered = filtered.filter((lesson) => lesson.difficulte === selectedDifficulte.toLowerCase());
+    if (filters.difficulte) {
+      filtered = filtered.filter((lesson) => lesson.difficulte === filters.difficulte);
     }
 
-    // Filtre par type
-    if (selectedType !== "Tous") {
-      filtered = filtered.filter((lesson) => lesson.type_contenu === selectedType.toLowerCase());
-    }
-
-    // Filtre gratuit uniquement
-    if (showOnlyFree) {
-      filtered = filtered.filter((lesson) => lesson.gratuit);
-    }
-
-    // Tri
-    switch (sortBy) {
-      case "recent":
-        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-        break;
-      case "title":
-        filtered.sort((a, b) => a.titre.localeCompare(b.titre));
-        break;
-      case "duration":
-        filtered.sort((a, b) => (a.duree_estimee_minutes || 0) - (b.duree_estimee_minutes || 0));
-        break;
-      case "difficulty":
-        const diffOrder = { facile: 1, moyen: 2, difficile: 3 };
-        filtered.sort((a, b) => (diffOrder[a.difficulte as keyof typeof diffOrder] || 0) - (diffOrder[b.difficulte as keyof typeof diffOrder] || 0));
-        break;
+    if (filters.type) {
+      filtered = filtered.filter((lesson) => lesson.type_contenu === filters.type);
     }
 
     setFilteredLessons(filtered);
@@ -245,18 +202,48 @@ const Lessons = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Hero Section */}
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold">Bibliothèque de ressources</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <div className="text-center space-y-6 py-8">
+            <h1 className="text-5xl font-bold">Bibliothèque de ressources</h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Des milliers de leçons, exercices et quiz alignés avec le programme français
             </p>
-            <div className="flex items-center justify-center gap-4 text-sm">
-              <Badge variant="secondary" className="bg-success/10 text-success">
-                {lessons.filter((l) => l.gratuit).length} leçons gratuites
-              </Badge>
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
-                {lessons.length} leçons au total
-              </Badge>
+            
+            {/* Statistics */}
+            <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-4">
+              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                <CardContent className="p-6 text-center">
+                  <BookOpen className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <div className="text-3xl font-bold text-primary">{lessons.length}</div>
+                  <div className="text-sm text-muted-foreground">Leçons totales</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
+                <CardContent className="p-6 text-center">
+                  <Target className="h-8 w-8 mx-auto mb-2 text-success" />
+                  <div className="text-3xl font-bold text-success">
+                    {lessons.filter((l) => l.gratuit).length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Ressources gratuites</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+                <CardContent className="p-6 text-center">
+                  <Video className="h-8 w-8 mx-auto mb-2 text-secondary" />
+                  <div className="text-3xl font-bold text-secondary">
+                    {lessons.filter((l) => l.type_contenu === "video").length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Vidéos</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+                <CardContent className="p-6 text-center">
+                  <FileQuestion className="h-8 w-8 mx-auto mb-2 text-accent" />
+                  <div className="text-3xl font-bold text-accent">
+                    {lessons.filter((l) => l.type_contenu === "quiz").length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Quiz</div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
@@ -322,125 +309,37 @@ const Lessons = () => {
             </Card>
           )}
 
-          {/* Filters */}
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              {/* Search Bar */}
-              <div className="relative">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher par titre, description ou matière..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 h-12 text-base"
-                />
+          {/* Search and Filters */}
+          <div className="space-y-4">
+            <SearchBar onSearch={handleSearch} />
+            
+            {/* Results and View Mode */}
+            <div className="flex items-center justify-between">
+              <Badge variant="secondary" className="text-sm">
+                {filteredLessons.length} résultat{filteredLessons.length > 1 ? "s" : ""}
+              </Badge>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="h-8 w-8 p-0"
+                >
+                  <Grid3x3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="h-8 w-8 p-0"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
               </div>
-
-              {/* Filter Grid */}
-              <div className="grid md:grid-cols-5 gap-3">
-                <Select value={selectedNiveau} onValueChange={setSelectedNiveau}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Niveau" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {niveauxScolaires.map((niveau) => (
-                      <SelectItem key={niveau} value={niveau}>
-                        {niveau}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedMatiere} onValueChange={setSelectedMatiere}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Matière" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {matieres.map((matiere) => (
-                      <SelectItem key={matiere} value={matiere}>
-                        {matiere}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedDifficulte} onValueChange={setSelectedDifficulte}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Difficulté" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Toutes">Toutes</SelectItem>
-                    <SelectItem value="Facile">Facile</SelectItem>
-                    <SelectItem value="Moyen">Moyen</SelectItem>
-                    <SelectItem value="Difficile">Difficile</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={selectedType} onValueChange={setSelectedType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Tous">Tous</SelectItem>
-                    <SelectItem value="Video">Vidéo</SelectItem>
-                    <SelectItem value="Exercice">Exercice</SelectItem>
-                    <SelectItem value="Quiz">Quiz</SelectItem>
-                    <SelectItem value="Document">Document</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Trier par" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="recent">Plus récents</SelectItem>
-                    <SelectItem value="title">Titre A-Z</SelectItem>
-                    <SelectItem value="duration">Durée</SelectItem>
-                    <SelectItem value="difficulty">Difficulté</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Filter Actions */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant={showOnlyFree ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setShowOnlyFree(!showOnlyFree)}
-                    className={showOnlyFree ? "bg-gradient-primary" : ""}
-                  >
-                    <Filter className="h-4 w-4 mr-2" />
-                    Gratuit uniquement
-                  </Button>
-                  <Badge variant="secondary" className="text-xs">
-                    {filteredLessons.length} résultat{filteredLessons.length > 1 ? "s" : ""}
-                  </Badge>
-                </div>
-
-                {/* View Mode Toggle */}
-                <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <Grid3x3 className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="h-8 w-8 p-0"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Lessons Grid */}
           {filteredLessons.length === 0 ? (
@@ -460,7 +359,7 @@ const Lessons = () => {
                   key={lesson.id}
                   lesson={lesson}
                   user={user}
-                  featured={index < 3 && sortBy === "recent"}
+                  featured={index < 3}
                 />
               ))}
             </div>
@@ -486,6 +385,8 @@ const Lessons = () => {
           )}
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
