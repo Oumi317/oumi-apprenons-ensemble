@@ -31,6 +31,7 @@ const LessonDetail = () => {
   const [children, setChildren] = useState<any[]>([]);
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
+  const [interactiveResources, setInteractiveResources] = useState<any[]>([]);
 
   useEffect(() => {
     checkUser();
@@ -63,7 +64,7 @@ const LessonDetail = () => {
       .from("lessons")
       .select("*")
       .eq("id", id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       toast({
@@ -74,8 +75,23 @@ const LessonDetail = () => {
       navigate("/lessons");
     } else {
       setLesson(data);
+      if (data) {
+        await loadInteractiveResources(data.id);
+      }
     }
     setLoading(false);
+  };
+
+  const loadInteractiveResources = async (lessonId: string) => {
+    const { data } = await supabase
+      .from("interactive_resources")
+      .select("*")
+      .eq("lesson_id", lessonId)
+      .order("ordre_affichage", { ascending: true });
+
+    if (data) {
+      setInteractiveResources(data);
+    }
   };
 
   const loadProgress = async (studentId: string) => {
@@ -86,7 +102,7 @@ const LessonDetail = () => {
       .select("*")
       .eq("etudiant_id", studentId)
       .eq("lesson_id", id)
-      .single();
+      .maybeSingle();
 
     setProgress(data);
   };
@@ -391,10 +407,17 @@ const LessonDetail = () => {
                   {/* Lesson Resources */}
                   <LessonResources
                     resources={[
+                      ...interactiveResources.map((resource) => ({
+                        id: resource.id,
+                        titre: resource.titre,
+                        type: resource.type as "interactive",
+                        url: resource.file_url,
+                        description: resource.description,
+                      })),
                       {
                         id: "1",
                         titre: "Fiche de révision - " + lesson.titre,
-                        type: "pdf",
+                        type: "pdf" as const,
                         url: "#",
                         taille: "2.5 MB",
                         description: "Résumé des points clés de la leçon",
@@ -402,7 +425,7 @@ const LessonDetail = () => {
                       {
                         id: "2",
                         titre: "Exercices pratiques",
-                        type: "document",
+                        type: "document" as const,
                         url: "#",
                         taille: "1.8 MB",
                         description: "Exercices d'application pour s'entraîner",
