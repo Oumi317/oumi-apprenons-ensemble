@@ -12,6 +12,7 @@ import { Quiz } from "@/components/Quiz";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { LessonNotes } from "@/components/LessonNotes";
 import { LessonResources } from "@/components/LessonResources";
+import { InteractiveLearning } from "@/components/InteractiveLearning";
 import { Footer } from "@/components/Footer";
 
 const difficulteColors = {
@@ -404,16 +405,14 @@ const LessonDetail = () => {
                     </CardContent>
                   </Card>
 
+                  {/* Interactive Learning Resources */}
+                  {interactiveResources.length > 0 && (
+                    <InteractiveLearning resources={interactiveResources} />
+                  )}
+
                   {/* Lesson Resources */}
                   <LessonResources
                     resources={[
-                      ...interactiveResources.map((resource) => ({
-                        id: resource.id,
-                        titre: resource.titre,
-                        type: resource.type as "interactive",
-                        url: resource.file_url,
-                        description: resource.description,
-                      })),
                       {
                         id: "1",
                         titre: "Fiche de révision - " + lesson.titre,
