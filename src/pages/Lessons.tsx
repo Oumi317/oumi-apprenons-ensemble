@@ -7,6 +7,8 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InteractiveLearning } from "@/components/InteractiveLearning";
 import { 
   GraduationCap, 
   BookOpen, 
@@ -34,6 +36,7 @@ const Lessons = () => {
   const [recommendedLessons, setRecommendedLessons] = useState<any[]>([]);
   const [children, setChildren] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [interactiveResources, setInteractiveResources] = useState<any[]>([]);
   const [filters, setFilters] = useState({
     niveau: "",
     matiere: "",
@@ -44,6 +47,7 @@ const Lessons = () => {
   useEffect(() => {
     checkUser();
     loadLessons();
+    loadInteractiveResources();
   }, []);
 
   useEffect(() => {
@@ -121,6 +125,19 @@ const Lessons = () => {
       setLessons(data || []);
     }
     setLoading(false);
+  };
+
+  const loadInteractiveResources = async () => {
+    const { data, error } = await supabase
+      .from("interactive_resources")
+      .select("*, lessons(titre, matiere)")
+      .order("ordre_affichage", { ascending: true });
+
+    if (error) {
+      console.error("Error loading interactive resources:", error);
+    } else {
+      setInteractiveResources(data || []);
+    }
   };
 
   const filterLessons = () => {
@@ -209,7 +226,7 @@ const Lessons = () => {
             </p>
             
             {/* Statistics */}
-            <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-4">
+            <div className="grid md:grid-cols-5 gap-4 max-w-5xl mx-auto pt-4">
               <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
                 <CardContent className="p-6 text-center">
                   <BookOpen className="h-8 w-8 mx-auto mb-2 text-primary" />
@@ -242,6 +259,15 @@ const Lessons = () => {
                     {lessons.filter((l) => l.type_contenu === "quiz").length}
                   </div>
                   <div className="text-sm text-muted-foreground">Quiz</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-primary/10 to-secondary/10 border-primary/30">
+                <CardContent className="p-6 text-center">
+                  <Sparkles className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <div className="text-3xl font-bold text-primary">
+                    {interactiveResources.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">Ressources interactives</div>
                 </CardContent>
               </Card>
             </div>
@@ -309,61 +335,113 @@ const Lessons = () => {
             </Card>
           )}
 
-          {/* Search and Filters */}
-          <div className="space-y-4">
-            <SearchBar onSearch={handleSearch} />
-            
-            {/* Results and View Mode */}
-            <div className="flex items-center justify-between">
-              <Badge variant="secondary" className="text-sm">
-                {filteredLessons.length} résultat{filteredLessons.length > 1 ? "s" : ""}
-              </Badge>
+          {/* Tabs for Lessons and Interactive Resources */}
+          <Tabs defaultValue="lessons" className="space-y-6">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+              <TabsTrigger value="lessons" className="flex items-center gap-2">
+                <BookOpen className="h-4 w-4" />
+                Toutes les leçons
+              </TabsTrigger>
+              <TabsTrigger value="interactive" className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4" />
+                Ressources interactives
+              </TabsTrigger>
+            </TabsList>
 
-              {/* View Mode Toggle */}
-              <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                  className="h-8 w-8 p-0"
-                >
-                  <Grid3x3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  className="h-8 w-8 p-0"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
+            <TabsContent value="lessons" className="space-y-4">
+              {/* Search and Filters */}
+              <div className="space-y-4">
+                <SearchBar onSearch={handleSearch} />
+                
+                {/* Results and View Mode */}
+                <div className="flex items-center justify-between">
+                  <Badge variant="secondary" className="text-sm">
+                    {filteredLessons.length} résultat{filteredLessons.length > 1 ? "s" : ""}
+                  </Badge>
+
+                  {/* View Mode Toggle */}
+                  <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
+                    <Button
+                      variant={viewMode === "grid" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("grid")}
+                      className="h-8 w-8 p-0"
+                    >
+                      <Grid3x3 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant={viewMode === "list" ? "default" : "ghost"}
+                      size="sm"
+                      onClick={() => setViewMode("list")}
+                      className="h-8 w-8 p-0"
+                    >
+                      <List className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Lessons Grid */}
-          {filteredLessons.length === 0 ? (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-30" />
-                <h3 className="text-xl font-semibold mb-2">Aucune leçon trouvée</h3>
-                <p className="text-muted-foreground">
-                  Essayez de modifier vos filtres de recherche
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-              {filteredLessons.map((lesson, index) => (
-                <LessonCard
-                  key={lesson.id}
-                  lesson={lesson}
-                  user={user}
-                  featured={index < 3}
-                />
-              ))}
-            </div>
-          )}
+              {/* Lessons Grid */}
+              {filteredLessons.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <BookOpen className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-30" />
+                    <h3 className="text-xl font-semibold mb-2">Aucune leçon trouvée</h3>
+                    <p className="text-muted-foreground">
+                      Essayez de modifier vos filtres de recherche
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
+                  {filteredLessons.map((lesson, index) => (
+                    <LessonCard
+                      key={lesson.id}
+                      lesson={lesson}
+                      user={user}
+                      featured={index < 3}
+                    />
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="interactive" className="space-y-6">
+              {interactiveResources.length === 0 ? (
+                <Card>
+                  <CardContent className="py-12 text-center">
+                    <Sparkles className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-30" />
+                    <h3 className="text-xl font-semibold mb-2">Aucune ressource interactive disponible</h3>
+                    <p className="text-muted-foreground">
+                      Les ressources interactives seront bientôt disponibles
+                    </p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <div className="space-y-6">
+                  {/* Group by lesson */}
+                  {Object.entries(
+                    interactiveResources.reduce((acc: any, resource: any) => {
+                      const lessonTitle = resource.lessons?.titre || "Autres ressources";
+                      if (!acc[lessonTitle]) {
+                        acc[lessonTitle] = [];
+                      }
+                      acc[lessonTitle].push(resource);
+                      return acc;
+                    }, {})
+                  ).map(([lessonTitle, resources]: [string, any]) => (
+                    <div key={lessonTitle}>
+                      <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                        {lessonTitle}
+                      </h3>
+                      <InteractiveLearning resources={resources} />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
 
           {/* CTA Premium */}
           {!user && (
