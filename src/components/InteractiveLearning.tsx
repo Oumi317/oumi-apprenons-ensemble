@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Sparkles } from "lucide-react";
+import { Play, Sparkles, Link as LinkIcon, ExternalLink } from "lucide-react";
 import { InteractiveResourceViewer } from "./InteractiveResourceViewer";
 import { useState } from "react";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface InteractiveResource {
   id: string;
@@ -19,6 +21,14 @@ interface InteractiveLearningProps {
 export function InteractiveLearning({ resources }: InteractiveLearningProps) {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<InteractiveResource | null>(null);
+
+  const copyLink = (resourceId: string) => {
+    const url = `${window.location.origin}/interactive/${resourceId}`;
+    navigator.clipboard.writeText(url);
+    toast.success("Lien copié !", {
+      description: "L'URL a été copiée dans votre presse-papier"
+    });
+  };
 
   if (resources.length === 0) {
     return null;
@@ -51,23 +61,43 @@ export function InteractiveLearning({ resources }: InteractiveLearningProps) {
                         {resource.description}
                       </p>
                     )}
-                    <Badge variant="secondary" className="bg-primary/10 text-primary">
-                      <Sparkles className="h-3 w-3 mr-1" />
-                      Exercice Interactif
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="bg-primary/10 text-primary">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        Exercice Interactif
+                      </Badge>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        /interactive/{resource.id.slice(0, 8)}...
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <Button
-                  size="lg"
-                  onClick={() => {
-                    setSelectedResource(resource);
-                    setViewerOpen(true);
-                  }}
-                  className="ml-4"
-                >
-                  <Play className="h-4 w-4 mr-2" />
-                  Lancer
-                </Button>
+                <div className="flex gap-2 ml-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyLink(resource.id)}
+                  >
+                    <LinkIcon className="h-4 w-4 mr-2" />
+                    Copier lien
+                  </Button>
+                  <Link to={`/interactive/${resource.id}`} target="_blank">
+                    <Button variant="outline" size="sm">
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Ouvrir
+                    </Button>
+                  </Link>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setSelectedResource(resource);
+                      setViewerOpen(true);
+                    }}
+                  >
+                    <Play className="h-4 w-4 mr-2" />
+                    Lancer
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

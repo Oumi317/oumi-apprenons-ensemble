@@ -27,6 +27,11 @@ export default function InteractiveResource() {
   }, [id]);
 
   const loadResource = async () => {
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    
     try {
       const { data, error } = await supabase
         .from("interactive_resources")
@@ -39,7 +44,7 @@ export default function InteractiveResource() {
           )
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setResource(data);
