@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, CheckCircle, XCircle } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import AdminResourceUpload from "@/components/AdminResourceUpload";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -243,6 +244,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="tutors">Tuteurs</TabsTrigger>
             <TabsTrigger value="lessons">Leçons</TabsTrigger>
             <TabsTrigger value="sessions">Sessions</TabsTrigger>
+            <TabsTrigger value="resources">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Ressources interactives
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="tutors">
@@ -413,6 +418,13 @@ export default function AdminDashboard() {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="resources">
+            <AdminResourceUpload 
+              lessons={lessons}
+              onUploadSuccess={fetchAdminData}
+            />
           </TabsContent>
         </Tabs>
       </main>
