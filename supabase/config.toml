@@ -2,3 +2,9 @@ project_id = "lizcpvxixahyzggwjnnq"
 
 [functions.ai-tutor]
 verify_jwt = true
+
+[functions.braintree-token]
+verify_jwt = true
+
+[functions.braintree-payment]
+verify_jwt = true

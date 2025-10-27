@@ -1052,10 +1052,7 @@ export type Database = {
         Args: { student_uuid: string; xp_amount: number }
         Returns: undefined
       }
-      calculate_level: {
-        Args: { xp: number }
-        Returns: number
-      }
+      calculate_level: { Args: { xp: number }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

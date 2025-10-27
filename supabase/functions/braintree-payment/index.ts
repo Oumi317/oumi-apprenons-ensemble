@@ -18,6 +18,17 @@ serve(async (req) => {
       throw new Error('Missing required payment data');
     }
 
+    // Validate amount is a positive number
+    const parsedAmount = parseFloat(amount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      throw new Error('Invalid payment amount');
+    }
+
+    // Validate amount is within reasonable range (0.01 to 10000 EUR)
+    if (parsedAmount < 0.01 || parsedAmount > 10000) {
+      throw new Error('Payment amount out of acceptable range');
+    }
+
     const merchantId = Deno.env.get('BRAINTREE_MERCHANT_ID');
     const publicKey = Deno.env.get('BRAINTREE_PUBLIC_KEY');
     const privateKey = Deno.env.get('BRAINTREE_PRIVATE_KEY');
