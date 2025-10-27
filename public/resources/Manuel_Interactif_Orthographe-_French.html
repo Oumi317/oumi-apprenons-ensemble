@@ -1,0 +1,2372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orthographe CP à CM2 - Manuel Interactif</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --bg-main: white;
+            --text-main: #333;
+            --shadow: rgba(0,0,0,0.3);
+        }
+        
+        body.dark-mode {
+            --bg-main: #1a1a2e;
+            --text-main: #eee;
+            --shadow: rgba(0,0,0,0.6);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-main);
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-main);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px var(--shadow);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 0.8s;
+        }
+        
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #27ae60, #2ecc71);
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        body.dark-mode .stats-bar {
+            background: #2a2a3e;
+        }
+        
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        body.dark-mode .nav-buttons {
+            background: #2a2a3e;
+        }
+        
+        .nav-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+        
+        .nav-btn.completed::after {
+            content: '✓';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--success);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .content {
+            padding: 30px;
+            min-height: 400px;
+        }
+        
+        .lesson {
+            display: none;
+        }
+        
+        .lesson.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .lesson h2 {
+            color: var(--secondary);
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 10px;
+        }
+        
+        .lesson h3 {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin: 20px 0 10px 0;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+            border-left: 5px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .example-box {
+            background: #fff9e6;
+            border: 3px solid #ffa726;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+        
+        body.dark-mode .example-box {
+            background: #3a3a1e;
+        }
+        
+        .example-box h4 {
+            color: #ff6f00;
+            margin-bottom: 10px;
+        }
+        
+        .exercise {
+            background: #e3f2fd;
+            border: 3px dashed #2196f3;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+        
+        body.dark-mode .exercise {
+            background: #1a3a5a;
+        }
+        
+        .exercise h3 {
+            color: #1976d2;
+            margin-bottom: 15px;
+        }
+        
+        .question {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+        
+        body.dark-mode .question {
+            background: #2a2a3e;
+        }
+        
+        .options {
+            margin: 10px 0;
+        }
+        
+        .option {
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            background: #e8f5e9;
+            border: 2px solid #81c784;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        body.dark-mode .option {
+            background: #1a3a1e;
+            border-color: #4a7a49;
+        }
+        
+        .option:hover {
+            background: #c8e6c9;
+            transform: translateX(5px);
+        }
+        
+        .option input {
+            margin-right: 10px;
+        }
+        
+        .btn-check {
+            background: linear-gradient(135deg, var(--success) 0%, #81c784 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-check:hover {
+            transform: scale(1.05);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            text-align: center;
+            animation: bounceIn 0.5s;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .result.correct {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+        
+        .result.incorrect {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+        
+        .word-highlight {
+            background: #ffeb3b;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            border: 2px solid var(--primary);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background: var(--primary);
+            color: white;
+        }
+        
+        tr:nth-child(even) {
+            background: #f5f5f5;
+        }
+        
+        body.dark-mode tr:nth-child(even) {
+            background: #2a2a3e;
+        }
+        
+        ul {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .level-cp {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .level-ce {
+            background: #2196f3;
+            color: white;
+        }
+        
+        .level-cm {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .correct-word {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .incorrect-word {
+            color: #e74c3c;
+            text-decoration: line-through;
+        }
+        
+        .certificate {
+            display: none;
+            margin-top: 30px;
+            padding: 40px;
+            border: 8px double #56ab2f;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+            text-align: center;
+            position: relative;
+        }
+        
+        .certificate.show {
+            display: block;
+            animation: fadeIn 0.8s;
+        }
+        
+        .certificate h2 {
+            color: #56ab2f;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            border: none;
+        }
+        
+        .certificate .student-name {
+            font-size: 1.8em;
+            color: #2ecc71;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        
+        .certificate .certificate-text {
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+        
+        .certificate .score-display {
+            font-size: 2em;
+            color: #56ab2f;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .certificate .date {
+            margin-top: 30px;
+            font-style: italic;
+        }
+        
+        .btn-print-cert {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-print-cert:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .name-input {
+            padding: 10px 20px;
+            border: 2px solid #56ab2f;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin: 10px 0;
+            width: 300px;
+            max-width: 90%;
+        }
+        
+        /* Styles d'impression pour le certificat */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .header, .stats-bar, .nav-buttons, .content > *:not(.certificate), .theme-toggle, .btn-print-cert {
+                display: none !important;
+            }
+            
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            
+            .certificate {
+                display: block !important;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+            <h1>✍️ Orthographe CP à CM2 ✍️</h1>
+            <p>Toutes les règles d'orthographe du primaire</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span>⭐</span>
+                <span>Leçons complétées : <span id="completed">0</span>/15</span>
+            </div>
+            <div class="stat-item">
+                <span>🎯</span>
+                <span>Score : <span id="accuracy">0</span>%</span>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showLesson(1)">L1: Les sons</button>
+            <button class="nav-btn" onclick="showLesson(2)">L2: Les accents</button>
+            <button class="nav-btn" onclick="showLesson(3)">L3: m devant m,b,p</button>
+            <button class="nav-btn" onclick="showLesson(4)">L4: c, ç, g, gu</button>
+            <button class="nav-btn" onclick="showLesson(5)">L5: Les lettres muettes</button>
+            <button class="nav-btn" onclick="showLesson(6)">L6: Les consonnes doubles</button>
+            <button class="nav-btn" onclick="showLesson(7)">L7: Le pluriel</button>
+            <button class="nav-btn" onclick="showLesson(8)">L8: Le féminin</button>
+            <button class="nav-btn" onclick="showLesson(9)">L9: Homophones a/à, et/est</button>
+            <button class="nav-btn" onclick="showLesson(10)">L10: Homophones son/sont, on/ont</button>
+            <button class="nav-btn" onclick="showLesson(11)">L11: Homophones ce/se, ces/ses</button>
+            <button class="nav-btn" onclick="showLesson(12)">L12: Homophones lexicaux</button>
+            <button class="nav-btn" onclick="showLesson(13)">L13: L'apostrophe</button>
+            <button class="nav-btn" onclick="showLesson(14)">L14: Le trait d'union</button>
+            <button class="nav-btn" onclick="showLesson(15)">L15: Révision générale</button>
+        </div>
+        
+        <div class="content">
+            <!-- Leçon 1 -->
+            <div class="lesson active" id="lesson1">
+                <h2>🔤 Leçon 1 : Les sons et leur écriture</h2>
+                
+                <div class="info-box">
+                    <h3>Les sons en français <span class="level-badge level-cp">CP-CE</span></h3>
+                    <p>Un même son peut s'écrire de différentes façons. Il faut apprendre les différentes graphies.</p>
+                </div>
+                
+                <h3>Les principales écritures des sons</h3>
+                
+                <div class="example-box">
+                    <h4>Le son [o]</h4>
+                    <ul>
+                        <li><strong>o :</strong> <em>robot, moto</em></li>
+                        <li><strong>au :</strong> <em>chaud, auto</em></li>
+                        <li><strong>eau :</strong> <em>bateau, chapeau</em></li>
+                        <li><strong>ô :</strong> <em>drôle, côte</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Le son [è]</h4>
+                    <ul>
+                        <li><strong>è :</strong> <em>mère, frère</em></li>
+                        <li><strong>ê :</strong> <em>forêt, fête</em></li>
+                        <li><strong>e + consonne double :</strong> <em>terre, belle</em></li>
+                        <li><strong>ai :</strong> <em>maison, lait</em></li>
+                        <li><strong>ei :</strong> <em>neige, reine</em></li>
+                        <li><strong>et (à la fin) :</strong> <em>jouet, poulet</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Le son [in]</h4>
+                    <ul>
+                        <li><strong>in :</strong> <em>lapin, jardin</em></li>
+                        <li><strong>im :</strong> <em>timbre, simple</em></li>
+                        <li><strong>ain :</strong> <em>pain, main</em></li>
+                        <li><strong>aim :</strong> <em>faim</em></li>
+                        <li><strong>ein :</strong> <em>frein, plein</em></li>
+                        <li><strong>un :</strong> <em>brun, un</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Les sons</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Quelle est la bonne orthographe du mot [bato] ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q1a" value="a"> bato
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1a" value="b"> bateau
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1a" value="c"> batot
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Comment écrire le son [è] dans le mot "m...re" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q1b" value="a"> mére
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1b" value="b"> mère
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1b" value="c"> mair
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Le son [in] s'écrit "im" devant :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q1c" value="a"> m, b, p
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1c" value="b"> toutes les consonnes
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> Quel mot contient le son [o] écrit "eau" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q1d" value="a"> auto
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1d" value="b"> chapeau
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1d" value="c"> mot
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> Comment écrire le son [in] dans "jard..." ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q1e" value="a"> jardin
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1e" value="b"> jardain
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q1e" value="c"> jardein
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(1, ['b', 'b', 'a', 'b', 'a'])">Vérifier mes réponses</button>
+                    <div id="result1" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 2 -->
+            <div class="lesson" id="lesson2">
+                <h2>📐 Leçon 2 : Les accents</h2>
+                
+                <div class="info-box">
+                    <h3>À quoi servent les accents ? <span class="level-badge level-cp">CP-CE</span></h3>
+                    <p>Les accents permettent de modifier la prononciation des lettres et de distinguer certains mots.</p>
+                </div>
+                
+                <h3>Les différents accents</h3>
+                
+                <div class="example-box">
+                    <h4>1. L'accent aigu (é)</h4>
+                    <p>Se place <strong>uniquement sur le e</strong> et se prononce [é]</p>
+                    <p>Ex : <em>école, été, éléphant, café</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. L'accent grave (è, à, ù)</h4>
+                    <p><strong>Sur le e :</strong> se prononce [è]</p>
+                    <p>Ex : <em>mère, après, élève</em></p>
+                    <p><strong>Sur le a :</strong> permet de distinguer des mots</p>
+                    <p>Ex : <em>à (préposition) ≠ a (verbe avoir)</em></p>
+                    <p><strong>Sur le u :</strong> uniquement dans "où" (lieu/question)</p>
+                    <p>Ex : <em>où (lieu) ≠ ou (choix)</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3. L'accent circonflexe (ê, â, î, ô, û)</h4>
+                    <p>Se place sur <strong>toutes les voyelles</strong></p>
+                    <p>Ex : <em>tête, pâte, île, hôtel, flûte</em></p>
+                    <p>Souvent, il remplace un <strong>s</strong> ancien : forêt (forest), hôpital (hospital)</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>4. Le tréma (ë, ï, ü)</h4>
+                    <p>Indique que la voyelle se prononce séparément</p>
+                    <p>Ex : <em>Noël (no-el), maïs (ma-is), aïe</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Les accents</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Complète : "Il va ___ l'école"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2a" value="a"> a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2a" value="b"> à
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2b" value="a"> éléve
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2b" value="b"> élève
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2b" value="c"> elève
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Complète : "___ vas-tu ?" (question de lieu)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2c" value="a"> Ou
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2c" value="b"> Où
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> Quel mot contient un accent circonflexe ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2d" value="a"> école
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2d" value="b"> forêt
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2d" value="c"> élève
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> Trouve l'erreur : "Le eleve va a l'ecole"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2e" value="a"> Il manque des accents
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2e" value="b"> Il y a trop d'accents
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2e" value="c"> Tout est correct
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Dans "Noël", le tréma sur le "e" sert à :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q2f" value="a"> Prononcer le e séparément
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q2f" value="b"> Faire le son [è]
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(2, ['b', 'b', 'b', 'b', 'a', 'a'])">Vérifier</button>
+                    <div id="result2" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 3 -->
+            <div class="lesson" id="lesson3">
+                <h2>🎵 Leçon 3 : m devant m, b, p</h2>
+                
+                <div class="info-box">
+                    <h3>La règle du m <span class="level-badge level-cp">CP-CE</span></h3>
+                    <p>Devant les lettres <strong>m, b, p</strong>, on écrit <strong>m</strong> au lieu de <strong>n</strong></p>
+                </div>
+                
+                <h3>Application de la règle</h3>
+                
+                <div class="example-box">
+                    <h4>Les sons avec m</h4>
+                    <ul>
+                        <li><strong>[an] → am :</strong> <em>jambe, chambre, lampe, campagne</em></li>
+                        <li><strong>[on] → om :</strong> <em>ombre, tomber, pompe, pompier</em></li>
+                        <li><strong>[in] → im :</strong> <em>timbre, simple, important, impossible</em></li>
+                        <li><strong>[un] → um :</strong> <em>parfum, humble</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>⚠️ Exceptions à connaître</h4>
+                    <ul>
+                        <li><strong>bonbon, bonbonne, bonbonnière</strong> (on garde le n)</li>
+                        <li><strong>néanmoins, embonpoint</strong></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Astuce pour retenir</h4>
+                    <p>Les lettres <strong>m, b, p</strong> sont prononcées avec les lèvres fermées, comme le <strong>m</strong> !</p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : m devant m, b, p</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Complète : "Une ja___be"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3a" value="a"> jambe (m)
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3a" value="b"> janbe (n)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Complète : "Un ti___bre"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3b" value="a"> tinbre (n)
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3b" value="b"> timbre (m)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3c" value="a"> chanbre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3c" value="b"> chambre
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> Complète : "Une o___bre"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3d" value="a"> onbre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3d" value="b"> ombre
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> Trouve l'intrus (le mot mal écrit) :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3e" value="a"> lampe
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3e" value="b"> campagne
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3e" value="c"> enporter
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Devant quelle lettre ne met-on PAS "m" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q3f" value="a"> b
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3f" value="b"> p
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q3f" value="c"> t
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(3, ['a', 'b', 'b', 'b', 'c', 'c'])">Vérifier</button>
+                    <div id="result3" class="result" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Leçon 4 -->
+            <div class="lesson" id="lesson4">
+                <h2>🎨 Leçon 4 : c, ç, g, gu</h2>
+                
+                <div class="info-box">
+                    <h3>Les règles de position <span class="level-badge level-ce">CE</span></h3>
+                    <p>La lettre <strong>c</strong> et la lettre <strong>g</strong> se prononcent différemment selon la voyelle qui suit.</p>
+                </div>
+                
+                <h3>La lettre c</h3>
+                
+                <div class="example-box">
+                    <h4>1. Le c se prononce [k]</h4>
+                    <p>Devant <strong>a, o, u</strong> et devant une consonne</p>
+                    <p>Ex : <em>cartable, colle, cube, classe, cri</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Le c se prononce [s]</h4>
+                    <p>Devant <strong>e, i, y</strong></p>
+                    <p>Ex : <em>cerise, ciel, cygne</em></p>
+                    
+                    <p><strong>La cédille (ç) :</strong> pour faire [s] devant a, o, u</p>
+                    <p>Ex : <em>ça, garçon, déçu, leçon</em></p>
+                </div>
+                
+                <h3>La lettre g</h3>
+                
+                <div class="example-box">
+                    <h4>1. Le g se prononce [g]</h4>
+                    <p>Devant <strong>a, o, u</strong> et devant une consonne</p>
+                    <p>Ex : <em>gare, gomme, légume, grand</em></p>
+                    
+                    <p><strong>Le u muet :</strong> pour faire [g] devant e, i</p>
+                    <p>Ex : <em>gui, guirlande, guerre, guépard</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Le g se prononce [ʒ] (comme dans "je")</h4>
+                    <p>Devant <strong>e, i, y</strong></p>
+                    <p>Ex : <em>girafe, genou, gymnase</em></p>
+                    
+                    <p><strong>Le e muet :</strong> pour faire [ʒ] devant a, o</p>
+                    <p>Ex : <em>mangeons, nageoire, pigeon</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : c, ç, g, gu</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Complète : "Un gar___on"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q4a" value="a"> garcon
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4a" value="b"> garçon
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Complète : "Une ___irlande"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q4b" value="a"> girlande
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4b" value="b"> guirlande
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q4c" value="a"> nous mangons
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q4c" value="b"> nous mangeons
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(4, ['b', 'b', 'b'])">Vérifier</button>
+                    <div id="result4" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 5 -->
+            <div class="lesson" id="lesson5">
+                <h2>🤫 Leçon 5 : Les lettres muettes</h2>
+                
+                <div class="info-box">
+                    <h3>Qu'est-ce qu'une lettre muette ? <span class="level-badge level-ce">CE-CM</span></h3>
+                    <p>Une lettre muette est une lettre qui <strong>s'écrit mais ne se prononce pas</strong>.</p>
+                </div>
+                
+                <h3>Les lettres muettes finales</h3>
+                
+                <div class="example-box">
+                    <h4>Les consonnes muettes</h4>
+                    <p>À la fin des mots, certaines consonnes ne se prononcent pas :</p>
+                    <ul>
+                        <li><strong>-d :</strong> <em>grand, froid, nid, pied</em></li>
+                        <li><strong>-s :</strong> <em>souris, bras, temps, corps</em></li>
+                        <li><strong>-t :</strong> <em>chat, lit, dent, sport</em></li>
+                        <li><strong>-p :</strong> <em>loup, drap, camp, beaucoup</em></li>
+                        <li><strong>-x :</strong> <em>voix, croix, paix, choix</em></li>
+                        <li><strong>-z :</strong> <em>nez, riz, chez</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Astuce pour trouver la lettre muette</h4>
+                    <p>Cherche un <strong>mot de la même famille</strong> où on entend la lettre :</p>
+                    <ul>
+                        <li>gran<strong>d</strong> → gran<strong>d</strong>ir</li>
+                        <li>cha<strong>t</strong> → cha<strong>t</strong>on</li>
+                        <li>den<strong>t</strong> → den<strong>t</strong>iste</li>
+                        <li>bra<strong>s</strong> → bra<strong>s</strong>sard</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Le h muet</h4>
+                    <p>Le <strong>h</strong> ne se prononce jamais en français :</p>
+                    <ul>
+                        <li><strong>h muet :</strong> permet l'élision → <em>l'homme, l'heure</em></li>
+                        <li><strong>h aspiré :</strong> empêche l'élision → <em>le héros, la hache</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Les lettres muettes</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Quel mot a une lettre muette finale ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q5a" value="a"> chat
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5a" value="b"> car
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Trouve la lettre muette : "gran___"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q5b" value="a"> grand (avec d)
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5b" value="b"> gran (sans lettre)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q5c" value="a"> un lou
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q5c" value="b"> un loup
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(5, ['a', 'a', 'b'])">Vérifier</button>
+                    <div id="result5" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 6 -->
+            <div class="lesson" id="lesson6">
+                <h2>👯 Leçon 6 : Les consonnes doubles</h2>
+                
+                <div class="info-box">
+                    <h3>Le doublement des consonnes <span class="level-badge level-ce">CE-CM</span></h3>
+                    <p>Certaines consonnes peuvent être <strong>doublées</strong> à l'intérieur des mots.</p>
+                </div>
+                
+                <h3>Quelles consonnes peut-on doubler ?</h3>
+                
+                <div class="example-box">
+                    <h4>Les consonnes qui se doublent souvent</h4>
+                    <ul>
+                        <li><strong>ll :</strong> <em>belle, balle, ville</em></li>
+                        <li><strong>mm :</strong> <em>pomme, comme, femme</em></li>
+                        <li><strong>nn :</strong> <em>année, canne, personne</em></li>
+                        <li><strong>pp :</strong> <em>appeler, nappe, grippe</em></li>
+                        <li><strong>rr :</strong> <em>terre, verre, courrir</em></li>
+                        <li><strong>ss :</strong> <em>poisson, tasse, dessin</em></li>
+                        <li><strong>tt :</strong> <em>lettre, nettayer, mettre</em></li>
+                        <li><strong>ff :</strong> <em>affaire, offrir, difficile</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>⚠️ Attention au s entre deux voyelles</h4>
+                    <p><strong>s</strong> entre deux voyelles se prononce [z] :</p>
+                    <ul>
+                        <li><em>maison, poison, rasoir</em> → [z]</li>
+                    </ul>
+                    <p>Pour faire le son [s], il faut <strong>doubler le s</strong> :</p>
+                    <ul>
+                        <li><em>poisson, dessin, tasse</em> → [s]</li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>Les mots en -tion</h4>
+                    <p>Les mots se terminant par <strong>-tion</strong> ne doublent jamais le t :</p>
+                    <p>Ex : <em>addition, émotion, station, attention</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Les consonnes doubles</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Complète : "Une po___e"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6a" value="a"> pome
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6a" value="b"> pomme
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Complète : "Un poi___on" (l'animal qui nage)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6b" value="a"> poisson
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6b" value="b"> poison
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6c" value="a"> une balle
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6c" value="b"> une bale
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> Complète : "Une a___aire importante"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6d" value="a"> affaire
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6d" value="b"> afaire
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> Entre deux voyelles, "s" se prononce [z], donc pour avoir le son [s], il faut :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6e" value="a"> Doubler le s
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6e" value="b"> Mettre un accent sur le s
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Trouve l'intrus (le mot mal écrit) :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q6f" value="a"> addition
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6f" value="b"> attension
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q6f" value="c"> station
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(6, ['b', 'a', 'a', 'a', 'a', 'b'])">Vérifier</button>
+                    <div id="result6" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 7 -->
+            <div class="lesson" id="lesson7">
+                <h2>📚 Leçon 7 : Le pluriel des noms</h2>
+                
+                <div class="info-box">
+                    <h3>Former le pluriel <span class="level-badge level-cp">CP-CE-CM</span></h3>
+                    <p>Le pluriel indique qu'il y a <strong>plusieurs</strong> personnes, animaux ou choses.</p>
+                </div>
+                
+                <h3>Les règles du pluriel</h3>
+                
+                <div class="example-box">
+                    <h4>1. Règle générale : + s</h4>
+                    <p>On ajoute un <strong>-s</strong> au singulier</p>
+                    <p>Ex : <em>un chat → des chat<strong>s</strong>, une table → des table<strong>s</strong></em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Mots en -s, -x, -z : pas de changement</h4>
+                    <p>Ex : <em>une souris → des souris, une voix → des voix, un nez → des nez</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3. Mots en -eau, -au, -eu : + x</h4>
+                    <p>Ex : <em>un bateau → des bateau<strong>x</strong>, un noyau → des noyau<strong>x</strong>, un cheveu → des cheveu<strong>x</strong></em></p>
+                    <p>⚠️ <strong>Exceptions :</strong> des pneus, des bleus, des landaus</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>4. Mots en -al : → -aux</h4>
+                    <p>Ex : <em>un cheval → des chev<strong>aux</strong>, un animal → des anim<strong>aux</strong></em></p>
+                    <p>⚠️ <strong>Exceptions :</strong> des bals, des festivals, des carnavals</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>5. Mots en -ou : + s (avec 7 exceptions en -x)</h4>
+                    <p>Règle générale : <em>un trou → des trou<strong>s</strong></em></p>
+                    <p><strong>7 exceptions qui prennent -x :</strong></p>
+                    <p>bijou, caillou, chou, genou, hibou, joujou, pou</p>
+                    <p>Ex : <em>un bijou → des bijou<strong>x</strong></em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Le pluriel</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Pluriel de "château" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7a" value="a"> châteaus
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7a" value="b"> châteaux
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Pluriel de "cheval" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7b" value="a"> chevals
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7b" value="b"> chevaux
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Pluriel de "genou" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7c" value="a"> genous
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7c" value="b"> genoux
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> Quel mot ne change pas au pluriel ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7d" value="a"> chat
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7d" value="b"> souris
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7d" value="c"> chien
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> Pluriel de "trou" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7e" value="a"> trous
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7e" value="b"> troux
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Trouve l'intrus (le seul mot qui prend -s au pluriel) :</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q7f" value="a"> bijou
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7f" value="b"> chou
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q7f" value="c"> clou
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(7, ['b', 'b', 'b', 'b', 'a', 'c'])">Vérifier</button>
+                    <div id="result7" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 8 -->
+            <div class="lesson" id="lesson8">
+                <h2>♀️ Leçon 8 : Le féminin des noms et adjectifs</h2>
+                
+                <div class="info-box">
+                    <h3>Former le féminin <span class="level-badge level-cp">CP-CE-CM</span></h3>
+                    <p>Le féminin marque le genre féminin d'un nom ou d'un adjectif.</p>
+                </div>
+                
+                <h3>Les règles du féminin</h3>
+                
+                <div class="example-box">
+                    <h4>1. Règle générale : + e</h4>
+                    <p>On ajoute un <strong>-e</strong> au masculin</p>
+                    <p>Ex : <em>un ami → une ami<strong>e</strong>, petit → petit<strong>e</strong></em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Doublement de la consonne + e</h4>
+                    <ul>
+                        <li><strong>-el → -elle :</strong> <em>réel → réelle</em></li>
+                        <li><strong>-en → -enne :</strong> <em>ancien → ancienne</em></li>
+                        <li><strong>-on → -onne :</strong> <em>bon → bonne</em></li>
+                        <li><strong>-et → -ette :</strong> <em>muet → muette</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3. Changements particuliers</h4>
+                    <ul>
+                        <li><strong>-er → -ère :</strong> <em>boulanger → boulang<strong>ère</strong></em></li>
+                        <li><strong>-eur → -euse :</strong> <em>chanteur → chant<strong>euse</strong></em></li>
+                        <li><strong>-teur → -trice :</strong> <em>acteur → ac<strong>trice</strong></em></li>
+                        <li><strong>-eux → -euse :</strong> <em>heureux → heur<strong>euse</strong></em></li>
+                        <li><strong>-f → -ve :</strong> <em>neuf → neu<strong>ve</strong>, vif → vi<strong>ve</strong></em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>4. Féminins irréguliers</h4>
+                    <ul>
+                        <li><em>blanc → blanche</em></li>
+                        <li><em>frais → fraîche</em></li>
+                        <li><em>doux → douce</em></li>
+                        <li><em>long → longue</em></li>
+                        <li><em>faux → fausse</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Le féminin</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Féminin de "heureux" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q8a" value="a"> heureuxe
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q8a" value="b"> heureuse
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Féminin de "chanteur" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q8b" value="a"> chanteuse
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q8b" value="b"> chanteure
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Féminin de "bon" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q8c" value="a"> bone
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q8c" value="b"> bonne
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(8, ['b', 'a', 'b'])">Vérifier</button>
+                    <div id="result8" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 9 -->
+            <div class="lesson" id="lesson9">
+                <h2>🔀 Leçon 9 : Homophones a/à et et/est</h2>
+                
+                <div class="info-box">
+                    <h3>Les homophones <span class="level-badge level-ce">CE-CM</span></h3>
+                    <p>Des mots qui se prononcent <strong>pareil</strong> mais s'écrivent <strong>différemment</strong>.</p>
+                </div>
+                
+                <h3>a / à</h3>
+                
+                <div class="example-box">
+                    <h4><strong>a</strong> sans accent</h4>
+                    <p>C'est le verbe <strong>avoir</strong> au présent (il/elle/on a)</p>
+                    <p>Astuce : On peut le remplacer par <strong>avait</strong></p>
+                    <p>Ex : <em>Il <strong>a</strong> un chat. → Il avait un chat.</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>à</strong> avec accent</h4>
+                    <p>C'est une <strong>préposition</strong></p>
+                    <p>Astuce : On ne peut PAS le remplacer par avait</p>
+                    <p>Ex : <em>Je vais <strong>à</strong> l'école. → Je vais avait l'école. ✗</em></p>
+                </div>
+                
+                <h3>et / est</h3>
+                
+                <div class="example-box">
+                    <h4><strong>et</strong></h4>
+                    <p>C'est une <strong>conjonction de coordination</strong> (relie des mots)</p>
+                    <p>Astuce : On peut le remplacer par <strong>et puis</strong></p>
+                    <p>Ex : <em>Pierre <strong>et</strong> Marie. → Pierre et puis Marie.</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>est</strong></h4>
+                    <p>C'est le verbe <strong>être</strong> au présent (il/elle/on est)</p>
+                    <p>Astuce : On peut le remplacer par <strong>était</strong></p>
+                    <p>Ex : <em>Il <strong>est</strong> content. → Il était content.</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : a/à et et/est</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> "Il ___ un chien"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9a" value="a"> a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9a" value="b"> à
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> "Je vais ___ Paris"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9b" value="a"> a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9b" value="b"> à
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> "Pierre ___ Marie jouent"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9c" value="a"> et
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9c" value="b"> est
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> "Le chat ___ content"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9d" value="a"> et
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9d" value="b"> est
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> "Elle ___ beaucoup de travail ___ faire"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9e" value="a"> a / à
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9e" value="b"> à / a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9e" value="c"> a / a
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Trouve l'erreur : "Mon frère et grand et il à les yeux bleus"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q9f" value="a"> "et" devrait être "est" / "à" devrait être "a"
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9f" value="b"> "et" devrait être "est" seulement
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q9f" value="c"> Tout est correct
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(9, ['a', 'b', 'a', 'b', 'a', 'a'])">Vérifier</button>
+                    <div id="result9" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 10 -->
+            <div class="lesson" id="lesson10">
+                <h2>🔄 Leçon 10 : Homophones son/sont et on/ont</h2>
+                
+                <div class="info-box">
+                    <h3>Distinguer son/sont et on/ont <span class="level-badge level-ce">CE-CM</span></h3>
+                </div>
+                
+                <h3>son / sont</h3>
+                
+                <div class="example-box">
+                    <h4><strong>son</strong></h4>
+                    <p>C'est un <strong>déterminant possessif</strong> (à lui)</p>
+                    <p>Astuce : On peut le remplacer par <strong>mon</strong> ou <strong>ton</strong></p>
+                    <p>Ex : <em>Il range <strong>son</strong> livre. → Il range mon livre.</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>sont</strong></h4>
+                    <p>C'est le verbe <strong>être</strong> au présent (ils/elles sont)</p>
+                    <p>Astuce : On peut le remplacer par <strong>étaient</strong></p>
+                    <p>Ex : <em>Ils <strong>sont</strong> contents. → Ils étaient contents.</em></p>
+                </div>
+                
+                <h3>on / ont</h3>
+                
+                <div class="example-box">
+                    <h4><strong>on</strong></h4>
+                    <p>C'est un <strong>pronom personnel</strong> (= nous, quelqu'un)</p>
+                    <p>Astuce : On peut souvent le remplacer par <strong>il</strong> ou <strong>nous</strong></p>
+                    <p>Ex : <em><strong>On</strong> joue. → Il joue / Nous jouons.</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>ont</strong></h4>
+                    <p>C'est le verbe <strong>avoir</strong> au présent (ils/elles ont)</p>
+                    <p>Astuce : On peut le remplacer par <strong>avaient</strong></p>
+                    <p>Ex : <em>Ils <strong>ont</strong> des livres. → Ils avaient des livres.</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : son/sont et on/ont</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> "Ils ___ contents"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10a" value="a"> son
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10a" value="b"> sont
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> "Il range ___ cahier"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10b" value="a"> son
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10b" value="b"> sont
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> "___ joue ensemble"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10c" value="a"> On
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10c" value="b"> Ont
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> "Elles ___ des livres"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10d" value="a"> on
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10d" value="b"> ont
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> "Marie et ___ frère ___ partis en vacances"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10e" value="a"> son / sont
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10e" value="b"> sont / son
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Trouve l'erreur : "On croit que les élèves son tous présents"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q10f" value="a"> "On" devrait être "Ont"
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10f" value="b"> "son" devrait être "sont"
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q10f" value="c"> Tout est correct
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(10, ['b', 'a', 'a', 'b', 'a', 'b'])">Vérifier</button>
+                    <div id="result10" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 11 -->
+            <div class="lesson" id="lesson11">
+                <h2>🎭 Leçon 11 : Homophones ce/se et ces/ses</h2>
+                
+                <div class="info-box">
+                    <h3>Distinguer ce/se et ces/ses <span class="level-badge level-cm">CM</span></h3>
+                </div>
+                
+                <h3>ce / se</h3>
+                
+                <div class="example-box">
+                    <h4><strong>ce</strong></h4>
+                    <p>C'est un <strong>déterminant démonstratif</strong> (montre quelque chose)</p>
+                    <p>Astuce : On peut le remplacer par <strong>un</strong></p>
+                    <p>Ex : <em><strong>Ce</strong> chat est mignon. → Un chat est mignon.</em></p>
+                    <p>Aussi dans : <em>c'est, ce sont</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>se</strong></h4>
+                    <p>C'est un <strong>pronom réfléchi</strong> devant un verbe pronominal</p>
+                    <p>Astuce : On peut le remplacer par <strong>me</strong> ou <strong>te</strong></p>
+                    <p>Ex : <em>Il <strong>se</strong> lave. → Je me lave / Tu te laves.</em></p>
+                </div>
+                
+                <h3>ces / ses</h3>
+                
+                <div class="example-box">
+                    <h4><strong>ces</strong></h4>
+                    <p>C'est un <strong>déterminant démonstratif pluriel</strong></p>
+                    <p>Astuce : On peut le remplacer par <strong>ce/cette</strong> au singulier</p>
+                    <p>Ex : <em><strong>Ces</strong> livres. → Ce livre / Cette table.</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4><strong>ses</strong></h4>
+                    <p>C'est un <strong>déterminant possessif pluriel</strong> (à lui/elle)</p>
+                    <p>Astuce : On peut le remplacer par <strong>son/sa</strong> au singulier</p>
+                    <p>Ex : <em>Il range <strong>ses</strong> livres. → Il range son livre / sa table.</em></p>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : ce/se et ces/ses</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> "___ chat est mignon"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q11a" value="a"> Ce
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q11a" value="b"> Se
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> "Il ___ lave"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q11b" value="a"> ce
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q11b" value="b"> se
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> "Elle range ___ affaires" (à elle)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q11c" value="a"> ces
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q11c" value="b"> ses
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(11, ['a', 'b', 'b'])">Vérifier</button>
+                    <div id="result11" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 12 -->
+            <div class="lesson" id="lesson12">
+                <h2>🌈 Leçon 12 : Homophones lexicaux</h2>
+                
+                <div class="info-box">
+                    <h3>Les homophones lexicaux <span class="level-badge level-cm">CM</span></h3>
+                    <p>Des mots qui se prononcent pareil mais ont des <strong>sens différents</strong>.</p>
+                </div>
+                
+                <h3>Les principaux homophones lexicaux</h3>
+                
+                <div class="example-box">
+                    <h4>ver / verre / vers / vert</h4>
+                    <ul>
+                        <li><strong>ver :</strong> l'animal → <em>un ver de terre</em></li>
+                        <li><strong>verre :</strong> on boit dedans → <em>un verre d'eau</em></li>
+                        <li><strong>vers :</strong> direction → <em>aller vers Paris</em></li>
+                        <li><strong>vert :</strong> la couleur → <em>un pull vert</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>mer / mère / maire</h4>
+                    <ul>
+                        <li><strong>mer :</strong> l'océan → <em>la mer est bleue</em></li>
+                        <li><strong>mère :</strong> maman → <em>ma mère</em></li>
+                        <li><strong>maire :</strong> chef de la ville → <em>le maire de Paris</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>cou / coup / coût</h4>
+                    <ul>
+                        <li><strong>cou :</strong> partie du corps → <em>le cou de la girafe</em></li>
+                        <li><strong>coup :</strong> action de frapper → <em>donner un coup</em></li>
+                        <li><strong>coût :</strong> le prix → <em>le coût d'un livre</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>pain / pin</h4>
+                    <ul>
+                        <li><strong>pain :</strong> on le mange → <em>une baguette de pain</em></li>
+                        <li><strong>pin :</strong> l'arbre → <em>une forêt de pins</em></li>
+                    </ul>
+                </div>
+                
+                <div class="example-box">
+                    <h4>saut / seau / sot</h4>
+                    <ul>
+                        <li><strong>saut :</strong> action de sauter → <em>faire un saut</em></li>
+                        <li><strong>seau :</strong> récipient → <em>un seau d'eau</em></li>
+                        <li><strong>sot :</strong> bête, idiot → <em>être sot</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Homophones lexicaux</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> "Un ___ d'eau" (pour boire)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q12a" value="a"> ver
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12a" value="b"> verre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12a" value="c"> vert
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> "J'aime ma ___" (maman)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q12b" value="a"> mer
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12b" value="b"> mère
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12b" value="c"> maire
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> "Le ___ du cygne" (partie du corps)</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q12c" value="a"> cou
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12c" value="b"> coup
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q12c" value="c"> coût
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(12, ['b', 'b', 'a'])">Vérifier</button>
+                    <div id="result12" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 13 -->
+            <div class="lesson" id="lesson13">
+                <h2>✂️ Leçon 13 : L'apostrophe</h2>
+                
+                <div class="info-box">
+                    <h3>L'élision <span class="level-badge level-cp">CP-CE</span></h3>
+                    <p>L'apostrophe remplace une voyelle qui disparaît devant un mot commençant par une voyelle ou un h muet.</p>
+                </div>
+                
+                <h3>Quand utilise-t-on l'apostrophe ?</h3>
+                
+                <div class="example-box">
+                    <h4>1. Les articles le, la</h4>
+                    <p><strong>le</strong> et <strong>la</strong> → <strong>l'</strong></p>
+                    <p>Ex : <em>le arbre ✗ → <strong>l'</strong>arbre ✓</em></p>
+                    <p>Ex : <em>la école ✗ → <strong>l'</strong>école ✓</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Les pronoms je, me, te, se</h4>
+                    <p>Ex : <em>je arrive ✗ → <strong>j'</strong>arrive ✓</em></p>
+                    <p>Ex : <em>tu me aimes ✗ → tu <strong>m'</strong>aimes ✓</em></p>
+                    <p>Ex : <em>il se appelle ✗ → il <strong>s'</strong>appelle ✓</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3. Les mots que, ne, de, si</h4>
+                    <p>Ex : <em>que est-ce ? ✗ → <strong>qu'</strong>est-ce ? ✓</em></p>
+                    <p>Ex : <em>si il vient ✗ → <strong>s'</strong>il vient ✓</em></p>
+                    <p>Ex : <em>ne oublie pas ✗ → <strong>n'</strong>oublie pas ✓</em></p>
+                    <p>Ex : <em>le livre de Emma ✗ → le livre <strong>d'</strong>Emma ✓</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>4. Mots composés</h4>
+                    <p>Ex : <em>aujourd'hui, quelqu'un, presqu'île, lorsqu'il</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>⚠️ Pas d'apostrophe devant</h4>
+                    <ul>
+                        <li><strong>h aspiré :</strong> <em>le héros, la hache</em> (pas d'élision)</li>
+                        <li><strong>certains mots :</strong> <em>le onze, le un, le oui</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : L'apostrophe</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Comment écrire : "le + arbre" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q13a" value="a"> le arbre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q13a" value="b"> l'arbre
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Comment écrire : "je + arrive" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q13b" value="a"> je arrive
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q13b" value="b"> j'arrive
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quelle phrase est correcte ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q13c" value="a"> qu'est-ce ?
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q13c" value="b"> que est-ce ?
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(13, ['b', 'b', 'a'])">Vérifier</button>
+                    <div id="result13" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 14 -->
+            <div class="lesson" id="lesson14">
+                <h2>➖ Leçon 14 : Le trait d'union</h2>
+                
+                <div class="info-box">
+                    <h3>À quoi sert le trait d'union ? <span class="level-badge level-cm">CM</span></h3>
+                    <p>Le trait d'union <strong>relie</strong> plusieurs mots pour en former un seul.</p>
+                </div>
+                
+                <h3>Quand met-on un trait d'union ?</h3>
+                
+                <div class="example-box">
+                    <h4>1. Les nombres composés</h4>
+                    <p>On met un trait d'union entre tous les éléments d'un nombre composé</p>
+                    <p>Ex : <em>vingt-trois, quatre-vingt-dix-sept, trois-cents</em></p>
+                    <p>⚠️ Sauf : <em>vingt et un, cent deux</em> (pas de trait d'union avec "et" ou devant "cent", "mille")</p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>2. Les mots composés</h4>
+                    <p>Ex : <em>un arc-en-ciel, un rouge-gorge, un tire-bouchon, un gratte-ciel</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>3. L'inversion du sujet</h4>
+                    <p>Dans les questions avec inversion :</p>
+                    <p>Ex : <em>Viens-tu ? Est-il là ? Parle-t-elle ?</em></p>
+                    <p>⚠️ Le <strong>t</strong> euphonique : <em>Va-t-il ? Mange-t-on ?</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>4. Avec les pronoms personnels</h4>
+                    <p>À l'impératif avec un pronom :</p>
+                    <p>Ex : <em>Donne-moi, prends-le, va-t'en</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>5. Certains préfixes</h4>
+                    <p>Ex : <em>ex-président, anti-virus, sous-marin</em></p>
+                </div>
+                
+                <div class="example-box">
+                    <h4>6. Mots particuliers</h4>
+                    <ul>
+                        <li><em>c'est-à-dire</em></li>
+                        <li><em>peut-être</em></li>
+                        <li><em>quelqu'un, quelque chose</em> (pas de trait d'union)</li>
+                        <li><em>là-bas, là-haut, celui-ci, celle-là</em></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise">
+                    <h3>🎯 Exercice : Le trait d'union</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Comment écrire le nombre 34 ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q14a" value="a"> trente quatre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q14a" value="b"> trente-quatre
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Quelle phrase est correcte ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q14b" value="a"> Viens tu ?
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q14b" value="b"> Viens-tu ?
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> Quel mot est bien écrit ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q14c" value="a"> un arc en ciel
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q14c" value="b"> un arc-en-ciel
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(14, ['b', 'b', 'b'])">Vérifier</button>
+                    <div id="result14" class="result" style="display:none;"></div>
+                </div>
+            </div>
+            
+            <!-- Leçon 15 -->
+            <div class="lesson" id="lesson15">
+                <h2>🏆 Leçon 15 : Révision générale d'orthographe</h2>
+                
+                <div class="info-box">
+                    <h3>Bravo ! Tu arrives à la fin du manuel !</h3>
+                    <p>Voici un récapitulatif des principales règles d'orthographe du CP au CM2.</p>
+                </div>
+                
+                <h3>Les règles essentielles</h3>
+                
+                <table>
+                    <tr>
+                        <th>Règle</th>
+                        <th>Exemples</th>
+                    </tr>
+                    <tr>
+                        <td><strong>m devant m, b, p</strong></td>
+                        <td>jambe, timbre, pompe</td>
+                    </tr>
+                    <tr>
+                        <td><strong>c/ç, g/gu</strong></td>
+                        <td>garçon, guirlande</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pluriel en -s</strong></td>
+                        <td>des chats</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pluriel en -x</strong></td>
+                        <td>des bateaux, des chevaux</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Féminin en -e</strong></td>
+                        <td>petite, grande</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accents</strong></td>
+                        <td>école, élève, forêt</td>
+                    </tr>
+                </table>
+                
+                <h3>Les homophones à retenir</h3>
+                
+                <ul>
+                    <li><strong>a / à :</strong> verbe avoir / préposition</li>
+                    <li><strong>et / est :</strong> conjonction / verbe être</li>
+                    <li><strong>son / sont :</strong> déterminant / verbe être</li>
+                    <li><strong>on / ont :</strong> pronom / verbe avoir</li>
+                    <li><strong>ce / se :</strong> déterminant / pronom réfléchi</li>
+                    <li><strong>ces / ses :</strong> déterminant démonstratif / déterminant possessif</li>
+                </ul>
+                
+                <div class="exercise">
+                    <h3>🎯 Quiz final de révision</h3>
+                    <div class="question">
+                        <p><strong>1.</strong> Complète : "Une ja___be"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15a" value="a"> janbe (n)
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15a" value="b"> jambe (m)
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>2.</strong> Pluriel de "château" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15b" value="a"> châteaus
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15b" value="b"> châteaux
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>3.</strong> "Il ___ un chien"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15c" value="a"> a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15c" value="b"> à
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>4.</strong> "Ils ___ contents"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15d" value="a"> son
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15d" value="b"> sont
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>5.</strong> "Je vais ___ l'école"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15e" value="a"> a
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15e" value="b"> à
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>6.</strong> Comment écrire "le + arbre" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15f" value="a"> le arbre
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15f" value="b"> l'arbre
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>7.</strong> Trouve l'erreur : "Un poisson ver nage dans la mer"</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15g" value="a"> "ver" devrait être "vert"
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15g" value="b"> "mer" devrait être "mère"
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15g" value="c"> Tout est correct
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="question">
+                        <p><strong>8.</strong> Féminin de "heureux" ?</p>
+                        <div class="options">
+                            <label class="option">
+                                <input type="radio" name="q15h" value="a"> heureuxe
+                            </label>
+                            <label class="option">
+                                <input type="radio" name="q15h" value="b"> heureuse
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-check" onclick="checkLesson(15, ['b', 'b', 'a', 'b', 'b', 'b', 'a', 'b'])">Vérifier mes réponses</button>
+                    <div id="result15" class="result" style="display:none;"></div>
+                </div>
+                
+                <!-- Certificat de réussite -->
+                <div class="certificate" id="certificate">
+                    <h2>🏆 Certificat de Réussite 🏆</h2>
+                    <p class="certificate-text">Ce certificat est décerné à</p>
+                    <input type="text" class="name-input" id="studentName" placeholder="Écris ton prénom ici" />
+                    <p class="certificate-text">pour avoir brillamment réussi le</p>
+                    <p class="certificate-text"><strong>Quiz Général d'Orthographe</strong></p>
+                    <p class="certificate-text">du CP au CM2</p>
+                    <div class="score-display" id="certificateScore"></div>
+                    <p class="date" id="certificateDate"></p>
+                    <button class="btn-print-cert" onclick="printCertificate()">🖨️ Imprimer mon certificat</button>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); border-radius: 15px; color: white; text-align: center;">
+                    <h3 style="color: white; font-size: 2em;">🎉 Félicitations ! 🎉</h3>
+                    <p style="font-size: 1.2em; margin-top: 15px;">Tu as parcouru toutes les règles d'orthographe du CP au CM2 !</p>
+                    <p style="margin-top: 10px;">Continue à t'entraîner pour devenir un champion de l'orthographe française !</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <script>
+        let gameState = {
+            completedLessons: [],
+            totalQuestions: 0,
+            correctAnswers: 0,
+            isDarkMode: false,
+            lesson15Score: 0
+        };
+        
+        function toggleTheme() {
+            gameState.isDarkMode = !gameState.isDarkMode;
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.theme-toggle').textContent = gameState.isDarkMode ? '☀️' : '🌙';
+        }
+        
+        function updateStats() {
+            document.getElementById('completed').textContent = gameState.completedLessons.length;
+            const accuracy = gameState.totalQuestions > 0 
+                ? Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100) 
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy;
+            
+            const progress = (gameState.completedLessons.length / 15) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        function showLesson(num) {
+            document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            const lesson = document.getElementById('lesson' + num);
+            if (lesson) {
+                lesson.classList.add('active');
+                document.querySelectorAll('.nav-btn')[num - 1].classList.add('active');
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        function checkLesson(lessonNum, correctAnswers) {
+            const questionNames = [];
+            
+            for (let i = 0; i < correctAnswers.length; i++) {
+                questionNames.push('q' + lessonNum + String.fromCharCode(97 + i));
+            }
+            
+            const answers = [];
+            let allAnswered = true;
+            
+            for (let name of questionNames) {
+                const selected = document.querySelector(`input[name="${name}"]:checked`);
+                if (!selected) {
+                    allAnswered = false;
+                    break;
+                }
+                answers.push(selected.value);
+            }
+            
+            const result = document.getElementById('result' + lessonNum);
+            
+            if (!allAnswered) {
+                result.innerHTML = "⚠️ Réponds à toutes les questions !";
+                result.className = "result incorrect";
+                result.style.display = "block";
+                return;
+            }
+            
+            let score = 0;
+            for (let i = 0; i < answers.length; i++) {
+                gameState.totalQuestions++;
+                if (answers[i] === correctAnswers[i]) {
+                    score++;
+                    gameState.correctAnswers++;
+                }
+            }
+            
+            if (score === correctAnswers.length) {
+                result.innerHTML = "🎉 Parfait ! Tu as tout bon ! ⭐⭐⭐";
+                result.className = "result correct";
+                
+                if (!gameState.completedLessons.includes(lessonNum)) {
+                    gameState.completedLessons.push(lessonNum);
+                    document.querySelectorAll('.nav-btn')[lessonNum - 1].classList.add('completed');
+                }
+                
+                // Afficher le certificat si c'est le quiz final (leçon 15)
+                if (lessonNum === 15) {
+                    showCertificate(score, correctAnswers.length);
+                }
+            } else {
+                result.innerHTML = `📖 Tu as ${score}/${correctAnswers.length}. Relis la leçon et réessaie !`;
+                result.className = "result incorrect";
+            }
+            
+            result.style.display = "block";
+            updateStats();
+        }
+        
+        // Fonction pour afficher le certificat
+        function showCertificate(score, total) {
+            const percentage = Math.round((score / total) * 100);
+            const certificate = document.getElementById('certificate');
+            const scoreDisplay = document.getElementById('certificateScore');
+            const dateDisplay = document.getElementById('certificateDate');
+            
+            scoreDisplay.textContent = `Score : ${score}/${total} (${percentage}%)`;
+            
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            dateDisplay.textContent = `Le ${today.toLocaleDateString('fr-FR', options)}`;
+            
+            certificate.classList.add('show');
+            
+            // Scroll vers le certificat
+            setTimeout(() => {
+                certificate.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        }
+        
+        // Fonction pour imprimer le certificat
+        function printCertificate() {
+            const studentName = document.getElementById('studentName').value.trim();
+            if (!studentName) {
+                alert('N\'oublie pas d\'écrire ton prénom avant d\'imprimer ! 😊');
+                return;
+            }
+            window.print();
+        }
+        
+        updateStats();
+    </script>
+</body>
+</html>

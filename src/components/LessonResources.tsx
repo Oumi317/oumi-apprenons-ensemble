@@ -1,12 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Download, ExternalLink, BookOpen, FileSpreadsheet, Image } from "lucide-react";
+import { FileText, Download, ExternalLink, BookOpen, FileSpreadsheet, Image, Play } from "lucide-react";
+import { InteractiveResourceViewer } from "./InteractiveResourceViewer";
+import { useState } from "react";
 
 interface Resource {
   id: string;
   titre: string;
-  type: "pdf" | "document" | "image" | "spreadsheet" | "link";
+  type: "pdf" | "document" | "image" | "spreadsheet" | "link" | "interactive";
   url: string;
   taille?: string;
   description?: string;
@@ -22,6 +24,7 @@ const resourceIcons = {
   image: Image,
   spreadsheet: FileSpreadsheet,
   link: ExternalLink,
+  interactive: Play,
 };
 
 const resourceColors = {
@@ -30,9 +33,13 @@ const resourceColors = {
   image: "text-green-500",
   spreadsheet: "text-emerald-500",
   link: "text-purple-500",
+  interactive: "text-orange-500",
 };
 
 export function LessonResources({ resources }: LessonResourcesProps) {
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
+
   if (resources.length === 0) {
     return null;
   }
@@ -98,7 +105,19 @@ export function LessonResources({ resources }: LessonResourcesProps) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  {resource.type === "link" ? (
+                  {resource.type === "interactive" ? (
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedResource(resource);
+                        setViewerOpen(true);
+                      }}
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      Lancer l'exercice
+                    </Button>
+                  ) : resource.type === "link" ? (
                     <Button
                       variant="outline"
                       size="sm"
@@ -132,6 +151,18 @@ export function LessonResources({ resources }: LessonResourcesProps) {
           })}
         </div>
       </CardContent>
+      
+      {selectedResource && (
+        <InteractiveResourceViewer
+          isOpen={viewerOpen}
+          onClose={() => {
+            setViewerOpen(false);
+            setSelectedResource(null);
+          }}
+          resourceUrl={selectedResource.url}
+          titre={selectedResource.titre}
+        />
+      )}
     </Card>
   );
 }

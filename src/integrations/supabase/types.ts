@@ -157,6 +157,50 @@ export type Database = {
           },
         ]
       }
+      interactive_resources: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_url: string
+          id: string
+          lesson_id: string
+          ordre_affichage: number | null
+          titre: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_url: string
+          id?: string
+          lesson_id: string
+          ordre_affichage?: number | null
+          titre: string
+          type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_url?: string
+          id?: string
+          lesson_id?: string
+          ordre_affichage?: number | null
+          titre?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interactive_resources_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_notes: {
         Row: {
           content: string
