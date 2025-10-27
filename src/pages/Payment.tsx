@@ -8,6 +8,7 @@ import {
   ArrowLeft, CheckCircle, Star, Shield, Clock, 
   Users, Trophy, Sparkles, Gift, Zap 
 } from "lucide-react";
+import { ComparisonTable } from "@/components/ComparisonTable";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -187,6 +188,11 @@ const Payment = () => {
                   </Card>
                 );
               })}
+            </div>
+
+            {/* Comparison Table */}
+            <div className="mt-16">
+              <ComparisonTable />
             </div>
 
             {/* Garanties */}

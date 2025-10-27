@@ -21,6 +21,7 @@ import VideoSession from "./pages/VideoSession";
 import Payment from "./pages/Payment";
 import AITutor from "./pages/AITutor";
 import Notifications from "./pages/Notifications";
+import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<Auth />} />
+          <Route 
+            path="/onboarding" 
+            element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            } 
+          />
           <Route path="/lessons" element={<Lessons />} />
           <Route path="/lessons/:id" element={<LessonDetail />} />
             <Route path="/tutors" element={<Tutors />} />

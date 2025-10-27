@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GraduationCap, Loader2 } from "lucide-react";
+import { GraduationCap, Loader2, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -103,7 +103,7 @@ const Auth = () => {
 
       // Auto-login après inscription
       if (data.user) {
-        navigate("/dashboard/parent");
+        navigate("/onboarding");
       }
     } catch (error: any) {
       toast({
@@ -118,14 +118,93 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <GraduationCap className="h-10 w-10 text-white" />
-            <span className="text-3xl font-bold text-white">Oumi'School</span>
-          </Link>
-          <p className="text-white/90">Excellence éducative francophone</p>
+      <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
+        {/* Left Side - Benefits */}
+        <div className="hidden lg:block space-y-8">
+          <div>
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Rejoignez +1 000 familles satisfaites
+            </h2>
+            <p className="text-white/90 text-lg">
+              Excellence éducative francophone pour vos enfants, où que vous soyez dans le monde
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                icon: "✓",
+                title: "Session d'essai gratuite",
+                desc: "Première session de 30 minutes offerte"
+              },
+              {
+                icon: "✓",
+                title: "+50 tuteurs certifiés",
+                desc: "Sélectionnés pour leur excellence pédagogique"
+              },
+              {
+                icon: "✓",
+                title: "Programme français",
+                desc: "Aligné avec le socle commun de connaissances"
+              },
+              {
+                icon: "✓",
+                title: "Suivi personnalisé",
+                desc: "Rapports de progression détaillés"
+              },
+              {
+                icon: "✓",
+                title: "Horaires flexibles",
+                desc: "7j/7 avec tous les fuseaux horaires"
+              }
+            ].map((benefit, index) => (
+              <div 
+                key={index}
+                className="flex items-start gap-4 p-4 bg-white/10 backdrop-blur-sm rounded-lg hover:bg-white/15 transition-colors animate-fade-in"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">
+                  {benefit.icon}
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-1">{benefit.title}</h4>
+                  <p className="text-sm text-white/80">{benefit.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-4 pt-4">
+            <div className="flex -space-x-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div 
+                  key={i}
+                  className="h-10 w-10 rounded-full bg-gradient-primary border-2 border-white flex items-center justify-center text-white font-bold"
+                >
+                  {String.fromCharCode(64 + i)}
+                </div>
+              ))}
+            </div>
+            <div className="text-white">
+              <div className="flex items-center gap-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-white" />
+                ))}
+              </div>
+              <p className="text-sm text-white/90">4.9/5 • 500+ avis</p>
+            </div>
+          </div>
         </div>
+
+        {/* Right Side - Auth Form */}
+        <div>
+          <div className="text-center mb-6 lg:hidden">
+            <Link to="/" className="inline-flex items-center gap-2 mb-4">
+              <GraduationCap className="h-10 w-10 text-white" />
+              <span className="text-3xl font-bold text-white">Oumi'School</span>
+            </Link>
+            <p className="text-white/90">Excellence éducative francophone</p>
+          </div>
 
         <Card>
           <CardHeader>
@@ -273,6 +352,7 @@ const Auth = () => {
             Retour à l'accueil
           </Link>
         </div>
+      </div>
       </div>
     </div>
   );

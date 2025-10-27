@@ -13,6 +13,7 @@ import { QuickStats } from "@/components/QuickStats";
 import { SessionCalendar } from "@/components/SessionCalendar";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { ProgressOverview } from "@/components/ProgressOverview";
+import { HelpButton } from "@/components/HelpButton";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -427,6 +428,9 @@ const ParentDashboard = () => {
           </div>
         </div>
       </main>
+      
+      {/* Help Button */}
+      <HelpButton />
     </div>
   );
 };
