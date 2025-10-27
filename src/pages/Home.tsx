@@ -14,6 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Testimonials } from "@/components/Testimonials";
+import { Footer } from "@/components/Footer";
 
 const Home = () => {
   return (
@@ -711,79 +712,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Footer - Enrichi style GoStudent */}
-      <footer className="bg-gradient-to-b from-card to-card/50 border-t py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-5 gap-8 mb-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-6">
-                <GraduationCap className="h-8 w-8 text-primary" />
-                <span className="font-bold text-2xl bg-gradient-hero bg-clip-text text-transparent">Oumi'School</span>
-              </div>
-              <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-                Plateforme de tutorat en ligne pour les familles francophones du monde entier. 
-                Excellence académique et valeurs éthiques.
-              </p>
-              <div className="flex gap-4">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                </div>
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
-                  <Video className="h-5 w-5 text-primary" />
-                </div>
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors cursor-pointer">
-                  <Globe className="h-5 w-5 text-primary" />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4 text-foreground">Pour les familles</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#segments" className="text-muted-foreground hover:text-primary transition-colors">Familles IEF</a></li>
-                <li><a href="#segments" className="text-muted-foreground hover:text-primary transition-colors">Expatriés</a></li>
-                <li><a href="#pricing" className="text-muted-foreground hover:text-primary transition-colors">Tarifs & formules</a></li>
-                <li><Link to="/lessons" className="text-muted-foreground hover:text-primary transition-colors">Matières disponibles</Link></li>
-                <li><Link to="/faq" className="text-muted-foreground hover:text-primary transition-colors">Questions fréquentes</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4 text-foreground">Pour les tuteurs</h4>
-              <ul className="space-y-3 text-sm">
-                <li><Link to="/tutor-signup" className="text-muted-foreground hover:text-primary transition-colors">Devenir tuteur</Link></li>
-                <li><Link to="/tutors" className="text-muted-foreground hover:text-primary transition-colors">Nos tuteurs</Link></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Avantages tuteurs</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Code de conduite</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold mb-4 text-foreground">Support</h4>
-              <ul className="space-y-3 text-sm">
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Centre d'aide</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Contactez-nous</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Conditions générales</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Politique de confidentialité</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Mentions légales</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-border pt-8">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-sm text-muted-foreground">
-                &copy; 2025 Oumi'School. Tous droits réservés.
-              </p>
-              <div className="flex items-center gap-6 text-sm text-muted-foreground">
-                <a href="#" className="hover:text-primary transition-colors">Conditions d'utilisation</a>
-                <a href="#" className="hover:text-primary transition-colors">Confidentialité</a>
-                <a href="#" className="hover:text-primary transition-colors">Cookies</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 };
