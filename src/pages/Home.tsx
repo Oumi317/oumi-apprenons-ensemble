@@ -760,7 +760,7 @@ const Home = () => {
                 </Button>
               </Link>
               <Link to="/tutors">
-                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 h-16 px-10 font-semibold">
+                <Button size="lg" variant="outline" className="border-2 border-white !text-white hover:bg-white/10 hover:!text-white h-16 px-10 font-semibold backdrop-blur-sm bg-white/5">
                   Parcourir les tuteurs
                 </Button>
               </Link>
