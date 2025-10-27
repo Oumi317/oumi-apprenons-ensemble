@@ -76,6 +76,17 @@ export function NavigationHeader() {
           {user ? (
             <>
               <NotificationsDropdown />
+              {isAdmin && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => navigate("/dashboard/admin")}
+                  className="hidden md:flex items-center gap-2"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Admin
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="sm"
