@@ -88,7 +88,8 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         .from("interactive-resources")
         .upload(filePath, file, {
           cacheControl: "3600",
-          upsert: false
+          upsert: false,
+          contentType: "text/html"
         });
 
       if (uploadError) throw uploadError;

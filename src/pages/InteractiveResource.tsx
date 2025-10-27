@@ -20,7 +20,6 @@ interface InteractiveResource {
 export default function InteractiveResource() {
   const { id } = useParams<{ id: string }>();
   const [resource, setResource] = useState<InteractiveResource | null>(null);
-  const [htmlContent, setHtmlContent] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -49,13 +48,6 @@ export default function InteractiveResource() {
 
       if (error) throw error;
       setResource(data);
-
-      // Fetch the HTML content
-      if (data?.file_url) {
-        const response = await fetch(data.file_url);
-        const html = await response.text();
-        setHtmlContent(html);
-      }
     } catch (error) {
       console.error("Erreur lors du chargement de la ressource:", error);
     } finally {
@@ -113,9 +105,9 @@ export default function InteractiveResource() {
 
       <main className="h-[calc(100vh-180px)]">
         <iframe
-          srcDoc={htmlContent}
+          src={resource.file_url}
           className="w-full h-full border-0"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
           title={resource.titre}
         />
       </main>
