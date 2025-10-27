@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Upload, Loader2, FileText, Trash2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { slugify } from "@/lib/utils";
 
 interface AdminResourceUploadProps {
   lessons: any[];
@@ -98,12 +99,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         .getPublicUrl(filePath);
 
       // Generate slug from title
-      const slug = titre
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
+      const slug = slugify(titre);
 
       // Insert metadata into database
       const { error: dbError } = await supabase
