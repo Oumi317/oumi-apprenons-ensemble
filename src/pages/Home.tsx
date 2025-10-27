@@ -13,6 +13,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Testimonials } from "@/components/Testimonials";
 
 const Home = () => {
   return (
@@ -558,77 +559,7 @@ const Home = () => {
       </section>
 
       {/* Témoignages */}
-      <section className="py-20 bg-gradient-to-b from-muted/30 to-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              ⭐ Témoignages
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              +1 000 familles nous font confiance
-            </h3>
-            <p className="text-xl text-muted-foreground">
-              Découvrez leurs histoires de réussite
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                name: "Amina K.",
-                location: "Paris, France",
-                text: "Ma fille a gagné 3 points de moyenne en mathématiques en seulement 2 mois ! Le tuteur est exceptionnel et vraiment pédagogue. Elle aime enfin les maths !",
-                rating: 5,
-                improvement: "+3 pts en maths",
-                avatar: "A"
-              },
-              {
-                name: "Mohamed B.",
-                location: "Montréal, Canada",
-                text: "Parfait pour maintenir le français avec nos enfants expatriés. Les horaires flexibles s'adaptent au décalage horaire. Un vrai plus pour nous !",
-                rating: 5,
-                improvement: "Bilinguisme réussi",
-                avatar: "M"
-              },
-              {
-                name: "Sarah L.",
-                location: "Casablanca, Maroc",
-                text: "Une plateforme qui respecte nos valeurs. Mon fils est passé de 12 à 16 de moyenne générale en un trimestre. Merci Oumi'School !",
-                rating: 5,
-                improvement: "+4 pts moyenne",
-                avatar: "S"
-              }
-            ].map((testimonial, index) => (
-              <Card 
-                key={index}
-                className="p-8 animate-fade-in hover:shadow-xl transition-all border-2 hover:border-success/30 relative group overflow-hidden"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
-                <div className="flex mb-4 relative">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-foreground mb-6 italic leading-relaxed relative">
-                  "{testimonial.text}"
-                </p>
-                <div className="flex items-center gap-3 relative">
-                  <div className="w-12 h-12 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg shadow-md">
-                    {testimonial.avatar}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.location}</p>
-                  </div>
-                  <Badge className="bg-success/10 text-success border-success/20">
-                    {testimonial.improvement}
-                  </Badge>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
 
       {/* Badges de Confiance - Inspiré GoStudent */}
       <section className="py-16 bg-background border-y">
