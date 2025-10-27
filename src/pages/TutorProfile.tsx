@@ -1,14 +1,31 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
 import { 
-  Star, Award, Calendar, MapPin, Clock, CheckCircle, 
-  Video, MessageSquare, ArrowLeft, GraduationCap, BookOpen
+  Star, 
+  Award, 
+  Calendar, 
+  MapPin, 
+  Clock, 
+  CheckCircle, 
+  Video, 
+  MessageSquare, 
+  ArrowLeft, 
+  GraduationCap, 
+  BookOpen,
+  Target,
+  TrendingUp,
+  Heart,
+  Shield,
+  Languages,
+  Users
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -169,15 +186,73 @@ const TutorProfile = () => {
 
           {/* Right Column - Details */}
           <div className="lg:col-span-2 space-y-6">
+            {/* Stats Overview */}
+            <div className="grid md:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <div className="text-2xl font-bold">{tutor.nombre_sessions}</div>
+                  <div className="text-sm text-muted-foreground">Sessions données</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <TrendingUp className="h-8 w-8 mx-auto mb-2 text-success" />
+                  <div className="text-2xl font-bold">98%</div>
+                  <div className="text-sm text-muted-foreground">Taux de réussite</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Clock className="h-8 w-8 mx-auto mb-2 text-secondary" />
+                  <div className="text-2xl font-bold">24h</div>
+                  <div className="text-sm text-muted-foreground">Temps de réponse</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 text-center">
+                  <Heart className="h-8 w-8 mx-auto mb-2 text-accent" />
+                  <div className="text-2xl font-bold">96%</div>
+                  <div className="text-sm text-muted-foreground">Recommandations</div>
+                </CardContent>
+              </Card>
+            </div>
+
             {/* Bio */}
             <Card>
               <CardHeader>
-                <CardTitle>À propos</CardTitle>
+                <CardTitle>À propos de moi</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <p className="text-muted-foreground leading-relaxed">
                   {tutor.bio || "Aucune description disponible."}
                 </p>
+                
+                {/* Teaching Approach */}
+                <div className="pt-4 border-t space-y-3">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <Target className="h-5 w-5 text-primary" />
+                    Ma méthode d'enseignement
+                  </h4>
+                  <ul className="space-y-2 text-sm text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                      <span>Approche personnalisée adaptée au rythme de chaque élève</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                      <span>Exercices pratiques et mises en situation réelles</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                      <span>Suivi régulier des progrès et ajustement de la méthode</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                      <span>Ressources pédagogiques complémentaires fournies</span>
+                    </li>
+                  </ul>
+                </div>
               </CardContent>
             </Card>
 
@@ -185,7 +260,7 @@ const TutorProfile = () => {
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="subjects">Matières</TabsTrigger>
                 <TabsTrigger value="education">Formation</TabsTrigger>
-                <TabsTrigger value="reviews">Avis</TabsTrigger>
+                <TabsTrigger value="reviews">Avis ({tutor.nombre_sessions || 0})</TabsTrigger>
               </TabsList>
 
               <TabsContent value="subjects">
@@ -257,35 +332,98 @@ const TutorProfile = () => {
               <TabsContent value="reviews">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Avis des parents</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle>Avis des parents</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Star className="h-5 w-5 fill-secondary text-secondary" />
+                        <span className="text-2xl font-bold">{tutor.note_moyenne?.toFixed(1)}</span>
+                        <span className="text-muted-foreground">/ 5</span>
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-6">
-                      {/* Mock reviews - À remplacer par de vraies données */}
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="space-y-3 pb-6 border-b last:border-0">
-                          <div className="flex items-center gap-3">
-                            <Avatar>
-                              <AvatarFallback>P{i}</AvatarFallback>
-                            </Avatar>
-                            <div className="flex-1">
-                              <p className="font-semibold">Parent {i}</p>
-                              <div className="flex items-center gap-1">
-                                {[...Array(5)].map((_, j) => (
-                                  <Star
-                                    key={j}
-                                    className="h-4 w-4 fill-secondary text-secondary"
-                                  />
-                                ))}
-                              </div>
+                    {/* Rating Distribution */}
+                    <div className="space-y-3 mb-8 pb-6 border-b">
+                      {[5, 4, 3, 2, 1].map((rating) => {
+                        const percentage = rating === 5 ? 85 : rating === 4 ? 12 : 3;
+                        return (
+                          <div key={rating} className="flex items-center gap-3">
+                            <div className="flex items-center gap-1 w-12">
+                              <span className="text-sm font-medium">{rating}</span>
+                              <Star className="h-3 w-3 fill-secondary text-secondary" />
                             </div>
-                            <span className="text-sm text-muted-foreground">
-                              Il y a {i} mois
+                            <Progress value={percentage} className="flex-1" />
+                            <span className="text-sm text-muted-foreground w-12 text-right">
+                              {percentage}%
                             </span>
                           </div>
-                          <p className="text-muted-foreground">
-                            Excellent tuteur ! Mon enfant a fait d'énormes progrès en quelques semaines. 
-                            Très pédagogue et patient.
+                        );
+                      })}
+                    </div>
+
+                    <div className="space-y-6">
+                      {/* Mock reviews with more detail */}
+                      {[
+                        {
+                          name: "Sophie Martin",
+                          rating: 5,
+                          date: "Il y a 2 semaines",
+                          subject: "Mathématiques - Seconde",
+                          comment: "Excellent professeur ! Ma fille a gagné 4 points de moyenne en mathématiques en seulement 2 mois. {tutorName} est très pédagogue et sait s'adapter au niveau de l'élève. Les exercices proposés sont variés et pertinents. Je recommande vivement !",
+                        },
+                        {
+                          name: "Thomas Dubois",
+                          rating: 5,
+                          date: "Il y a 1 mois",
+                          subject: "Physique-Chimie - Terminale",
+                          comment: "Grâce à {tutorName}, mon fils a décroché une mention Très Bien au Bac ! La préparation était rigoureuse et les explications toujours claires. Un vrai professionnel qui sait motiver ses élèves.",
+                        },
+                        {
+                          name: "Marie Leclerc",
+                          rating: 5,
+                          date: "Il y a 2 mois",
+                          subject: "Français - 3ème",
+                          comment: "Ma fille était en difficulté en français, particulièrement à l'écrit. {tutorName} a su identifier ses lacunes et y remédier avec des méthodes adaptées. Les progrès sont spectaculaires ! Merci pour votre patience et votre professionnalisme.",
+                        },
+                        {
+                          name: "Jean Rousseau",
+                          rating: 4,
+                          date: "Il y a 3 mois",
+                          subject: "Histoire-Géographie - 1ère",
+                          comment: "Très bon tuteur, mon fils a repris confiance en lui. Les cours sont bien structurés et {tutorName} prend le temps d'expliquer. Seul petit bémol : parfois un peu de retard sur les horaires.",
+                        },
+                      ].map((review, i) => (
+                        <div key={i} className="space-y-3 pb-6 border-b last:border-0">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex items-start gap-3">
+                              <Avatar className="h-10 w-10">
+                                <AvatarFallback className="bg-primary/10 text-primary">
+                                  {review.name.split(' ').map(n => n[0]).join('')}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="flex-1">
+                                <p className="font-semibold">{review.name}</p>
+                                <p className="text-sm text-muted-foreground">{review.subject}</p>
+                                <div className="flex items-center gap-1 mt-1">
+                                  {[...Array(5)].map((_, j) => (
+                                    <Star
+                                      key={j}
+                                      className={`h-4 w-4 ${
+                                        j < review.rating
+                                          ? "fill-secondary text-secondary"
+                                          : "text-muted"
+                                      }`}
+                                    />
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                            <span className="text-sm text-muted-foreground whitespace-nowrap">
+                              {review.date}
+                            </span>
+                          </div>
+                          <p className="text-muted-foreground leading-relaxed">
+                            {review.comment.replace('{tutorName}', tutor.profiles?.prenom || 'Ce tuteur')}
                           </p>
                         </div>
                       ))}
@@ -297,6 +435,8 @@ const TutorProfile = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
 
       <BookingDialog
         open={bookingOpen}
