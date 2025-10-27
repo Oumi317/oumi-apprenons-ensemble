@@ -97,6 +97,14 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         .from("interactive-resources")
         .getPublicUrl(filePath);
 
+      // Generate slug from title
+      const slug = titre
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "") // Remove diacritics
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, ""); // Remove leading/trailing dashes
+
       // Insert metadata into database
       const { error: dbError } = await supabase
         .from("interactive_resources")
@@ -106,6 +114,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
           description,
           type: "interactive_html",
           file_url: publicUrl,
+          slug,
           ordre_affichage: parseInt(ordreAffichage)
         });
 

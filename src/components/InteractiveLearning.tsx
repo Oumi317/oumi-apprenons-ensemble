@@ -12,6 +12,7 @@ interface InteractiveResource {
   titre: string;
   description?: string;
   file_url: string;
+  slug: string;
 }
 
 interface InteractiveLearningProps {
@@ -22,8 +23,8 @@ export function InteractiveLearning({ resources }: InteractiveLearningProps) {
   const [viewerOpen, setViewerOpen] = useState(false);
   const [selectedResource, setSelectedResource] = useState<InteractiveResource | null>(null);
 
-  const copyLink = (resourceId: string) => {
-    const url = `${window.location.origin}/interactive/${resourceId}`;
+  const copyLink = (slug: string) => {
+    const url = `${window.location.origin}/interactive/${slug}`;
     navigator.clipboard.writeText(url);
     toast.success("Lien copié !", {
       description: "L'URL a été copiée dans votre presse-papier"
@@ -67,7 +68,7 @@ export function InteractiveLearning({ resources }: InteractiveLearningProps) {
                         Exercice Interactif
                       </Badge>
                       <span className="text-xs text-muted-foreground font-mono">
-                        /interactive/{resource.id.slice(0, 8)}...
+                        /interactive/{resource.slug}
                       </span>
                     </div>
                   </div>
@@ -76,12 +77,12 @@ export function InteractiveLearning({ resources }: InteractiveLearningProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => copyLink(resource.id)}
+                    onClick={() => copyLink(resource.slug)}
                   >
                     <LinkIcon className="h-4 w-4 mr-2" />
                     Copier lien
                   </Button>
-                  <Link to={`/interactive/${resource.id}`} target="_blank">
+                  <Link to={`/interactive/${resource.slug}`} target="_blank">
                     <Button variant="outline" size="sm">
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Ouvrir

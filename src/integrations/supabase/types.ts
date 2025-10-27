@@ -165,6 +165,7 @@ export type Database = {
           id: string
           lesson_id: string
           ordre_affichage: number | null
+          slug: string
           titre: string
           type: string
           updated_at: string | null
@@ -176,6 +177,7 @@ export type Database = {
           id?: string
           lesson_id: string
           ordre_affichage?: number | null
+          slug: string
           titre: string
           type?: string
           updated_at?: string | null
@@ -187,6 +189,7 @@ export type Database = {
           id?: string
           lesson_id?: string
           ordre_affichage?: number | null
+          slug?: string
           titre?: string
           type?: string
           updated_at?: string | null

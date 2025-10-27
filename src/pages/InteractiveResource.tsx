@@ -43,7 +43,7 @@ export default function InteractiveResource() {
             niveau_scolaire
           )
         `)
-        .eq("id", id)
+        .eq("slug", id)
         .maybeSingle();
 
       if (error) throw error;
