@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -12,7 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GraduationCap, Search, Star, Award, Calendar, Clock, Users } from "lucide-react";
+import { 
+  GraduationCap, 
+  Search, 
+  Star, 
+  Award, 
+  Calendar, 
+  Users,
+  CheckCircle,
+  Target,
+  Shield,
+  Sparkles
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BookingDialog from "@/components/BookingDialog";
@@ -28,6 +41,7 @@ const Tutors = () => {
   const [user, setUser] = useState<any>(null);
   const [tutors, setTutors] = useState<any[]>([]);
   const [filteredTutors, setFilteredTutors] = useState<any[]>([]);
+  const [featuredTutors, setFeaturedTutors] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState("Toutes");
@@ -83,6 +97,15 @@ const Tutors = () => {
       });
     } else {
       setTutors(data || []);
+      // Set featured tutors (top rated with most sessions)
+      const featured = [...(data || [])]
+        .sort((a, b) => {
+          const scoreA = (a.note_moyenne || 0) * 0.6 + (a.nombre_sessions || 0) * 0.4;
+          const scoreB = (b.note_moyenne || 0) * 0.6 + (b.nombre_sessions || 0) * 0.4;
+          return scoreB - scoreA;
+        })
+        .slice(0, 3);
+      setFeaturedTutors(featured);
     }
     setLoading(false);
   };
@@ -138,68 +161,198 @@ const Tutors = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Hero Section */}
-          <div className="text-center space-y-4">
-            <h2 className="text-4xl font-bold">Nos tuteurs certifiés</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Professeurs expérimentés et diplômés, prêts à accompagner vos enfants
+          <div className="text-center space-y-6 py-8">
+            <h1 className="text-5xl font-bold">Nos tuteurs d'excellence</h1>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Des enseignants passionnés, certifiés et expérimentés, sélectionnés pour leur expertise pédagogique
             </p>
-            <div className="flex items-center justify-center gap-4 text-sm">
-              <Badge variant="secondary" className="bg-success/10 text-success">
-                <Award className="h-3 w-3 mr-1" />
-                100% certifiés
-              </Badge>
-              <Badge variant="secondary" className="bg-primary/10 text-primary">
-                <Users className="h-3 w-3 mr-1" />
-                {tutors.length} tuteurs disponibles
-              </Badge>
+            
+            {/* Statistics */}
+            <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-4">
+              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                <CardContent className="p-6 text-center">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <div className="text-3xl font-bold text-primary">{tutors.length}</div>
+                  <div className="text-sm text-muted-foreground">Tuteurs certifiés</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
+                <CardContent className="p-6 text-center">
+                  <CheckCircle className="h-8 w-8 mx-auto mb-2 text-success" />
+                  <div className="text-3xl font-bold text-success">100%</div>
+                  <div className="text-sm text-muted-foreground">Vérifiés</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
+                <CardContent className="p-6 text-center">
+                  <Star className="h-8 w-8 mx-auto mb-2 text-secondary" />
+                  <div className="text-3xl font-bold text-secondary">
+                    {tutors.length > 0 
+                      ? (tutors.reduce((sum, t) => sum + (t.note_moyenne || 0), 0) / tutors.length).toFixed(1)
+                      : "4.8"
+                    }
+                  </div>
+                  <div className="text-sm text-muted-foreground">Note moyenne</div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
+                <CardContent className="p-6 text-center">
+                  <Award className="h-8 w-8 mx-auto mb-2 text-accent" />
+                  <div className="text-3xl font-bold text-accent">
+                    {tutors.reduce((sum, t) => sum + (t.annees_experience || 0), 0)}+
+                  </div>
+                  <div className="text-sm text-muted-foreground">Années d'expérience</div>
+                </CardContent>
+              </Card>
             </div>
           </div>
 
-          {/* Filters */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="grid md:grid-cols-3 gap-4">
-                <div>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Rechercher un tuteur..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
+          {/* Featured Tutors */}
+          {featuredTutors.length > 0 && (
+            <Card className="bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 border-primary/20">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-primary" />
+                      Tuteurs recommandés
+                    </CardTitle>
+                    <CardDescription>Nos meilleurs tuteurs selon les notes et l'expérience</CardDescription>
                   </div>
                 </div>
-                <Select value={selectedMatiere} onValueChange={setSelectedMatiere}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Matière" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {matieres.map((matiere) => (
-                      <SelectItem key={matiere} value={matiere}>
-                        {matiere}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground">
-                    Tarif maximum: {maxTarif}€/h
-                  </label>
-                  <Input
-                    type="range"
-                    min="20"
-                    max="100"
-                    step="5"
-                    value={maxTarif}
-                    onChange={(e) => setMaxTarif(Number(e.target.value))}
-                  />
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {featuredTutors.map((tutor) => (
+                    <Card
+                      key={tutor.id}
+                      className="hover:shadow-xl transition-all hover:border-primary cursor-pointer relative overflow-hidden"
+                      onClick={() => navigate(`/tutors/${tutor.id}`)}
+                    >
+                      <div className="absolute top-0 right-0 bg-gradient-primary text-white px-3 py-1 rounded-bl-lg text-xs font-semibold">
+                        <Star className="h-3 w-3 inline mr-1" />
+                        Top tuteur
+                      </div>
+                      <CardHeader>
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="h-16 w-16 rounded-full bg-gradient-primary flex items-center justify-center text-white text-2xl font-bold">
+                            {tutor.profiles?.prenom?.[0]}{tutor.profiles?.nom?.[0]}
+                          </div>
+                          <div className="text-right">
+                            <div className="flex items-center gap-1 text-secondary font-bold">
+                              <Star className="h-4 w-4 fill-secondary" />
+                              <span>{tutor.note_moyenne?.toFixed(1)}</span>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              {tutor.nombre_sessions} sessions
+                            </p>
+                          </div>
+                        </div>
+                        <CardTitle className="text-xl">
+                          {tutor.profiles?.prenom} {tutor.profiles?.nom}
+                        </CardTitle>
+                        <CardDescription>
+                          {tutor.annees_experience} ans d'expérience
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex flex-wrap gap-1">
+                          {tutor.matieres_enseignees?.slice(0, 2).map((matiere: string) => (
+                            <Badge key={matiere} variant="secondary" className="text-xs">
+                              {matiere}
+                            </Badge>
+                          ))}
+                        </div>
+                        <div className="flex items-center justify-between pt-2 border-t">
+                          <div>
+                            <p className="text-2xl font-bold text-primary">
+                              {tutor.tarif_horaire_eur}€
+                            </p>
+                            <p className="text-xs text-muted-foreground">par heure</p>
+                          </div>
+                          <Button 
+                            size="sm"
+                            className="bg-gradient-primary"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setBookingDialog({
+                                open: true,
+                                tutorId: tutor.id,
+                                tutorName: `${tutor.profiles?.prenom} ${tutor.profiles?.nom}`,
+                                subject: tutor.matieres_enseignees?.[0] || "Matière",
+                                hourlyRate: Number(tutor.tarif_horaire_eur)
+                              });
+                            }}
+                          >
+                            Réserver
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
-              </div>
-              <div className="mt-4">
-                <span className="text-sm text-muted-foreground">
-                  {filteredTutors.length} tuteur{filteredTutors.length > 1 ? "s" : ""} trouvé{filteredTutors.length > 1 ? "s" : ""}
-                </span>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Search and Filters */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="md:col-span-2">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                      <Input
+                        placeholder="Rechercher par nom ou spécialité..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-11 h-12 text-base"
+                      />
+                    </div>
+                  </div>
+                  <Select value={selectedMatiere} onValueChange={setSelectedMatiere}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Toutes les matières" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {matieres.map((matiere) => (
+                        <SelectItem key={matiere} value={matiere}>
+                          {matiere}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">
+                      Budget maximum
+                    </label>
+                    <Badge variant="secondary" className="text-sm font-bold">
+                      {maxTarif}€/heure
+                    </Badge>
+                  </div>
+                  <Slider
+                    value={[maxTarif]}
+                    onValueChange={(value) => setMaxTarif(value[0])}
+                    min={20}
+                    max={100}
+                    step={5}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>20€</span>
+                    <span>100€</span>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t">
+                  <Badge variant="secondary">
+                    {filteredTutors.length} tuteur{filteredTutors.length > 1 ? "s" : ""} trouvé{filteredTutors.length > 1 ? "s" : ""}
+                  </Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -308,23 +461,46 @@ const Tutors = () => {
           )}
 
           {/* CTA Devenir Tuteur */}
-          <Card className="bg-gradient-warm text-white border-0">
+          <Card className="bg-gradient-hero text-white border-0">
             <CardContent className="py-12 text-center">
-              <h3 className="text-3xl font-bold mb-4">
-                Vous êtes enseignant ?
-              </h3>
-              <p className="text-xl mb-6 text-white/90">
-                Rejoignez notre équipe de tuteurs certifiés et partagez votre passion de l'enseignement
-              </p>
-              <Link to="/auth?mode=signup&role=tutor">
-                <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform">
-                  Devenir tuteur
-                </Button>
-              </Link>
+              <div className="max-w-2xl mx-auto space-y-6">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <Shield className="h-8 w-8" />
+                  <GraduationCap className="h-10 w-10" />
+                  <Target className="h-8 w-8" />
+                </div>
+                <h3 className="text-4xl font-bold">
+                  Vous êtes enseignant ?
+                </h3>
+                <p className="text-xl text-white/90">
+                  Rejoignez notre équipe de tuteurs d'excellence et partagez votre passion de l'enseignement avec des milliers d'élèves
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Horaires flexibles</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Rémunération attractive</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Formation continue</span>
+                  </div>
+                </div>
+                <Link to="/tutor-signup">
+                  <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform text-lg px-8">
+                    Devenir tuteur
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>
       </main>
+
+      <Footer />
 
       <BookingDialog
         open={bookingDialog.open}
