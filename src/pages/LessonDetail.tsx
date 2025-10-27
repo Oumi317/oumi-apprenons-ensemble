@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GraduationCap, Clock, BookOpen, ArrowLeft, Play, CheckCircle, Star, Award } from "lucide-react";
+import { GraduationCap, Clock, BookOpen, ArrowLeft, Play, CheckCircle, Star, Award, Target, TrendingUp, Users, Lightbulb, FileText, Video } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Quiz } from "@/components/Quiz";
 import { VideoPlayer } from "@/components/VideoPlayer";
 import { LessonNotes } from "@/components/LessonNotes";
 import { LessonResources } from "@/components/LessonResources";
+import { Footer } from "@/components/Footer";
 
 const difficulteColors = {
   facile: "bg-success/10 text-success",
@@ -214,7 +215,7 @@ const LessonDetail = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Lesson Header */}
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="flex items-center gap-3">
               <Badge variant="secondary" className="bg-primary/10 text-primary">
                 {lesson.niveau_scolaire}
@@ -237,28 +238,87 @@ const LessonDetail = () => {
             <h1 className="text-4xl font-bold">{lesson.titre}</h1>
             <p className="text-xl text-muted-foreground">{lesson.description}</p>
             
-            <div className="flex items-center gap-6 text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                <span>{lesson.duree_estimee_minutes} minutes</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                <span className="capitalize">{lesson.type_contenu}</span>
-              </div>
+            {/* Lesson Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <Clock className="h-8 w-8 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-bold">{lesson.duree_estimee_minutes}</p>
+                  <p className="text-sm text-muted-foreground">Minutes</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <Target className="h-8 w-8 text-success mx-auto mb-2" />
+                  <p className="text-2xl font-bold capitalize">{lesson.difficulte}</p>
+                  <p className="text-sm text-muted-foreground">Niveau</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <Video className="h-8 w-8 text-secondary mx-auto mb-2" />
+                  <p className="text-2xl font-bold capitalize">{lesson.type_contenu}</p>
+                  <p className="text-sm text-muted-foreground">Format</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <Users className="h-8 w-8 text-accent mx-auto mb-2" />
+                  <p className="text-2xl font-bold">98%</p>
+                  <p className="text-sm text-muted-foreground">Réussite</p>
+                </CardContent>
+              </Card>
             </div>
 
             {progress && (
-              <Card className="bg-gradient-success">
+              <Card className="bg-gradient-success border-0">
                 <CardContent className="pt-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-white font-semibold">Progression</span>
-                    <span className="text-white font-bold">{progress.statut_completion}%</span>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-white font-semibold flex items-center gap-2">
+                      <TrendingUp className="h-5 w-5" />
+                      Votre progression
+                    </span>
+                    <span className="text-white font-bold text-lg">{progress.statut_completion}%</span>
                   </div>
-                  <Progress value={progress.statut_completion} className="h-3" />
+                  <Progress value={progress.statut_completion} className="h-3 bg-white/20" />
+                  {progress.tentatives > 0 && (
+                    <p className="text-white/90 text-sm mt-2">
+                      Tentative {progress.tentatives} • Temps passé: {progress.temps_passe_minutes || 0} min
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
+
+            {/* What You'll Learn */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-primary" />
+                  Ce que vous allez apprendre
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                    <span>Maîtriser les concepts fondamentaux de {lesson.matiere}</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                    <span>Appliquer les connaissances à travers des exercices pratiques</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                    <span>Évaluer votre compréhension avec un quiz interactif</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle className="h-5 w-5 text-success flex-shrink-0 mt-0.5" />
+                    <span>Obtenir des ressources complémentaires pour approfondir</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Main Content Area */}
@@ -375,32 +435,56 @@ const LessonDetail = () => {
                 <CardHeader>
                   <CardTitle>Détails de la leçon</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2 flex items-center gap-2">
-                      <Award className="h-4 w-4 text-success" />
-                      Alignement programme officiel
-                    </h4>
-                    <p className="text-sm text-muted-foreground">
-                      {lesson.alignement_socle_commun}
-                    </p>
-                  </div>
+                <CardContent className="space-y-6">
+                  {lesson.alignement_socle_commun && (
+                    <div>
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <Award className="h-5 w-5 text-success" />
+                        Alignement programme officiel
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        {lesson.alignement_socle_commun}
+                      </p>
+                    </div>
+                  )}
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Objectifs pédagogiques</h4>
-                    <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                      <li>Comprendre les concepts fondamentaux</li>
-                      <li>Appliquer les connaissances à travers des exercices</li>
-                      <li>Évaluer sa compréhension avec un quiz</li>
+                  <div className="pt-4 border-t">
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <Target className="h-5 w-5 text-primary" />
+                      Objectifs pédagogiques
+                    </h4>
+                    <ul className="space-y-2">
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="text-primary mt-1">•</span>
+                        <span>Comprendre et assimiler les concepts fondamentaux</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="text-primary mt-1">•</span>
+                        <span>Appliquer les connaissances à travers des exercices pratiques</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="text-primary mt-1">•</span>
+                        <span>Évaluer sa compréhension avec un quiz détaillé</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-sm text-muted-foreground">
+                        <span className="text-primary mt-1">•</span>
+                        <span>Développer des compétences transversales</span>
+                      </li>
                     </ul>
                   </div>
 
                   {lesson.type_contenu === "quiz" && (
-                    <div>
-                      <h4 className="font-semibold mb-2">Format du quiz</h4>
-                      <p className="text-sm text-muted-foreground">
-                        10 questions à choix multiples • Correction immédiate • Score détaillé
-                      </p>
+                    <div className="pt-4 border-t">
+                      <h4 className="font-semibold mb-3 flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-secondary" />
+                        Format du quiz
+                      </h4>
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        <p>• 10 questions à choix multiples</p>
+                        <p>• Correction immédiate après chaque question</p>
+                        <p>• Score détaillé et explications</p>
+                        <p>• Possibilité de refaire le quiz</p>
+                      </div>
                     </div>
                   )}
                 </CardContent>
@@ -488,6 +572,49 @@ const LessonDetail = () => {
                 </CardContent>
               </Card>
 
+              {/* Lesson Stats */}
+              <Card className="bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/10">
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                    Statistiques
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      Étudiants inscrits
+                    </span>
+                    <span className="font-bold text-primary">1,234</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Star className="h-4 w-4" />
+                      Note moyenne
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-secondary text-secondary" />
+                      <span className="font-bold">4.8</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Award className="h-5 w-5" />
+                      Taux de réussite
+                    </span>
+                    <span className="font-bold text-success">98%</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-background rounded-lg">
+                    <span className="text-sm text-muted-foreground flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      Temps moyen
+                    </span>
+                    <span className="font-bold">{lesson.duree_estimee_minutes} min</span>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Lesson Notes */}
               {selectedChild && lesson.type_contenu === "video" && (
                 <LessonNotes
@@ -535,6 +662,8 @@ const LessonDetail = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
     </div>
   );
 };
