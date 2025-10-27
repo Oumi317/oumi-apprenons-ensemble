@@ -24,7 +24,12 @@ import {
   CheckCircle,
   Target,
   Shield,
-  Sparkles
+  Sparkles,
+  Clock,
+  Video,
+  BarChart3,
+  TrendingUp,
+  Filter
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -157,55 +162,81 @@ const Tutors = () => {
     <div className="min-h-screen bg-background">
       <NavigationHeader />
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {/* Hero Section */}
-          <div className="text-center space-y-6 py-8">
-            <h1 className="text-5xl font-bold">Nos tuteurs d'excellence</h1>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Des enseignants passionnés, certifiés et expérimentés, sélectionnés pour leur expertise pédagogique
-            </p>
+      {/* Hero Section */}
+      <section className="relative py-20 bg-gradient-hero overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm inline-flex items-center gap-2 px-4 py-2">
+              <Shield className="h-4 w-4" />
+              +{tutors.length} tuteurs certifiés disponibles
+            </Badge>
             
-            {/* Statistics */}
-            <div className="grid md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-4">
-              <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
-                <CardContent className="p-6 text-center">
-                  <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-                  <div className="text-3xl font-bold text-primary">{tutors.length}</div>
-                  <div className="text-sm text-muted-foreground">Tuteurs certifiés</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-to-br from-success/5 to-success/10 border-success/20">
-                <CardContent className="p-6 text-center">
-                  <CheckCircle className="h-8 w-8 mx-auto mb-2 text-success" />
-                  <div className="text-3xl font-bold text-success">100%</div>
-                  <div className="text-sm text-muted-foreground">Vérifiés</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-to-br from-secondary/5 to-secondary/10 border-secondary/20">
-                <CardContent className="p-6 text-center">
-                  <Star className="h-8 w-8 mx-auto mb-2 text-secondary" />
-                  <div className="text-3xl font-bold text-secondary">
-                    {tutors.length > 0 
-                      ? (tutors.reduce((sum, t) => sum + (t.note_moyenne || 0), 0) / tutors.length).toFixed(1)
-                      : "4.8"
-                    }
-                  </div>
-                  <div className="text-sm text-muted-foreground">Note moyenne</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-gradient-to-br from-accent/5 to-accent/10 border-accent/20">
-                <CardContent className="p-6 text-center">
-                  <Award className="h-8 w-8 mx-auto mb-2 text-accent" />
-                  <div className="text-3xl font-bold text-accent">
-                    {tutors.reduce((sum, t) => sum + (t.annees_experience || 0), 0)}+
-                  </div>
-                  <div className="text-sm text-muted-foreground">Années d'expérience</div>
-                </CardContent>
-              </Card>
+            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+              Trouvez le tuteur parfait pour votre enfant
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+              Des enseignants passionnés, rigoureusement sélectionnés pour leur excellence pédagogique et leur expérience
+            </p>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <Users className="h-8 w-8 mx-auto mb-2 text-white" />
+                <div className="text-3xl font-bold text-white">{tutors.length}+</div>
+                <div className="text-sm text-white/80">Tuteurs</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <Star className="h-8 w-8 mx-auto mb-2 text-white" />
+                <div className="text-3xl font-bold text-white">
+                  {tutors.length > 0 
+                    ? (tutors.reduce((sum, t) => sum + (t.note_moyenne || 0), 0) / tutors.length).toFixed(1)
+                    : "4.8"
+                  }
+                </div>
+                <div className="text-sm text-white/80">Note moyenne</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-white" />
+                <div className="text-3xl font-bold text-white">100%</div>
+                <div className="text-sm text-white/80">Vérifiés</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                <Clock className="h-8 w-8 mx-auto mb-2 text-white" />
+                <div className="text-3xl font-bold text-white">24/7</div>
+                <div className="text-sm text-white/80">Disponibilité</div>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Trust Badges */}
+      <section className="py-12 bg-muted/30 border-y">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+            {[
+              { icon: Shield, title: "Vérification rigoureuse", desc: "Diplômes et casiers judiciaires vérifiés" },
+              { icon: Video, title: "Cours interactifs", desc: "Tableau blanc et outils pédagogiques avancés" },
+              { icon: BarChart3, title: "Suivi en temps réel", desc: "Rapports détaillés après chaque session" },
+              { icon: TrendingUp, title: "Résultats garantis", desc: "92% de progression constatée" },
+            ].map((item, index) => (
+              <div key={index} className="text-center space-y-3 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <div className="h-14 w-14 mx-auto bg-primary/10 rounded-xl flex items-center justify-center">
+                  <item.icon className="h-7 w-7 text-primary" />
+                </div>
+                <h4 className="font-semibold text-sm">{item.title}</h4>
+                <p className="text-xs text-muted-foreground">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-12">
+        <div className="space-y-8">
 
           {/* Featured Tutors */}
           {featuredTutors.length > 0 && (
@@ -296,42 +327,56 @@ const Tutors = () => {
           )}
 
           {/* Search and Filters */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="space-y-4">
+          <Card className="shadow-lg border-2">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5 text-primary" />
+                <CardTitle>Trouvez votre tuteur idéal</CardTitle>
+              </div>
+              <CardDescription>
+                Filtrez par matière, budget et compétences pour trouver le match parfait
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div className="md:col-span-2">
+                    <label className="text-sm font-medium mb-2 block">Recherche</label>
                     <div className="relative">
-                      <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       <Input
-                        placeholder="Rechercher par nom ou spécialité..."
+                        placeholder="Nom, spécialité, certification..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-11 h-12 text-base"
                       />
                     </div>
                   </div>
-                  <Select value={selectedMatiere} onValueChange={setSelectedMatiere}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Toutes les matières" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {matieres.map((matiere) => (
-                        <SelectItem key={matiere} value={matiere}>
-                          {matiere}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Matière</label>
+                    <Select value={selectedMatiere} onValueChange={setSelectedMatiere}>
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Toutes les matières" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {matieres.map((matiere) => (
+                          <SelectItem key={matiere} value={matiere}>
+                            {matiere}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
                   <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">
-                      Budget maximum
+                    <label className="text-sm font-medium flex items-center gap-2">
+                      <Award className="h-4 w-4 text-primary" />
+                      Budget maximum par heure
                     </label>
-                    <Badge variant="secondary" className="text-sm font-bold">
-                      {maxTarif}€/heure
+                    <Badge className="text-base font-bold px-3 py-1">
+                      {maxTarif}€
                     </Badge>
                   </div>
                   <Slider
@@ -342,16 +387,30 @@ const Tutors = () => {
                     step={5}
                     className="w-full"
                   />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>20€</span>
-                    <span>100€</span>
+                  <div className="flex justify-between text-xs text-muted-foreground pt-1">
+                    <span>20€/h</span>
+                    <span>100€/h</span>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t">
-                  <Badge variant="secondary">
-                    {filteredTutors.length} tuteur{filteredTutors.length > 1 ? "s" : ""} trouvé{filteredTutors.length > 1 ? "s" : ""}
+                <div className="flex items-center justify-between pt-2 border-t">
+                  <Badge variant="secondary" className="text-base px-4 py-2">
+                    <Users className="h-4 w-4 mr-2" />
+                    {filteredTutors.length} tuteur{filteredTutors.length > 1 ? "s" : ""} disponible{filteredTutors.length > 1 ? "s" : ""}
                   </Badge>
+                  {(searchQuery || selectedMatiere !== "Toutes" || maxTarif !== 100) && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setSelectedMatiere("Toutes");
+                        setMaxTarif(100);
+                      }}
+                    >
+                      Réinitialiser
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -373,72 +432,83 @@ const Tutors = () => {
               {filteredTutors.map((tutor) => (
                 <Card
                   key={tutor.id}
-                  className="hover:shadow-lg transition-all hover:border-primary/50 cursor-pointer animate-fade-in"
+                  className="group hover:shadow-2xl transition-all hover:border-primary/50 cursor-pointer animate-fade-in hover:-translate-y-1 border-2"
                   onClick={() => navigate(`/tutors/${tutor.id}`)}
                 >
-                  <CardHeader>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="h-16 w-16 rounded-full bg-gradient-primary flex items-center justify-center text-white text-2xl font-bold">
-                        {tutor.profiles?.prenom?.[0]}{tutor.profiles?.nom?.[0]}
+                  <CardHeader className="relative">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="relative">
+                        <div className="h-20 w-20 rounded-2xl bg-gradient-primary flex items-center justify-center text-white text-3xl font-bold shadow-lg group-hover:scale-105 transition-transform">
+                          {tutor.profiles?.prenom?.[0]}{tutor.profiles?.nom?.[0]}
+                        </div>
+                        {tutor.verification_casier && (
+                          <div className="absolute -bottom-1 -right-1 h-7 w-7 bg-success rounded-full border-2 border-background flex items-center justify-center">
+                            <CheckCircle className="h-4 w-4 text-white" />
+                          </div>
+                        )}
                       </div>
                       <div className="text-right">
-                        <div className="flex items-center gap-1 text-secondary font-bold">
-                          <Star className="h-4 w-4 fill-secondary" />
-                          <span>{tutor.note_moyenne?.toFixed(1)}</span>
+                        <div className="flex items-center gap-1 bg-secondary/10 px-3 py-1.5 rounded-full">
+                          <Star className="h-4 w-4 fill-secondary text-secondary" />
+                          <span className="font-bold text-secondary">{tutor.note_moyenne?.toFixed(1)}</span>
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          {tutor.nombre_sessions} sessions
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {tutor.nombre_sessions} sessions données
                         </p>
                       </div>
                     </div>
-                    <CardTitle className="text-xl">
+                    <CardTitle className="text-xl group-hover:text-primary transition-colors">
                       {tutor.profiles?.prenom} {tutor.profiles?.nom}
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="flex items-center gap-2">
+                      <Award className="h-3 w-3" />
                       {tutor.annees_experience} ans d'expérience • {tutor.profiles?.pays}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground line-clamp-3">
+                    <div className="min-h-[60px]">
+                      <p className="text-sm text-muted-foreground line-clamp-3 leading-relaxed">
                         {tutor.bio}
                       </p>
                     </div>
 
                     <div className="space-y-2">
-                      <p className="text-xs font-semibold text-muted-foreground">Matières</p>
-                      <div className="flex flex-wrap gap-1">
+                      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Matières enseignées</p>
+                      <div className="flex flex-wrap gap-1.5">
                         {tutor.matieres_enseignees?.slice(0, 3).map((matiere: string) => (
-                          <Badge key={matiere} variant="secondary" className="text-xs">
+                          <Badge key={matiere} variant="secondary" className="text-xs font-medium">
                             {matiere}
                           </Badge>
                         ))}
                         {tutor.matieres_enseignees?.length > 3 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{tutor.matieres_enseignees.length - 3}
+                          <Badge variant="outline" className="text-xs">
+                            +{tutor.matieres_enseignees.length - 3} autres
                           </Badge>
                         )}
                       </div>
                     </div>
 
                     {tutor.certifications && tutor.certifications.length > 0 && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Award className="h-4 w-4 text-success" />
-                        <span className="text-success font-semibold">
+                      <div className="flex items-center gap-2 p-2 bg-success/5 rounded-lg">
+                        <div className="h-8 w-8 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
+                          <Award className="h-4 w-4 text-success" />
+                        </div>
+                        <span className="text-sm text-success font-semibold">
                           {tutor.certifications[0]}
                         </span>
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between pt-2 border-t">
+                    <div className="flex items-center justify-between pt-4 border-t-2">
                       <div>
-                        <p className="text-2xl font-bold text-primary">
+                        <p className="text-3xl font-bold text-primary">
                           {tutor.tarif_horaire_eur}€
                         </p>
                         <p className="text-xs text-muted-foreground">par heure</p>
                       </div>
                       <Button 
-                        className="bg-gradient-primary"
+                        size="lg"
+                        className="bg-gradient-primary hover:scale-105 transition-transform shadow-lg"
                         onClick={(e) => {
                           e.stopPropagation();
                           setBookingDialog({
