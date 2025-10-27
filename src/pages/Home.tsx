@@ -54,70 +54,112 @@ const Home = () => {
         </div>
       </header>
 
-      {/* Hero Section - Style GoStudent */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary/90 to-secondary py-20 md:py-32">
+      {/* Hero Section - Enhanced GoStudent Style */}
+      <section className="relative overflow-hidden bg-gradient-hero py-20 md:py-32">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             <div className="text-white space-y-8 animate-fade-in">
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm">
-                ✨ Rejoignez plus de 1 000 familles
+              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm inline-flex items-center gap-2">
+                <Award className="h-4 w-4" />
+                Rejoignez plus de 1 000 familles satisfaites
               </Badge>
               
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-                92% des élèves progressent avec notre tutorat 1-à-1
+              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                92% des élèves <span className="text-white/90">progressent</span> avec notre tutorat
               </h1>
               
+              <p className="text-xl md:text-2xl text-white/90 leading-relaxed">
+                Excellence éducative francophone accessible partout dans le monde, 
+                avec des tuteurs certifiés disponibles 7j/7
+              </p>
+
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="h-6 w-6 text-white mt-1 flex-shrink-0" />
-                  <p className="text-lg text-white/90">Tuteurs certifiés et expérimentés triés sur le volet</p>
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-lg text-white/90">Tuteurs certifiés avec 5+ ans d'expérience</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="h-6 w-6 text-white mt-1 flex-shrink-0" />
-                  <p className="text-lg text-white/90">Cours personnalisés dans notre salle de classe virtuelle</p>
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-lg text-white/90">Salle de classe virtuelle avec tableau interactif</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="h-6 w-6 text-white mt-1 flex-shrink-0" />
-                  <p className="text-lg text-white/90">Horaires flexibles - apprenez quand vous voulez, d'où vous voulez</p>
+                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-5 w-5 text-white" />
+                  </div>
+                  <p className="text-lg text-white/90">Horaires ultra flexibles adaptés à votre fuseau</p>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/auth?mode=signup">
-                  <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl hover:scale-105 transition-transform">
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link to="/auth?mode=signup" className="inline-block">
+                  <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl hover:scale-105 transition-transform text-lg h-14 px-8 font-semibold">
                     Réserver un cours d'essai gratuit
+                  </Button>
+                </Link>
+                <Link to="/tutors" className="inline-block">
+                  <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 h-14 px-8 font-semibold">
+                    Voir nos tuteurs
                   </Button>
                 </Link>
               </div>
 
-              <div className="flex items-center gap-3 text-white/90">
+              <div className="flex items-center gap-6 pt-4 border-t border-white/20">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-5 w-5 fill-white text-white" />
                   ))}
                 </div>
-                <span className="text-sm">Excellent - 4.8/5 basé sur 500+ avis</span>
+                <div className="text-white">
+                  <p className="font-semibold text-lg">4.8/5 Excellent</p>
+                  <p className="text-sm text-white/70">Basé sur 500+ avis vérifiés</p>
+                </div>
               </div>
             </div>
 
-            <div className="relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="relative bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
-                <div className="aspect-video bg-gradient-to-br from-white/5 to-white/10 rounded-xl flex items-center justify-center">
-                  <Play className="h-16 w-16 text-white" />
-                </div>
-                <div className="mt-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center">
-                      <Video className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="text-white">
-                      <p className="font-semibold">Salle de classe interactive</p>
-                      <p className="text-sm text-white/70">Rend l'apprentissage amusant et engageant</p>
+            <div className="relative animate-fade-in space-y-6" style={{ animationDelay: '0.2s' }}>
+              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl hover:shadow-3xl transition-shadow">
+                <div className="aspect-video bg-gradient-to-br from-white/5 to-white/10 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
+                  <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors"></div>
+                  <div className="relative">
+                    <div className="h-20 w-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Play className="h-10 w-10 text-white ml-1" />
                     </div>
                   </div>
                 </div>
+                <div className="mt-6 space-y-4">
+                  <div className="flex items-center gap-3 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
+                    <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="text-white">
+                      <p className="font-semibold text-lg">Salle de classe interactive</p>
+                      <p className="text-sm text-white/70">Tableau blanc, partage d'écran et outils avancés</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { icon: Users, label: "1000+", desc: "Élèves actifs" },
+                  { icon: Award, label: "50+", desc: "Tuteurs certifiés" },
+                  { icon: Globe, label: "25+", desc: "Pays couverts" },
+                ].map((stat, index) => (
+                  <div 
+                    key={index}
+                    className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-colors"
+                  >
+                    <stat.icon className="h-6 w-6 text-white mx-auto mb-2" />
+                    <div className="text-2xl font-bold text-white">{stat.label}</div>
+                    <div className="text-xs text-white/70">{stat.desc}</div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -691,22 +733,58 @@ const Home = () => {
         </div>
       </section>
 
-      {/* CTA Final */}
-      <section className="py-20 bg-gradient-hero">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl mx-auto space-y-8">
-            <h3 className="text-3xl md:text-5xl font-bold text-white">
-              Prêt à commencer l'aventure éducative ?
+      {/* CTA Final - Enhanced */}
+      <section className="relative py-24 bg-gradient-hero overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm inline-flex items-center gap-2 px-6 py-2">
+              <Target className="h-4 w-4" />
+              Offre de lancement
+            </Badge>
+            
+            <h3 className="text-3xl md:text-6xl font-bold text-white leading-tight">
+              Commencez votre aventure éducative dès aujourd'hui
             </h3>
-            <p className="text-xl text-white/90">
-              Rejoignez des milliers de familles qui font confiance à Oumi'School
+            
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+              Première session de 30 minutes <span className="font-bold text-white">100% gratuite</span> et sans engagement. 
+              Découvrez pourquoi +1 000 familles nous font confiance.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
               <Link to="/auth?mode=signup">
-                <Button size="lg" variant="secondary" className="hover:scale-105 transition-transform">
-                  Créer mon compte gratuitement
+                <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-2xl hover:scale-105 transition-transform text-lg h-16 px-10 font-bold">
+                  Réserver mon cours gratuit
                 </Button>
               </Link>
+              <Link to="/tutors">
+                <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 h-16 px-10 font-semibold">
+                  Parcourir les tuteurs
+                </Button>
+              </Link>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-8 border-t border-white/20">
+              <div className="flex items-center gap-3 text-white">
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <span className="font-semibold">Sans carte bancaire</span>
+              </div>
+              <div className="flex items-center gap-3 text-white">
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <span className="font-semibold">Sans engagement</span>
+              </div>
+              <div className="flex items-center gap-3 text-white">
+                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6" />
+                </div>
+                <span className="font-semibold">Annulation gratuite</span>
+              </div>
             </div>
           </div>
         </div>
