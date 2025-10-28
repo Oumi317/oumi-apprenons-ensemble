@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Maximize2, Minimize2, X } from "lucide-react";
-import { useState } from "react";
+import { Maximize2, Minimize2, X, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
 
 interface InteractiveResourceViewerProps {
   isOpen: boolean;
@@ -17,6 +17,27 @@ export function InteractiveResourceViewer({
   titre,
 }: InteractiveResourceViewerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [htmlContent, setHtmlContent] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadHtmlContent = async () => {
+      if (!resourceUrl || !isOpen) return;
+      
+      setLoading(true);
+      try {
+        const response = await fetch(resourceUrl);
+        const html = await response.text();
+        setHtmlContent(html);
+      } catch (error) {
+        console.error("Erreur lors du chargement du contenu HTML:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadHtmlContent();
+  }, [resourceUrl, isOpen]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -60,15 +81,21 @@ export function InteractiveResourceViewer({
         </DialogHeader>
         
         <div className="flex-1 overflow-hidden">
-          <iframe
-            src={resourceUrl}
-            className="w-full h-full border-0"
-            sandbox="allow-scripts allow-same-origin allow-forms"
-            title={titre}
-            style={{ 
-              height: isFullscreen ? "calc(100vh - 80px)" : "calc(90vh - 80px)" 
-            }}
-          />
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <iframe
+              srcDoc={htmlContent}
+              className="w-full h-full border-0"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+              title={titre}
+              style={{ 
+                height: isFullscreen ? "calc(100vh - 80px)" : "calc(90vh - 80px)" 
+              }}
+            />
+          )}
         </div>
       </DialogContent>
     </Dialog>
