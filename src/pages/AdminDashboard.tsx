@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, CheckCircle, XCircle, Sparkles } from "lucide-react";
 import AdminResourceUpload from "@/components/AdminResourceUpload";
+import AdminLessonManager from "@/components/AdminLessonManager";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -242,7 +243,11 @@ export default function AdminDashboard() {
         <Tabs defaultValue="tutors" className="space-y-6">
           <TabsList>
             <TabsTrigger value="tutors">Tuteurs</TabsTrigger>
-            <TabsTrigger value="lessons">Leçons</TabsTrigger>
+            <TabsTrigger value="lessons">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Gestion des leçons
+            </TabsTrigger>
+            <TabsTrigger value="lessons-list">Liste des leçons</TabsTrigger>
             <TabsTrigger value="sessions">Sessions</TabsTrigger>
             <TabsTrigger value="resources">
               <Sparkles className="h-4 w-4 mr-2" />
@@ -325,9 +330,13 @@ export default function AdminDashboard() {
           </TabsContent>
 
           <TabsContent value="lessons">
+            <AdminLessonManager onUpdate={fetchAdminData} />
+          </TabsContent>
+
+          <TabsContent value="lessons-list">
             <Card>
               <CardHeader>
-                <CardTitle>Gestion des leçons</CardTitle>
+                <CardTitle>Liste des leçons</CardTitle>
                 <CardDescription>Vue d'ensemble des leçons disponibles</CardDescription>
               </CardHeader>
               <CardContent>
