@@ -7,7 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Search, ArrowUpDown, CheckCircle, XCircle, Trash2, Eye } from "lucide-react";
+import { Search, ArrowUpDown, CheckCircle, XCircle, Trash2, Eye, Plus } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -47,6 +49,19 @@ export default function AdminTutorManager({ tutors, onUpdate }: AdminTutorManage
   const [selectedTutor, setSelectedTutor] = useState<Tutor | null>(null);
   const [actionDialogOpen, setActionDialogOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ type: 'approve' | 'reject', tutorId: string } | null>(null);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newTutor, setNewTutor] = useState({
+    email: '',
+    password: '',
+    prenom: '',
+    nom: '',
+    bio: '',
+    matieres_enseignees: '',
+    diplomes: '',
+    tarif_horaire_eur: '',
+    annees_experience: '',
+  });
 
   const handleSort = (field: 'nom' | 'tarif_horaire_eur' | 'created_at' | 'note_moyenne') => {
     if (sortField === field) {
@@ -194,6 +209,68 @@ export default function AdminTutorManager({ tutors, onUpdate }: AdminTutorManage
     }
   };
 
+  const handleAddTutor = async () => {
+    if (!newTutor.email || !newTutor.password || !newTutor.prenom || !newTutor.nom) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const { data, error } = await supabase.functions.invoke('create-tutor', {
+        body: {
+          email: newTutor.email,
+          password: newTutor.password,
+          prenom: newTutor.prenom,
+          nom: newTutor.nom,
+          bio: newTutor.bio || null,
+          matieres_enseignees: newTutor.matieres_enseignees.split(',').map(m => m.trim()).filter(m => m),
+          diplomes: newTutor.diplomes.split(',').map(d => d.trim()).filter(d => d),
+          tarif_horaire_eur: parseFloat(newTutor.tarif_horaire_eur) || 0,
+          annees_experience: parseInt(newTutor.annees_experience) || 0,
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Tuteur créé",
+        description: "Le tuteur a été créé avec succès"
+      });
+
+      setAddDialogOpen(false);
+      setNewTutor({
+        email: '',
+        password: '',
+        prenom: '',
+        nom: '',
+        bio: '',
+        matieres_enseignees: '',
+        diplomes: '',
+        tarif_horaire_eur: '',
+        annees_experience: '',
+      });
+      onUpdate();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -214,6 +291,11 @@ export default function AdminTutorManager({ tutors, onUpdate }: AdminTutorManage
               className="pl-9"
             />
           </div>
+          
+          <Button onClick={() => setAddDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Ajouter un tuteur
+          </Button>
           
           {selectedTutors.length > 0 && (
             <div className="flex gap-2">
@@ -475,6 +557,128 @@ export default function AdminTutorManager({ tutors, onUpdate }: AdminTutorManage
               </div>
             </ScrollArea>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Tutor Dialog */}
+      <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Ajouter un tuteur</DialogTitle>
+            <DialogDescription>
+              Créer un nouveau compte tuteur
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[500px] pr-4">
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="prenom">Prénom *</Label>
+                  <Input
+                    id="prenom"
+                    value={newTutor.prenom}
+                    onChange={(e) => setNewTutor({ ...newTutor, prenom: e.target.value })}
+                    placeholder="Jean"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="nom">Nom *</Label>
+                  <Input
+                    id="nom"
+                    value={newTutor.nom}
+                    onChange={(e) => setNewTutor({ ...newTutor, nom: e.target.value })}
+                    placeholder="Dupont"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newTutor.email}
+                  onChange={(e) => setNewTutor({ ...newTutor, email: e.target.value })}
+                  placeholder="jean.dupont@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Mot de passe *</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={newTutor.password}
+                  onChange={(e) => setNewTutor({ ...newTutor, password: e.target.value })}
+                  placeholder="Minimum 6 caractères"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bio">Biographie</Label>
+                <Textarea
+                  id="bio"
+                  value={newTutor.bio}
+                  onChange={(e) => setNewTutor({ ...newTutor, bio: e.target.value })}
+                  placeholder="Présentation du tuteur..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="matieres">Matières enseignées (séparées par des virgules)</Label>
+                <Input
+                  id="matieres"
+                  value={newTutor.matieres_enseignees}
+                  onChange={(e) => setNewTutor({ ...newTutor, matieres_enseignees: e.target.value })}
+                  placeholder="Mathématiques, Français, Sciences"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="diplomes">Diplômes (séparés par des virgules)</Label>
+                <Input
+                  id="diplomes"
+                  value={newTutor.diplomes}
+                  onChange={(e) => setNewTutor({ ...newTutor, diplomes: e.target.value })}
+                  placeholder="Master Mathématiques, CAPES"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="tarif">Tarif horaire (€)</Label>
+                  <Input
+                    id="tarif"
+                    type="number"
+                    value={newTutor.tarif_horaire_eur}
+                    onChange={(e) => setNewTutor({ ...newTutor, tarif_horaire_eur: e.target.value })}
+                    placeholder="30"
+                    min="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="experience">Années d'expérience</Label>
+                  <Input
+                    id="experience"
+                    type="number"
+                    value={newTutor.annees_experience}
+                    onChange={(e) => setNewTutor({ ...newTutor, annees_experience: e.target.value })}
+                    placeholder="5"
+                    min="0"
+                  />
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" onClick={() => setAddDialogOpen(false)} disabled={isSubmitting}>
+              Annuler
+            </Button>
+            <Button onClick={handleAddTutor} disabled={isSubmitting}>
+              {isSubmitting ? "Création..." : "Créer le tuteur"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </Card>
