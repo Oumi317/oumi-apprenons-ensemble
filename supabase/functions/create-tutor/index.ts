@@ -99,6 +99,24 @@ Deno.serve(async (req) => {
 
     console.log('Profile created');
 
+    // Create user_role entry
+    const { error: roleError } = await supabaseClient
+      .from('user_roles')
+      .insert({
+        user_id: newUser.user.id,
+        role: 'tuteur',
+      });
+
+    if (roleError) {
+      console.error('Error creating role:', roleError);
+      // Rollback
+      await supabaseClient.from('profiles').delete().eq('id', newUser.user.id);
+      await supabaseClient.auth.admin.deleteUser(newUser.user.id);
+      throw roleError;
+    }
+
+    console.log('Role created');
+
     // Create tutor entry
     const { data: tutor, error: tutorError } = await supabaseClient
       .from('tutors')
@@ -117,6 +135,7 @@ Deno.serve(async (req) => {
     if (tutorError) {
       console.error('Error creating tutor:', tutorError);
       // Rollback
+      await supabaseClient.from('user_roles').delete().eq('user_id', newUser.user.id);
       await supabaseClient.from('profiles').delete().eq('id', newUser.user.id);
       await supabaseClient.auth.admin.deleteUser(newUser.user.id);
       throw tutorError;
@@ -133,8 +152,9 @@ Deno.serve(async (req) => {
     );
   } catch (error) {
     console.error('Error in create-tutor function:', error);
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
