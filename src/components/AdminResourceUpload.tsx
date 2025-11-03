@@ -7,11 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Loader2, FileText, Trash2, Edit } from "lucide-react";
+import { Upload, Loader2, FileText, Trash2, Edit, Search } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface AdminResourceUploadProps {
   lessons: any[];
@@ -31,6 +32,11 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
   const [editingResource, setEditingResource] = useState<any | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [resourceToDelete, setResourceToDelete] = useState<{ id: string; fileUrl: string } | null>(null);
+  const [errors, setErrors] = useState<{ titre?: string; lessonId?: string; file?: string }>({});
 
   useEffect(() => {
     loadResources();
@@ -55,28 +61,64 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     }
   };
 
+  const validateFile = (selectedFile: File): boolean => {
+    if (!selectedFile.name.endsWith('.html')) {
+      setErrors(prev => ({ ...prev, file: "Seuls les fichiers HTML sont acceptés" }));
+      return false;
+    }
+    setErrors(prev => ({ ...prev, file: undefined }));
+    return true;
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      if (!selectedFile.name.endsWith('.html')) {
-        toast({
-          title: "Format invalide",
-          description: "Seuls les fichiers HTML sont acceptés",
-          variant: "destructive"
-        });
-        return;
-      }
+    if (selectedFile && validateFile(selectedFile)) {
       setFile(selectedFile);
     }
   };
 
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile && validateFile(droppedFile)) {
+      setFile(droppedFile);
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: { titre?: string; lessonId?: string; file?: string } = {};
+    
+    if (!titre.trim()) {
+      newErrors.titre = "Le titre est requis";
+    }
+    
+    if (!selectedLessonId) {
+      newErrors.lessonId = "Veuillez sélectionner une leçon";
+    }
+    
+    if (!file) {
+      newErrors.file = "Veuillez sélectionner un fichier HTML";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleUpload = async () => {
-    if (!file || !titre || !selectedLessonId) {
-      toast({
-        title: "Champs manquants",
-        description: "Veuillez remplir tous les champs obligatoires",
-        variant: "destructive"
-      });
+    if (!validateForm()) {
       return;
     }
 
@@ -204,8 +246,17 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     }
   };
 
-  const handleDelete = async (resourceId: string, fileUrl: string) => {
+  const confirmDelete = (resourceId: string, fileUrl: string) => {
+    setResourceToDelete({ id: resourceId, fileUrl });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!resourceToDelete) return;
+
     try {
+      const { id: resourceId, fileUrl } = resourceToDelete;
+      
       // Extract file path from URL
       const url = new URL(fileUrl);
       const pathParts = url.pathname.split('/');
@@ -231,6 +282,8 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         description: "La ressource a été supprimée avec succès"
       });
 
+      setDeleteDialogOpen(false);
+      setResourceToDelete(null);
       await loadResources();
       onUploadSuccess();
 
@@ -242,6 +295,14 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
       });
     }
   };
+
+  const filteredResources = resources.filter(resource => {
+    const matchesSearch = 
+      resource.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.lessons?.titre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      resource.description?.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  });
 
   return (
     <div className="space-y-6">
@@ -260,15 +321,30 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
               <Input
                 id="titre"
                 value={titre}
-                onChange={(e) => setTitre(e.target.value)}
+                onChange={(e) => {
+                  setTitre(e.target.value);
+                  if (e.target.value.trim()) {
+                    setErrors(prev => ({ ...prev, titre: undefined }));
+                  }
+                }}
                 placeholder="Ex: Manuel interactif d'orthographe"
+                className={errors.titre ? "border-destructive" : ""}
               />
+              {errors.titre && (
+                <p className="text-sm text-destructive">{errors.titre}</p>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="lesson">Leçon associée *</Label>
-              <Select value={selectedLessonId} onValueChange={setSelectedLessonId}>
-                <SelectTrigger>
+              <Select 
+                value={selectedLessonId} 
+                onValueChange={(value) => {
+                  setSelectedLessonId(value);
+                  setErrors(prev => ({ ...prev, lessonId: undefined }));
+                }}
+              >
+                <SelectTrigger className={errors.lessonId ? "border-destructive" : ""}>
                   <SelectValue placeholder="Sélectionner une leçon" />
                 </SelectTrigger>
                 <SelectContent>
@@ -279,6 +355,9 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                   ))}
                 </SelectContent>
               </Select>
+              {errors.lessonId && (
+                <p className="text-sm text-destructive">{errors.lessonId}</p>
+              )}
             </div>
           </div>
 
@@ -306,21 +385,46 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
 
           <div className="space-y-2">
             <Label htmlFor="file">Fichier HTML *</Label>
-            <div className="flex items-center gap-2">
+            <div 
+              className={`relative border-2 border-dashed rounded-lg p-6 transition-colors ${
+                dragActive 
+                  ? "border-primary bg-primary/5" 
+                  : errors.file 
+                  ? "border-destructive" 
+                  : "border-border hover:border-primary/50"
+              }`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+            >
               <Input
                 id="file"
                 type="file"
                 accept=".html"
                 onChange={handleFileChange}
-                className="flex-1"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-              {file && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <FileText className="h-3 w-3" />
-                  {file.name}
-                </Badge>
-              )}
+              <div className="text-center">
+                <Upload className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground mb-1">
+                  {file ? (
+                    <Badge variant="secondary" className="flex items-center gap-1 mx-auto w-fit">
+                      <FileText className="h-3 w-3" />
+                      {file.name}
+                    </Badge>
+                  ) : (
+                    <>
+                      Glissez-déposez un fichier HTML ici ou{" "}
+                      <span className="text-primary underline">cliquez pour parcourir</span>
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
+            {errors.file && (
+              <p className="text-sm text-destructive">{errors.file}</p>
+            )}
           </div>
 
           <Button
@@ -348,17 +452,30 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         <CardHeader>
           <CardTitle>Ressources interactives existantes</CardTitle>
           <CardDescription>
-            Gérez les ressources interactives importées ({resources.length} ressource{resources.length !== 1 ? 's' : ''})
+            Gérez les ressources interactives importées ({filteredResources.length} / {resources.length} ressource{resources.length !== 1 ? 's' : ''})
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Search Bar */}
+          <div className="mb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Rechercher par titre, leçon ou description..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+
           {loadingResources ? (
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
             </div>
-          ) : resources.length === 0 ? (
+          ) : filteredResources.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
-              Aucune ressource interactive importée
+              {searchQuery ? "Aucune ressource ne correspond à votre recherche" : "Aucune ressource interactive importée"}
             </div>
           ) : (
             <Table>
@@ -372,7 +489,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {resources.map((resource) => (
+                {filteredResources.map((resource) => (
                   <TableRow key={resource.id}>
                     <TableCell className="font-medium">{resource.titre}</TableCell>
                     <TableCell>{resource.lessons?.titre || "N/A"}</TableCell>
@@ -392,7 +509,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(resource.id, resource.file_url)}
+                          onClick={() => confirmDelete(resource.id, resource.file_url)}
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
@@ -484,6 +601,24 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cette ressource ? Cette action est irréversible et supprimera définitivement le fichier HTML associé.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
