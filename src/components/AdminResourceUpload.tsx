@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Loader2, FileText, Trash2, Edit, Search } from "lucide-react";
+import { Upload, Loader2, FileText, Trash2, Edit, Search, Eye, ArrowUpDown } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/lib/utils";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AdminResourceUploadProps {
   lessons: any[];
@@ -37,6 +38,10 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [resourceToDelete, setResourceToDelete] = useState<{ id: string; fileUrl: string } | null>(null);
   const [errors, setErrors] = useState<{ titre?: string; lessonId?: string; file?: string }>({});
+  const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+  const [previewContent, setPreviewContent] = useState("");
+  const [sortField, setSortField] = useState<'titre' | 'created_at' | 'ordre_affichage'>('created_at');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
     loadResources();
@@ -74,6 +79,12 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     const selectedFile = e.target.files?.[0];
     if (selectedFile && validateFile(selectedFile)) {
       setFile(selectedFile);
+      // Read file content for preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewContent(event.target?.result as string);
+      };
+      reader.readAsText(selectedFile);
     }
   };
 
@@ -95,6 +106,12 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile && validateFile(droppedFile)) {
       setFile(droppedFile);
+      // Read file content for preview
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewContent(event.target?.result as string);
+      };
+      reader.readAsText(droppedFile);
     }
   };
 
@@ -296,13 +313,34 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     }
   };
 
-  const filteredResources = resources.filter(resource => {
-    const matchesSearch = 
-      resource.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.lessons?.titre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      resource.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  });
+  const handleSort = (field: 'titre' | 'created_at' | 'ordre_affichage') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const filteredAndSortedResources = resources
+    .filter(resource => {
+      const matchesSearch = 
+        resource.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.lessons?.titre?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.description?.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    })
+    .sort((a, b) => {
+      let compareValue = 0;
+      if (sortField === 'titre') {
+        compareValue = a.titre.localeCompare(b.titre);
+      } else if (sortField === 'created_at') {
+        compareValue = new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else if (sortField === 'ordre_affichage') {
+        compareValue = a.ordre_affichage - b.ordre_affichage;
+      }
+      return sortDirection === 'asc' ? compareValue : -compareValue;
+    });
 
   return (
     <div className="space-y-6">
@@ -427,6 +465,18 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
             )}
           </div>
 
+          {file && previewContent && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setPreviewDialogOpen(true)}
+              className="w-full"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Prévisualiser le fichier HTML
+            </Button>
+          )}
+
           <Button
             onClick={handleUpload}
             disabled={uploading || !file || !titre || !selectedLessonId}
@@ -452,7 +502,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
         <CardHeader>
           <CardTitle>Ressources interactives existantes</CardTitle>
           <CardDescription>
-            Gérez les ressources interactives importées ({filteredResources.length} / {resources.length} ressource{resources.length !== 1 ? 's' : ''})
+            Gérez les ressources interactives importées ({filteredAndSortedResources.length} / {resources.length} ressource{resources.length !== 1 ? 's' : ''})
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -473,7 +523,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
             <div className="text-center py-8">
               <Loader2 className="h-8 w-8 animate-spin mx-auto text-muted-foreground" />
             </div>
-          ) : filteredResources.length === 0 ? (
+          ) : filteredAndSortedResources.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               {searchQuery ? "Aucune ressource ne correspond à votre recherche" : "Aucune ressource interactive importée"}
             </div>
@@ -481,22 +531,49 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Titre</TableHead>
+                  <TableHead>
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('titre')} className="font-semibold">
+                      Titre
+                      <ArrowUpDown className="ml-1 h-3 w-3" />
+                    </Button>
+                  </TableHead>
                   <TableHead>Leçon</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Ordre</TableHead>
+                  <TableHead>
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('ordre_affichage')} className="font-semibold">
+                      Ordre
+                      <ArrowUpDown className="ml-1 h-3 w-3" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button variant="ghost" size="sm" onClick={() => handleSort('created_at')} className="font-semibold">
+                      Date
+                      <ArrowUpDown className="ml-1 h-3 w-3" />
+                    </Button>
+                  </TableHead>
+                  <TableHead>Statut</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredResources.map((resource) => (
+                {filteredAndSortedResources.map((resource) => (
                   <TableRow key={resource.id}>
                     <TableCell className="font-medium">{resource.titre}</TableCell>
-                    <TableCell>{resource.lessons?.titre || "N/A"}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{resource.lessons?.titre || "N/A"}</Badge>
+                    </TableCell>
                     <TableCell className="max-w-xs truncate">
                       {resource.description || "—"}
                     </TableCell>
                     <TableCell>{resource.ordre_affichage}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {new Date(resource.created_at).toLocaleDateString('fr-FR')}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={resource.file_url ? "default" : "secondary"}>
+                        {resource.file_url ? "Actif" : "Inactif"}
+                      </Badge>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
                         <Button
@@ -598,6 +675,26 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                 "Enregistrer"
               )}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Preview Dialog */}
+      <Dialog open={previewDialogOpen} onOpenChange={setPreviewDialogOpen}>
+        <DialogContent className="sm:max-w-[800px] max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Prévisualisation du fichier HTML</DialogTitle>
+            <DialogDescription>
+              Aperçu du contenu du fichier {file?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[500px] w-full rounded border p-4">
+            <pre className="text-xs whitespace-pre-wrap break-words">
+              <code>{previewContent}</code>
+            </pre>
+          </ScrollArea>
+          <DialogFooter>
+            <Button onClick={() => setPreviewDialogOpen(false)}>Fermer</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
