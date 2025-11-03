@@ -43,9 +43,9 @@ export const OnboardingFlow = ({ userId, userRole }: OnboardingFlowProps) => {
   ];
 
   const niveauxScolaires = [
-    "cp", "ce1", "ce2", "cm1", "cm2",
+    "CP", "CE1", "CE2", "CM1", "CM2",
     "6eme", "5eme", "4eme", "3eme",
-    "seconde", "premiere", "terminale"
+    "Seconde", "Premiere", "Terminale"
   ];
 
   const handleAddChild = () => {
