@@ -12,6 +12,7 @@ import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, Sparkles } from "l
 import AdminResourceUpload from "@/components/AdminResourceUpload";
 import AdminLessonManager from "@/components/AdminLessonManager";
 import AdminTutorManager from "@/components/AdminTutorManager";
+import AdminUserManager from "@/components/AdminUserManager";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function AdminDashboard() {
   const [tutors, setTutors] = useState<any[]>([]);
   const [lessons, setLessons] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [parents, setParents] = useState<any[]>([]);
 
   useEffect(() => {
     if (!roleLoading) {
@@ -70,6 +72,18 @@ export default function AdminDashboard() {
         .order("created_at", { ascending: false });
 
       setTutors(tutorsData || []);
+
+      // Fetch parents with their students
+      const { data: parentsData } = await supabase
+        .from("parents")
+        .select(`
+          *,
+          profiles (prenom, nom, email, telephone),
+          students (id, prenom, niveau_scolaire)
+        `)
+        .order("created_at", { ascending: false });
+
+      setParents(parentsData || []);
 
       // Fetch lessons
       const { data: lessonsData } = await supabase
@@ -241,8 +255,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Management Tabs */}
-        <Tabs defaultValue="tutors" className="space-y-6">
+        <Tabs defaultValue="users" className="space-y-6">
           <TabsList>
+            <TabsTrigger value="users">
+              <Users className="h-4 w-4 mr-2" />
+              Utilisateurs
+            </TabsTrigger>
             <TabsTrigger value="tutors">Tuteurs</TabsTrigger>
             <TabsTrigger value="lessons">
               <BookOpen className="h-4 w-4 mr-2" />
@@ -255,6 +273,10 @@ export default function AdminDashboard() {
               Ressources interactives
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="users">
+            <AdminUserManager parents={parents} onUpdate={fetchAdminData} />
+          </TabsContent>
 
           <TabsContent value="tutors">
             <AdminTutorManager tutors={tutors} onUpdate={fetchAdminData} />
