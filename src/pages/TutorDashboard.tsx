@@ -38,7 +38,7 @@ export default function TutorDashboard() {
         .from("tutors")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (tutorError) throw tutorError;
 
