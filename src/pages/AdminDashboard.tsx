@@ -8,9 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, Sparkles } from "lucide-react";
 import AdminResourceUpload from "@/components/AdminResourceUpload";
 import AdminLessonManager from "@/components/AdminLessonManager";
+import AdminTutorManager from "@/components/AdminTutorManager";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -256,77 +257,7 @@ export default function AdminDashboard() {
           </TabsList>
 
           <TabsContent value="tutors">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestion des tuteurs</CardTitle>
-                <CardDescription>Approuver ou rejeter les demandes de tuteurs</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nom</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Matières</TableHead>
-                      <TableHead>Tarif/h</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tutors.map((tutor) => (
-                      <TableRow key={tutor.id}>
-                        <TableCell>
-                          {tutor.profiles?.prenom} {tutor.profiles?.nom}
-                        </TableCell>
-                        <TableCell>{tutor.profiles?.email}</TableCell>
-                        <TableCell>{tutor.matieres_enseignees?.slice(0, 2).join(", ")}</TableCell>
-                        <TableCell>{tutor.tarif_horaire_eur}€</TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              tutor.statut_approbation === "approuve"
-                                ? "default"
-                                : tutor.statut_approbation === "refuse"
-                                ? "destructive"
-                                : "secondary"
-                            }
-                          >
-                            {tutor.statut_approbation === "approuve"
-                              ? "Approuvé"
-                              : tutor.statut_approbation === "refuse"
-                              ? "Refusé"
-                              : "En attente"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          {tutor.statut_approbation === "en_attente" && (
-                            <div className="flex gap-2">
-                              <Button
-                                size="sm"
-                                variant="default"
-                                onClick={() => handleApproveTutor(tutor.id)}
-                              >
-                                <CheckCircle className="h-4 w-4 mr-1" />
-                                Approuver
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleRejectTutor(tutor.id)}
-                              >
-                                <XCircle className="h-4 w-4 mr-1" />
-                                Rejeter
-                              </Button>
-                            </div>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
+            <AdminTutorManager tutors={tutors} onUpdate={fetchAdminData} />
           </TabsContent>
 
           <TabsContent value="lessons">

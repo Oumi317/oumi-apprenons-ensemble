@@ -9,9 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, Upload, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Upload, Loader2, Search, ArrowUpDown } from "lucide-react";
 
 interface Lesson {
   id: string;
@@ -26,6 +27,7 @@ interface Lesson {
   contenu_url: string | null;
   thumbnail_url: string | null;
   ordre_affichage: number;
+  created_at?: string;
 }
 
 interface AdminLessonManagerProps {
@@ -45,6 +47,15 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
   const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
   const [uploadingContent, setUploadingContent] = useState(false);
   const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState<'titre' | 'created_at' | 'matiere'>('created_at');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [selectedLessons, setSelectedLessons] = useState<string[]>([]);
+  const [batchDeleteDialogOpen, setBatchDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [lessonToDelete, setLessonToDelete] = useState<string | null>(null);
+  const [dragActive, setDragActive] = useState(false);
+  const [errors, setErrors] = useState<{ titre?: string; matiere?: string }>({});
 
   const [formData, setFormData] = useState<{
     titre: string;
@@ -218,14 +229,19 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
     setIsDialogOpen(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette leçon ?")) return;
+  const confirmDelete = (id: string) => {
+    setLessonToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!lessonToDelete) return;
 
     try {
       const { error } = await supabase
         .from("lessons")
         .delete()
-        .eq("id", id);
+        .eq("id", lessonToDelete);
 
       if (error) throw error;
 
@@ -234,6 +250,8 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
         description: "La leçon a été supprimée avec succès",
       });
 
+      setDeleteDialogOpen(false);
+      setLessonToDelete(null);
       loadLessons();
       onUpdate();
     } catch (error: any) {
@@ -244,6 +262,98 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
       });
     }
   };
+
+  const handleSort = (field: 'titre' | 'created_at' | 'matiere') => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const toggleLessonSelection = (id: string) => {
+    setSelectedLessons(prev => 
+      prev.includes(id) ? prev.filter(lid => lid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    const filtered = filteredAndSortedLessons;
+    if (selectedLessons.length === filtered.length && filtered.length > 0) {
+      setSelectedLessons([]);
+    } else {
+      setSelectedLessons(filtered.map(l => l.id));
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    try {
+      const { error } = await supabase
+        .from('lessons')
+        .delete()
+        .in('id', selectedLessons);
+
+      if (error) throw error;
+
+      toast({
+        title: "Leçons supprimées",
+        description: `${selectedLessons.length} leçon(s) supprimée(s) avec succès`
+      });
+
+      setSelectedLessons([]);
+      setBatchDeleteDialogOpen(false);
+      loadLessons();
+      onUpdate();
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true);
+    } else if (e.type === "dragleave") {
+      setDragActive(false);
+    }
+  };
+
+  const handleDropContent = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    const droppedFile = e.dataTransfer.files?.[0];
+    if (droppedFile) {
+      setContentFile(droppedFile);
+    }
+  };
+
+  const filteredAndSortedLessons = lessons
+    .filter(lesson => {
+      const matchesSearch = 
+        lesson.titre.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lesson.matiere.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lesson.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        lesson.niveau_scolaire.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesSearch;
+    })
+    .sort((a, b) => {
+      let compareValue = 0;
+      if (sortField === 'titre') {
+        compareValue = a.titre.localeCompare(b.titre);
+      } else if (sortField === 'created_at') {
+        compareValue = new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();
+      } else if (sortField === 'matiere') {
+        compareValue = a.matiere.localeCompare(b.matiere);
+      }
+      return sortDirection === 'asc' ? compareValue : -compareValue;
+    });
 
   const resetForm = () => {
     setEditingLesson(null);
@@ -474,21 +584,64 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
         </div>
       </CardHeader>
       <CardContent>
+        {/* Search Bar and Batch Actions */}
+        <div className="flex items-center justify-between gap-4 mb-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher par titre, matière, niveau..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+          
+          {selectedLessons.length > 0 && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => setBatchDeleteDialogOpen(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Supprimer ({selectedLessons.length})
+            </Button>
+          )}
+        </div>
+
         {loading && lessons.length === 0 ? (
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
             <p className="mt-2 text-sm text-muted-foreground">Chargement...</p>
           </div>
-        ) : lessons.length === 0 ? (
+        ) : filteredAndSortedLessons.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            <p>Aucune leçon trouvée</p>
+            {searchQuery ? "Aucune leçon ne correspond à votre recherche" : "Aucune leçon trouvée"}
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Titre</TableHead>
-                <TableHead>Matière</TableHead>
+                <TableHead className="w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedLessons.length === filteredAndSortedLessons.length && filteredAndSortedLessons.length > 0}
+                    onChange={toggleSelectAll}
+                    className="cursor-pointer h-4 w-4"
+                    title="Tout sélectionner"
+                  />
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" size="sm" onClick={() => handleSort('titre')} className="font-semibold">
+                    Titre
+                    <ArrowUpDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button variant="ghost" size="sm" onClick={() => handleSort('matiere')} className="font-semibold">
+                    Matière
+                    <ArrowUpDown className="ml-1 h-3 w-3" />
+                  </Button>
+                </TableHead>
                 <TableHead>Niveau</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Difficulté</TableHead>
@@ -498,17 +651,34 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lessons.map((lesson) => (
+              {filteredAndSortedLessons.map((lesson) => (
                 <TableRow key={lesson.id}>
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selectedLessons.includes(lesson.id)}
+                      onChange={() => toggleLessonSelection(lesson.id)}
+                      className="cursor-pointer h-4 w-4"
+                    />
+                  </TableCell>
                   <TableCell className="font-medium">{lesson.titre}</TableCell>
-                  <TableCell>{lesson.matiere}</TableCell>
                   <TableCell>
-                    <Badge variant="outline">{lesson.niveau_scolaire.toUpperCase()}</Badge>
+                    <Badge variant="outline">{lesson.matiere}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="secondary">{lesson.type_contenu}</Badge>
+                    <Badge variant="secondary">{lesson.niveau_scolaire.toUpperCase()}</Badge>
                   </TableCell>
-                  <TableCell>{lesson.difficulte}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{lesson.type_contenu}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={
+                      lesson.difficulte === 'facile' ? 'default' :
+                      lesson.difficulte === 'difficile' ? 'destructive' : 'secondary'
+                    }>
+                      {lesson.difficulte}
+                    </Badge>
+                  </TableCell>
                   <TableCell>{lesson.duree_estimee_minutes || "-"} min</TableCell>
                   <TableCell>
                     <Badge variant={lesson.gratuit ? "default" : "secondary"}>
@@ -527,7 +697,7 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => handleDelete(lesson.id)}
+                        onClick={() => confirmDelete(lesson.id)}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
@@ -539,6 +709,43 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
           </Table>
         )}
       </CardContent>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer cette leçon ? Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Batch Delete Dialog */}
+      <AlertDialog open={batchDeleteDialogOpen} onOpenChange={setBatchDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer les leçons sélectionnées</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer {selectedLessons.length} leçon(s) ? 
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBatchDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
