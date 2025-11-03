@@ -42,6 +42,8 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
   const [previewContent, setPreviewContent] = useState("");
   const [sortField, setSortField] = useState<'titre' | 'created_at' | 'ordre_affichage'>('created_at');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [selectedResources, setSelectedResources] = useState<string[]>([]);
+  const [batchDeleteDialogOpen, setBatchDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     loadResources();
@@ -75,16 +77,97 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     return true;
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile && validateFile(selectedFile)) {
-      setFile(selectedFile);
-      // Read file content for preview
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPreviewContent(event.target?.result as string);
-      };
-      reader.readAsText(selectedFile);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      const firstFile = selectedFiles[0];
+      if (validateFile(firstFile)) {
+        setFile(firstFile);
+        // Read file content for preview
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setPreviewContent(event.target?.result as string);
+        };
+        reader.readAsText(firstFile);
+        
+        // If multiple files, handle multiple upload
+        if (selectedFiles.length > 1 && selectedLessonId) {
+          await handleMultipleUpload(selectedFiles);
+        }
+      }
+    }
+  };
+
+  const handleMultipleUpload = async (files: FileList) => {
+    setUploading(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!validateFile(file)) {
+        errorCount++;
+        continue;
+      }
+
+      try {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `${selectedLessonId}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("interactive-resources")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: "text/html"
+          });
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from("interactive-resources")
+          .getPublicUrl(filePath);
+
+        const slug = slugify(file.name.replace('.html', ''));
+
+        const { error: dbError } = await supabase
+          .from("interactive_resources")
+          .insert({
+            lesson_id: selectedLessonId,
+            titre: file.name.replace('.html', ''),
+            description: description || null,
+            type: "interactive_html",
+            file_url: publicUrl,
+            slug,
+            ordre_affichage: parseInt(ordreAffichage) + i
+          });
+
+        if (dbError) throw dbError;
+        successCount++;
+      } catch (error) {
+        console.error(`Error uploading ${file.name}:`, error);
+        errorCount++;
+      }
+    }
+
+    setUploading(false);
+
+    if (successCount > 0) {
+      toast({
+        title: "Ressources importées",
+        description: `${successCount} ressource(s) importée(s) avec succès${errorCount > 0 ? `, ${errorCount} échec(s)` : ''}`
+      });
+      await loadResources();
+      onUploadSuccess();
+    }
+
+    if (errorCount > 0 && successCount === 0) {
+      toast({
+        title: "Erreur d'importation",
+        description: "Échec de l'importation de toutes les ressources",
+        variant: "destructive"
+      });
     }
   };
 
@@ -268,6 +351,62 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
     setDeleteDialogOpen(true);
   };
 
+  const toggleResourceSelection = (id: string) => {
+    setSelectedResources(prev => 
+      prev.includes(id) ? prev.filter(rid => rid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedResources.length === filteredAndSortedResources.length && filteredAndSortedResources.length > 0) {
+      setSelectedResources([]);
+    } else {
+      setSelectedResources(filteredAndSortedResources.map(r => r.id));
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    try {
+      // Delete files from storage first
+      for (const resourceId of selectedResources) {
+        const resource = resources.find(r => r.id === resourceId);
+        if (resource?.file_url) {
+          const url = new URL(resource.file_url);
+          const pathParts = url.pathname.split('/');
+          const filePath = pathParts.slice(pathParts.indexOf('interactive-resources') + 1).join('/');
+          
+          await supabase.storage
+            .from("interactive-resources")
+            .remove([filePath]);
+        }
+      }
+
+      // Delete from database
+      const { error } = await supabase
+        .from('interactive_resources')
+        .delete()
+        .in('id', selectedResources);
+
+      if (error) throw error;
+
+      toast({
+        title: "Ressources supprimées",
+        description: `${selectedResources.length} ressource(s) supprimée(s) avec succès`
+      });
+      
+      setSelectedResources([]);
+      setBatchDeleteDialogOpen(false);
+      await loadResources();
+      onUploadSuccess();
+    } catch (error: any) {
+      toast({
+        title: "Erreur de suppression",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleDelete = async () => {
     if (!resourceToDelete) return;
 
@@ -440,6 +579,7 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                 id="file"
                 type="file"
                 accept=".html"
+                multiple
                 onChange={handleFileChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
@@ -506,9 +646,9 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Search Bar */}
-          <div className="mb-4">
-            <div className="relative">
+          {/* Search Bar and Batch Actions */}
+          <div className="flex items-center justify-between gap-4 mb-4">
+            <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Rechercher par titre, leçon ou description..."
@@ -517,6 +657,17 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                 className="pl-9"
               />
             </div>
+            
+            {selectedResources.length > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => setBatchDeleteDialogOpen(true)}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                Supprimer ({selectedResources.length})
+              </Button>
+            )}
           </div>
 
           {loadingResources ? (
@@ -531,6 +682,15 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12">
+                    <input
+                      type="checkbox"
+                      checked={selectedResources.length === filteredAndSortedResources.length && filteredAndSortedResources.length > 0}
+                      onChange={toggleSelectAll}
+                      className="cursor-pointer h-4 w-4"
+                      title="Tout sélectionner"
+                    />
+                  </TableHead>
                   <TableHead>
                     <Button variant="ghost" size="sm" onClick={() => handleSort('titre')} className="font-semibold">
                       Titre
@@ -555,10 +715,18 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
-                {filteredAndSortedResources.map((resource) => (
-                  <TableRow key={resource.id}>
-                    <TableCell className="font-medium">{resource.titre}</TableCell>
+            <TableBody>
+              {filteredAndSortedResources.map((resource) => (
+                <TableRow key={resource.id}>
+                  <TableCell>
+                    <input
+                      type="checkbox"
+                      checked={selectedResources.includes(resource.id)}
+                      onChange={() => toggleResourceSelection(resource.id)}
+                      className="cursor-pointer h-4 w-4"
+                    />
+                  </TableCell>
+                  <TableCell className="font-medium">{resource.titre}</TableCell>
                     <TableCell>
                       <Badge variant="outline">{resource.lessons?.titre || "N/A"}</Badge>
                     </TableCell>
@@ -711,6 +879,25 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
           <AlertDialogFooter>
             <AlertDialogCancel>Annuler</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Batch Delete Dialog */}
+      <AlertDialog open={batchDeleteDialogOpen} onOpenChange={setBatchDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer les ressources sélectionnées</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer {selectedResources.length} ressource(s) ? 
+              Cette action est irréversible et supprimera définitivement les fichiers HTML associés.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleBatchDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Supprimer
             </AlertDialogAction>
           </AlertDialogFooter>
