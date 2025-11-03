@@ -30,7 +30,7 @@ export const OnboardingFlow = ({ userId, userRole }: OnboardingFlowProps) => {
     objectifs: [] as string[],
   }]);
 
-  const totalSteps = userRole === "parent" ? 3 : 2;
+  const totalSteps = userRole === "parent" ? 2 : 2;
   const progress = (step / totalSteps) * 100;
 
   const objectives = [
