@@ -7,10 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Upload, Loader2, FileText, Trash2 } from "lucide-react";
+import { Upload, Loader2, FileText, Trash2, Edit } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { slugify } from "@/lib/utils";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 interface AdminResourceUploadProps {
   lessons: any[];
@@ -27,6 +28,9 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
   const [ordreAffichage, setOrdreAffichage] = useState("0");
   const [resources, setResources] = useState<any[]>([]);
   const [loadingResources, setLoadingResources] = useState(true);
+  const [editingResource, setEditingResource] = useState<any | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     loadResources();
@@ -142,6 +146,61 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
       });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleEdit = (resource: any) => {
+    setEditingResource(resource);
+    setEditDialogOpen(true);
+  };
+
+  const handleUpdate = async () => {
+    if (!editingResource || !editingResource.titre || !editingResource.lesson_id) {
+      toast({
+        title: "Champs manquants",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setUpdating(true);
+
+    try {
+      const slug = slugify(editingResource.titre);
+
+      const { error } = await supabase
+        .from("interactive_resources")
+        .update({
+          titre: editingResource.titre,
+          description: editingResource.description,
+          lesson_id: editingResource.lesson_id,
+          ordre_affichage: parseInt(editingResource.ordre_affichage),
+          slug
+        })
+        .eq("id", editingResource.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Ressource modifiée",
+        description: "La ressource a été modifiée avec succès"
+      });
+
+      setEditDialogOpen(false);
+      setEditingResource(null);
+      await loadResources();
+      onUploadSuccess();
+
+    } catch (error: any) {
+      console.error("Error updating resource:", error);
+      toast({
+        title: "Erreur de modification",
+        description: error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -322,13 +381,22 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
                     </TableCell>
                     <TableCell>{resource.ordre_affichage}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(resource.id, resource.file_url)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEdit(resource)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(resource.id, resource.file_url)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -337,6 +405,85 @@ export default function AdminResourceUpload({ lessons, onUploadSuccess }: AdminR
           )}
         </CardContent>
       </Card>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Modifier la ressource</DialogTitle>
+            <DialogDescription>
+              Modifiez les informations de la ressource interactive
+            </DialogDescription>
+          </DialogHeader>
+          {editingResource && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-titre">Titre *</Label>
+                <Input
+                  id="edit-titre"
+                  value={editingResource.titre}
+                  onChange={(e) => setEditingResource({ ...editingResource, titre: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-lesson">Leçon associée *</Label>
+                <Select 
+                  value={editingResource.lesson_id} 
+                  onValueChange={(value) => setEditingResource({ ...editingResource, lesson_id: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sélectionner une leçon" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lessons.map((lesson) => (
+                      <SelectItem key={lesson.id} value={lesson.id}>
+                        {lesson.titre}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={editingResource.description || ""}
+                  onChange={(e) => setEditingResource({ ...editingResource, description: e.target.value })}
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-ordre">Ordre d'affichage</Label>
+                <Input
+                  id="edit-ordre"
+                  type="number"
+                  value={editingResource.ordre_affichage}
+                  onChange={(e) => setEditingResource({ ...editingResource, ordre_affichage: e.target.value })}
+                  min="0"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Annuler
+            </Button>
+            <Button onClick={handleUpdate} disabled={updating}>
+              {updating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Modification...
+                </>
+              ) : (
+                "Enregistrer"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
