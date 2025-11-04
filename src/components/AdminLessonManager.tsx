@@ -34,7 +34,7 @@ interface AdminLessonManagerProps {
   onUpdate: () => void;
 }
 
-const niveauxScolaires = ["cp", "ce1", "ce2", "cm1", "cm2", "6eme", "5eme", "4eme", "3eme"];
+const niveauxScolaires = ["CP", "CE1", "CE2", "CM1", "CM2", "6eme", "5eme", "4eme", "3eme", "seconde", "premiere", "terminale"];
 const matieres = ["Français", "Mathématiques", "Sciences", "Histoire-Géo", "Anglais", "Autres"];
 const typesContenu = ["video", "exercise", "quiz", "document"];
 const difficultes = ["facile", "moyen", "difficile"];
@@ -71,7 +71,7 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
     titre: "",
     description: "",
     matiere: "Français",
-    niveau_scolaire: "cp",
+    niveau_scolaire: "CP",
     type_contenu: "video",
     difficulte: "moyen",
     duree_estimee_minutes: 30,
