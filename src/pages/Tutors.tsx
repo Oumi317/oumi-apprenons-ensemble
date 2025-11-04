@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -43,6 +43,7 @@ const matieres = [
 const Tutors = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [searchParams] = useSearchParams();
   const [user, setUser] = useState<any>(null);
   const [tutors, setTutors] = useState<any[]>([]);
   const [filteredTutors, setFilteredTutors] = useState<any[]>([]);
@@ -68,7 +69,13 @@ const Tutors = () => {
   useEffect(() => {
     checkUser();
     loadTutors();
-  }, []);
+    
+    // Check if there's a subject parameter in the URL
+    const subjectParam = searchParams.get('subject');
+    if (subjectParam) {
+      setSelectedMatiere(subjectParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     filterTutors();

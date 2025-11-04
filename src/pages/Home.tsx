@@ -218,14 +218,18 @@ const Home = () => {
               { name: "Philosophie", icon: "💭" },
               { name: "Arabe", icon: "📚" }
             ].map((subject, index) => (
-              <Card 
-                key={index} 
-                className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
+              <Link 
+                key={index}
+                to={`/tutors?subject=${encodeURIComponent(subject.name)}`}
               >
-                <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
-                <h4 className="font-semibold text-sm">{subject.name}</h4>
-              </Card>
+                <Card 
+                  className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
+                  <h4 className="font-semibold text-sm">{subject.name}</h4>
+                </Card>
+              </Link>
             ))}
           </div>
 
