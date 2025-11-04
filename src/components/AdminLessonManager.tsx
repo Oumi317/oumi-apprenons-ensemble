@@ -36,7 +36,7 @@ interface AdminLessonManagerProps {
 
 const niveauxScolaires = ["CP", "CE1", "CE2", "CM1", "CM2", "6eme", "5eme", "4eme", "3eme", "seconde", "premiere", "terminale"];
 const matieres = ["Français", "Mathématiques", "Sciences", "Histoire-Géo", "Anglais", "Autres"];
-const typesContenu = ["video", "exercise", "quiz", "document"];
+const typesContenu = ["video", "exercice", "quiz", "document"];
 const difficultes = ["facile", "moyen", "difficile"];
 
 export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps) {
