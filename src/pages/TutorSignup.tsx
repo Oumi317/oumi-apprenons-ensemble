@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { 
   GraduationCap, 
   Loader2, 
@@ -17,7 +18,9 @@ import {
   Users,
   TrendingUp,
   Award,
-  Clock
+  Clock,
+  LogOut,
+  AlertCircle
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -33,6 +36,50 @@ const TutorSignup = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsLoggedIn(true);
+        setUserEmail(user.email || "");
+      }
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      setIsLoggedIn(false);
+      setUserEmail("");
+      toast({
+        title: "Déconnexion réussie",
+        description: "Vous pouvez maintenant créer votre compte tuteur",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erreur",
+        description: error.message || "Impossible de se déconnecter",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const [formData, setFormData] = useState({
     // Étape 1: Informations personnelles
@@ -476,6 +523,14 @@ const TutorSignup = () => {
     </div>
   );
 
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="grid lg:grid-cols-2 min-h-screen">
@@ -567,29 +622,81 @@ const TutorSignup = () => {
           </div>
         </div>
 
-        {/* Right Side - Form */}
+        {/* Right Side - Form or Logout Prompt */}
         <div className="p-8 lg:p-12 flex flex-col justify-center overflow-y-auto">
           <div className="max-w-lg mx-auto w-full">
-            <Card className="border-none shadow-none">
-              <CardHeader className="px-0">
-                <CardTitle className="text-2xl">Candidature tuteur</CardTitle>
-                <CardDescription className="text-base">
-                  Étape {currentStep} sur 3 - Complétez votre profil
-                </CardDescription>
-                <div className="flex gap-2 mt-4">
-                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 1 ? "bg-primary" : "bg-muted"}`} />
-                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 2 ? "bg-primary" : "bg-muted"}`} />
-                  <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 3 ? "bg-primary" : "bg-muted"}`} />
-                </div>
-              </CardHeader>
-              <CardContent className="px-0">
-                <form onSubmit={handleSubmit}>
-                  {currentStep === 1 && renderStep1()}
-                  {currentStep === 2 && renderStep2()}
-                  {currentStep === 3 && renderStep3()}
-                </form>
-              </CardContent>
-            </Card>
+            {isLoggedIn ? (
+              <Card className="border shadow-lg">
+                <CardHeader>
+                  <CardTitle className="text-2xl flex items-center gap-2">
+                    <AlertCircle className="h-6 w-6 text-warning" />
+                    Déconnexion requise
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Compte existant détecté</AlertTitle>
+                    <AlertDescription>
+                      Vous êtes actuellement connecté avec le compte <strong>{userEmail}</strong>.
+                      <br /><br />
+                      Pour créer un compte tuteur, vous devez vous déconnecter d'abord. 
+                      Les comptes parent et tuteur doivent être séparés.
+                    </AlertDescription>
+                  </Alert>
+
+                  <div className="space-y-4">
+                    <Button 
+                      onClick={handleLogout}
+                      disabled={loading}
+                      className="w-full bg-gradient-primary"
+                      size="lg"
+                    >
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Se déconnecter et continuer
+                    </Button>
+
+                    <Button 
+                      onClick={() => navigate("/")}
+                      variant="outline"
+                      className="w-full"
+                      size="lg"
+                    >
+                      Retour à l'accueil
+                    </Button>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <p className="text-sm text-muted-foreground text-center">
+                      Vous souhaitez utiliser le même email pour les deux comptes ? 
+                      Vous devrez créer un nouveau compte tuteur après la déconnexion.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="border-none shadow-none">
+                <CardHeader className="px-0">
+                  <CardTitle className="text-2xl">Candidature tuteur</CardTitle>
+                  <CardDescription className="text-base">
+                    Étape {currentStep} sur 3 - Complétez votre profil
+                  </CardDescription>
+                  <div className="flex gap-2 mt-4">
+                    <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 1 ? "bg-primary" : "bg-muted"}`} />
+                    <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 2 ? "bg-primary" : "bg-muted"}`} />
+                    <div className={`h-2 flex-1 rounded-full transition-all ${currentStep >= 3 ? "bg-primary" : "bg-muted"}`} />
+                  </div>
+                </CardHeader>
+                <CardContent className="px-0">
+                  <form onSubmit={handleSubmit}>
+                    {currentStep === 1 && renderStep1()}
+                    {currentStep === 2 && renderStep2()}
+                    {currentStep === 3 && renderStep3()}
+                  </form>
+                </CardContent>
+              </Card>
+            )}
 
             <div className="text-center mt-6">
               <Link to="/" className="text-sm text-muted-foreground hover:text-primary">
