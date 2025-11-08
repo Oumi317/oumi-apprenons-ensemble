@@ -38,12 +38,19 @@ export default function BookingDialog({
   const [studentId, setStudentId] = useState<string>();
   const [students, setStudents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [bookedSlots, setBookedSlots] = useState<string[]>([]);
 
   useEffect(() => {
     if (open) {
       fetchStudents();
     }
   }, [open]);
+
+  useEffect(() => {
+    if (date && tutorId) {
+      fetchBookedSlots();
+    }
+  }, [date, tutorId]);
 
   const fetchStudents = async () => {
     try {
@@ -59,6 +66,51 @@ export default function BookingDialog({
       setStudents(data || []);
     } catch (error: any) {
       console.error("Error fetching students:", error);
+    }
+  };
+
+  const fetchBookedSlots = async () => {
+    if (!date || !tutorId) return;
+
+    try {
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const { data, error } = await supabase
+        .from("sessions_tutorat")
+        .select("date_heure_debut, duree_minutes")
+        .eq("tuteur_id", tutorId)
+        .gte("date_heure_debut", startOfDay.toISOString())
+        .lte("date_heure_debut", endOfDay.toISOString())
+        .eq("statut", "programmee");
+
+      if (error) throw error;
+
+      // Construire une liste de tous les créneaux occupés
+      const occupied: string[] = [];
+      data?.forEach((session) => {
+        const sessionStart = new Date(session.date_heure_debut);
+        const sessionEnd = new Date(sessionStart.getTime() + session.duree_minutes * 60000);
+        
+        // Marquer tous les créneaux horaires qui se chevauchent
+        timeSlots.forEach((slot) => {
+          const [hours, minutes] = slot.split(":");
+          const slotTime = new Date(date);
+          slotTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+          
+          // Vérifier si ce créneau chevauche la session existante
+          if (slotTime >= sessionStart && slotTime < sessionEnd) {
+            occupied.push(slot);
+          }
+        });
+      });
+
+      setBookedSlots(occupied);
+    } catch (error: any) {
+      console.error("Error fetching booked slots:", error);
     }
   };
 
@@ -175,21 +227,36 @@ export default function BookingDialog({
           {/* Time Slot Selection */}
           <div className="space-y-2">
             <Label>Sélectionner un créneau horaire</Label>
-            <Select value={timeSlot} onValueChange={setTimeSlot}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choisir une heure" />
-              </SelectTrigger>
-              <SelectContent>
-                {timeSlots.map((slot) => (
-                  <SelectItem key={slot} value={slot}>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      {slot}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {!date && (
+              <p className="text-sm text-muted-foreground">
+                Veuillez d'abord sélectionner une date
+              </p>
+            )}
+            {date && (
+              <Select value={timeSlot} onValueChange={setTimeSlot}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choisir une heure" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeSlots.map((slot) => {
+                    const isBooked = bookedSlots.includes(slot);
+                    return (
+                      <SelectItem 
+                        key={slot} 
+                        value={slot}
+                        disabled={isBooked}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4" />
+                          {slot}
+                          {isBooked && <span className="text-xs text-muted-foreground">(Réservé)</span>}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           {/* Duration Selection */}
