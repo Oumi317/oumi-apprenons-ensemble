@@ -119,6 +119,36 @@ export type Database = {
           },
         ]
       }
+      budget_alerts: {
+        Row: {
+          alert_threshold: number | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          monthly_limit: number
+          parent_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          alert_threshold?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_limit: number
+          parent_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          alert_threshold?: number | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          monthly_limit?: number
+          parent_id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           created_at: string
@@ -153,6 +183,35 @@ export type Database = {
             columns: ["student_id"]
             isOneToOne: false
             referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorite_tutors: {
+        Row: {
+          created_at: string | null
+          id: string
+          parent_id: string
+          tutor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          parent_id: string
+          tutor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          parent_id?: string
+          tutor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorite_tutors_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
             referencedColumns: ["id"]
           },
         ]
@@ -789,6 +848,61 @@ export type Database = {
           },
         ]
       }
+      student_tracking_notes: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          note_type: string
+          session_id: string | null
+          student_id: string
+          tutor_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          note_type: string
+          session_id?: string | null
+          student_id: string
+          tutor_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          note_type?: string
+          session_id?: string | null
+          student_id?: string
+          tutor_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_tracking_notes_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "sessions_tutorat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_tracking_notes_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "student_tracking_notes_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       students: {
         Row: {
           besoins_specifiques: string | null
@@ -955,6 +1069,135 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "parents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_availability: {
+        Row: {
+          created_at: string | null
+          day_of_week: number
+          end_time: string
+          id: string
+          is_recurring: boolean | null
+          start_time: string
+          tutor_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week: number
+          end_time: string
+          id?: string
+          is_recurring?: boolean | null
+          start_time: string
+          tutor_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: number
+          end_time?: string
+          id?: string
+          is_recurring?: boolean | null
+          start_time?: string
+          tutor_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_availability_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_resources: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_type: string
+          file_url: string
+          id: string
+          is_public: boolean | null
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          shared_with_students: string[] | null
+          titre: string
+          tutor_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_type: string
+          file_url: string
+          id?: string
+          is_public?: boolean | null
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          shared_with_students?: string[] | null
+          titre: string
+          tutor_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          is_public?: boolean | null
+          matiere?: string
+          niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
+          shared_with_students?: string[] | null
+          titre?: string
+          tutor_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_resources_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_unavailability: {
+        Row: {
+          created_at: string | null
+          end_date: string
+          id: string
+          reason: string | null
+          start_date: string
+          tutor_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          end_date: string
+          id?: string
+          reason?: string | null
+          start_date: string
+          tutor_id: string
+        }
+        Update: {
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          reason?: string | null
+          start_date?: string
+          tutor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_unavailability_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
             referencedColumns: ["id"]
           },
         ]

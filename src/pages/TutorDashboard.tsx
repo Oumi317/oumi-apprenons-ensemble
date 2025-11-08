@@ -7,6 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Clock, DollarSign, Users, Star, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AvailabilityManager from "@/components/AvailabilityManager";
+import StudentTracking from "@/components/StudentTracking";
+import TutorStatistics from "@/components/TutorStatistics";
 
 export default function TutorDashboard() {
   const navigate = useNavigate();
@@ -191,6 +194,9 @@ export default function TutorDashboard() {
             <TabsTrigger value="upcoming">À venir</TabsTrigger>
             <TabsTrigger value="past">Passées</TabsTrigger>
             <TabsTrigger value="all">Toutes</TabsTrigger>
+            <TabsTrigger value="availability">Disponibilités</TabsTrigger>
+            <TabsTrigger value="tracking">Suivi Élèves</TabsTrigger>
+            <TabsTrigger value="statistics">Statistiques</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upcoming" className="space-y-4">
@@ -345,6 +351,18 @@ export default function TutorDashboard() {
                 </Card>
               ))
             )}
+          </TabsContent>
+
+          <TabsContent value="availability">
+            <AvailabilityManager />
+          </TabsContent>
+
+          <TabsContent value="tracking">
+            <StudentTracking />
+          </TabsContent>
+
+          <TabsContent value="statistics">
+            <TutorStatistics />
           </TabsContent>
         </Tabs>
       </main>

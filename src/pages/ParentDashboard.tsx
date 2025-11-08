@@ -14,6 +14,10 @@ import { SessionCalendar } from "@/components/SessionCalendar";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { ProgressOverview } from "@/components/ProgressOverview";
 import { HelpButton } from "@/components/HelpButton";
+import BudgetManagement from "@/components/BudgetManagement";
+import FavoriteTutors from "@/components/FavoriteTutors";
+import FamilyCalendar from "@/components/FamilyCalendar";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -426,6 +430,34 @@ const ParentDashboard = () => {
             <UpcomingSessions />
             <RecentActivity />
           </div>
+
+          {/* Advanced Features Tabs */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Fonctionnalités Avancées</CardTitle>
+              <CardDescription>
+                Gérez votre budget, vos tuteurs favoris et votre calendrier familial
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="budget" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="budget">Gestion du Budget</TabsTrigger>
+                  <TabsTrigger value="favorites">Tuteurs Favoris</TabsTrigger>
+                  <TabsTrigger value="calendar">Calendrier Familial</TabsTrigger>
+                </TabsList>
+                <TabsContent value="budget">
+                  <BudgetManagement />
+                </TabsContent>
+                <TabsContent value="favorites">
+                  <FavoriteTutors />
+                </TabsContent>
+                <TabsContent value="calendar">
+                  <FamilyCalendar />
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
         </div>
       </main>
       
