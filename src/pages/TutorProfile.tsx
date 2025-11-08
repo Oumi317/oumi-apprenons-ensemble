@@ -38,9 +38,12 @@ const TutorProfile = () => {
   const [tutor, setTutor] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [userId, setUserId] = useState<string>("");
 
   useEffect(() => {
     loadTutor();
+    checkFavorite();
   }, [id]);
 
   const loadTutor = async () => {
@@ -74,6 +77,73 @@ const TutorProfile = () => {
       setTutor(data);
     }
     setLoading(false);
+  };
+
+  const checkFavorite = async () => {
+    if (!id) return;
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    
+    setUserId(user.id);
+    
+    const { data } = await supabase
+      .from("favorite_tutors")
+      .select("id")
+      .eq("parent_id", user.id)
+      .eq("tutor_id", id)
+      .maybeSingle();
+    
+    setIsFavorite(!!data);
+  };
+
+  const toggleFavorite = async () => {
+    if (!userId || !id) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez être connecté pour ajouter aux favoris",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        await supabase
+          .from("favorite_tutors")
+          .delete()
+          .eq("parent_id", userId)
+          .eq("tutor_id", id);
+        
+        setIsFavorite(false);
+        toast({
+          title: "Retiré des favoris",
+          description: "Ce tuteur a été retiré de vos favoris"
+        });
+      } else {
+        // Add to favorites
+        await supabase
+          .from("favorite_tutors")
+          .insert({
+            parent_id: userId,
+            tutor_id: id
+          });
+        
+        setIsFavorite(true);
+        toast({
+          title: "Ajouté aux favoris",
+          description: "Ce tuteur a été ajouté à vos favoris"
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier les favoris",
+        variant: "destructive"
+      });
+    }
   };
 
   if (loading) {
@@ -165,6 +235,14 @@ const TutorProfile = () => {
                   >
                     <Calendar className="h-4 w-4 mr-2" />
                     Réserver un cours
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full mt-2"
+                    onClick={toggleFavorite}
+                  >
+                    <Heart className={`h-4 w-4 mr-2 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
+                    {isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
                   </Button>
                   <Button
                     variant="outline"

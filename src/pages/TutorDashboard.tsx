@@ -10,6 +10,11 @@ import { useToast } from "@/hooks/use-toast";
 import AvailabilityManager from "@/components/AvailabilityManager";
 import StudentTracking from "@/components/StudentTracking";
 import TutorStatistics from "@/components/TutorStatistics";
+import SessionFeedback from "@/components/SessionFeedback";
+import DynamicPricing from "@/components/DynamicPricing";
+import LessonPlanTemplates from "@/components/LessonPlanTemplates";
+import TutorResourceLibrary from "@/components/TutorResourceLibrary";
+import TutorChat from "@/components/TutorChat";
 
 export default function TutorDashboard() {
   const navigate = useNavigate();
@@ -190,13 +195,18 @@ export default function TutorDashboard() {
 
         {/* Sessions Tabs */}
         <Tabs defaultValue="upcoming" className="space-y-6">
-          <TabsList>
+          <TabsList className="flex flex-wrap">
             <TabsTrigger value="upcoming">À venir</TabsTrigger>
             <TabsTrigger value="past">Passées</TabsTrigger>
             <TabsTrigger value="all">Toutes</TabsTrigger>
             <TabsTrigger value="availability">Disponibilités</TabsTrigger>
             <TabsTrigger value="tracking">Suivi Élèves</TabsTrigger>
             <TabsTrigger value="statistics">Statistiques</TabsTrigger>
+            <TabsTrigger value="feedback">Feedbacks</TabsTrigger>
+            <TabsTrigger value="pricing">Tarification</TabsTrigger>
+            <TabsTrigger value="templates">Plans de Cours</TabsTrigger>
+            <TabsTrigger value="resources">Bibliothèque</TabsTrigger>
+            <TabsTrigger value="chat">Messages</TabsTrigger>
           </TabsList>
 
           <TabsContent value="upcoming" className="space-y-4">
@@ -363,6 +373,26 @@ export default function TutorDashboard() {
 
           <TabsContent value="statistics">
             <TutorStatistics />
+          </TabsContent>
+
+          <TabsContent value="feedback">
+            <SessionFeedback />
+          </TabsContent>
+
+          <TabsContent value="pricing">
+            <DynamicPricing />
+          </TabsContent>
+
+          <TabsContent value="templates">
+            <LessonPlanTemplates />
+          </TabsContent>
+
+          <TabsContent value="resources">
+            <TutorResourceLibrary />
+          </TabsContent>
+
+          <TabsContent value="chat">
+            <TutorChat />
           </TabsContent>
         </Tabs>
       </main>

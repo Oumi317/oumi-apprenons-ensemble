@@ -308,6 +308,59 @@ export type Database = {
           },
         ]
       }
+      lesson_plan_templates: {
+        Row: {
+          created_at: string | null
+          deroulement: Json
+          duree_minutes: number
+          id: string
+          is_public: boolean | null
+          materiel_necessaire: string[] | null
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs: string[]
+          titre: string
+          tutor_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deroulement?: Json
+          duree_minutes: number
+          id?: string
+          is_public?: boolean | null
+          materiel_necessaire?: string[] | null
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs?: string[]
+          titre: string
+          tutor_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deroulement?: Json
+          duree_minutes?: number
+          id?: string
+          is_public?: boolean | null
+          materiel_necessaire?: string[] | null
+          matiere?: string
+          niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
+          objectifs?: string[]
+          titre?: string
+          tutor_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_plan_templates_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           alignement_socle_commun: string | null
@@ -673,6 +726,79 @@ export type Database = {
             columns: ["lesson_id"]
             isOneToOne: false
             referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      session_feedback: {
+        Row: {
+          areas_for_improvement: string | null
+          comprehension_score: number | null
+          created_at: string | null
+          homework_assigned: string | null
+          homework_completion_score: number | null
+          id: string
+          next_session_focus: string | null
+          participation_score: number | null
+          session_id: string
+          strengths: string | null
+          student_id: string
+          tutor_id: string
+          tutor_notes: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          areas_for_improvement?: string | null
+          comprehension_score?: number | null
+          created_at?: string | null
+          homework_assigned?: string | null
+          homework_completion_score?: number | null
+          id?: string
+          next_session_focus?: string | null
+          participation_score?: number | null
+          session_id: string
+          strengths?: string | null
+          student_id: string
+          tutor_id: string
+          tutor_notes?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          areas_for_improvement?: string | null
+          comprehension_score?: number | null
+          created_at?: string | null
+          homework_assigned?: string | null
+          homework_completion_score?: number | null
+          id?: string
+          next_session_focus?: string | null
+          participation_score?: number | null
+          session_id?: string
+          strengths?: string | null
+          student_id?: string
+          tutor_id?: string
+          tutor_notes?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_feedback_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "sessions_tutorat"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_feedback_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "session_feedback_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
             referencedColumns: ["id"]
           },
         ]
@@ -1107,6 +1233,129 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "tutor_availability_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_messages: {
+        Row: {
+          attachment_url: string | null
+          content: string
+          conversation_id: string
+          created_at: string | null
+          id: string
+          read: boolean | null
+          sender_id: string
+        }
+        Insert: {
+          attachment_url?: string | null
+          content: string
+          conversation_id: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          sender_id: string
+        }
+        Update: {
+          attachment_url?: string | null
+          content?: string
+          conversation_id?: string
+          created_at?: string | null
+          id?: string
+          read?: boolean | null
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_packages: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          nom: string
+          nombre_sessions: number
+          reduction_pourcentage: number
+          tutor_id: string
+          updated_at: string | null
+          validite_jours: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom: string
+          nombre_sessions: number
+          reduction_pourcentage: number
+          tutor_id: string
+          updated_at?: string | null
+          validite_jours?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          nom?: string
+          nombre_sessions?: number
+          reduction_pourcentage?: number
+          tutor_id?: string
+          updated_at?: string | null
+          validite_jours?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_packages_tutor_id_fkey"
+            columns: ["tutor_id"]
+            isOneToOne: false
+            referencedRelation: "tutors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tutor_pricing: {
+        Row: {
+          created_at: string | null
+          id: string
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          tarif_horaire_eur: number
+          tutor_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          matiere: string
+          niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
+          tarif_horaire_eur: number
+          tutor_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          matiere?: string
+          niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
+          tarif_horaire_eur?: number
+          tutor_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tutor_pricing_tutor_id_fkey"
             columns: ["tutor_id"]
             isOneToOne: false
             referencedRelation: "tutors"

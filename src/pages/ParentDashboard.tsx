@@ -18,6 +18,7 @@ import BudgetManagement from "@/components/BudgetManagement";
 import FavoriteTutors from "@/components/FavoriteTutors";
 import FamilyCalendar from "@/components/FamilyCalendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import TutorChat from "@/components/TutorChat";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -441,10 +442,11 @@ const ParentDashboard = () => {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="budget" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-3">
+                <TabsList className="grid w-full grid-cols-4">
                   <TabsTrigger value="budget">Gestion du Budget</TabsTrigger>
                   <TabsTrigger value="favorites">Tuteurs Favoris</TabsTrigger>
                   <TabsTrigger value="calendar">Calendrier Familial</TabsTrigger>
+                  <TabsTrigger value="chat">Messages</TabsTrigger>
                 </TabsList>
                 <TabsContent value="budget">
                   <BudgetManagement />
@@ -454,6 +456,9 @@ const ParentDashboard = () => {
                 </TabsContent>
                 <TabsContent value="calendar">
                   <FamilyCalendar />
+                </TabsContent>
+                <TabsContent value="chat">
+                  <TutorChat />
                 </TabsContent>
               </Tabs>
             </CardContent>
