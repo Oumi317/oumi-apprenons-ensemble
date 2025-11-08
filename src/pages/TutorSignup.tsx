@@ -204,7 +204,19 @@ const TutorSignup = () => {
         }
       });
 
-      if (authError) throw authError;
+      if (authError) {
+        // Détecter si l'email est déjà utilisé
+        if (authError.message.includes("already registered") || authError.message.includes("User already registered")) {
+          toast({
+            title: "Email déjà utilisé",
+            description: "Cet email est déjà associé à un compte. Si vous avez déjà un compte parent, veuillez utiliser un email différent pour votre compte tuteur.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+        throw authError;
+      }
 
       if (authData.user) {
         // Créer le profil tuteur
