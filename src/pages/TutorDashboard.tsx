@@ -107,7 +107,7 @@ export default function TutorDashboard() {
     const statusMap: Record<string, { variant: "default" | "secondary" | "destructive" | "outline", label: string }> = {
       programmee: { variant: "default", label: "Programmée" },
       en_cours: { variant: "secondary", label: "En cours" },
-      terminee: { variant: "outline", label: "Terminée" },
+      completee: { variant: "outline", label: "Terminée" },
       annulee: { variant: "destructive", label: "Annulée" }
     };
     const info = statusMap[status] || statusMap.programmee;

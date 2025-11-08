@@ -19,7 +19,7 @@ interface Session {
   time: string;
   subject: string;
   tutor: string;
-  status: "programmee" | "en_cours" | "terminee";
+  status: "programmee" | "en_cours" | "completee";
 }
 
 interface SessionCalendarProps {
@@ -47,7 +47,7 @@ export const SessionCalendar = ({ sessions, onSessionClick }: SessionCalendarPro
         return "bg-primary/10 text-primary border-primary/20";
       case "en_cours":
         return "bg-success/10 text-success border-success/20";
-      case "terminee":
+      case "completee":
         return "bg-muted text-muted-foreground";
       default:
         return "bg-muted";
@@ -60,7 +60,7 @@ export const SessionCalendar = ({ sessions, onSessionClick }: SessionCalendarPro
         return "Programmée";
       case "en_cours":
         return "En cours";
-      case "terminee":
+      case "completee":
         return "Terminée";
       default:
         return status;

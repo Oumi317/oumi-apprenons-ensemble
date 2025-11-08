@@ -1619,7 +1619,7 @@ export type Database = {
         | "Terminale"
       statut_abonnement: "actif" | "annule" | "expire"
       statut_paiement: "reussi" | "echec" | "en_attente"
-      statut_session: "programmee" | "completee" | "annulee"
+      statut_session: "programmee" | "completee" | "annulee" | "en_cours"
       statut_tuteur: "en_attente" | "approuve" | "refuse" | "suspendu"
       type_abonnement: "gratuit" | "premium_individuel" | "premium_famille"
       type_contenu: "video" | "exercice" | "quiz" | "document"
@@ -1768,7 +1768,7 @@ export const Constants = {
       ],
       statut_abonnement: ["actif", "annule", "expire"],
       statut_paiement: ["reussi", "echec", "en_attente"],
-      statut_session: ["programmee", "completee", "annulee"],
+      statut_session: ["programmee", "completee", "annulee", "en_cours"],
       statut_tuteur: ["en_attente", "approuve", "refuse", "suspendu"],
       type_abonnement: ["gratuit", "premium_individuel", "premium_famille"],
       type_contenu: ["video", "exercice", "quiz", "document"],
