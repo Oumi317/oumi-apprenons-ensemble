@@ -23,7 +23,7 @@ interface Session {
     profiles: {
       prenom: string;
       nom: string;
-    };
+    } | null;
   };
 }
 
@@ -137,7 +137,7 @@ export function UpcomingSessions() {
                   </div>
                   <div className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    {session.tutors.profiles.prenom} {session.tutors.profiles.nom}
+                    {session.tutors.profiles?.prenom || "Tuteur"} {session.tutors.profiles?.nom || ""}
                   </div>
                 </div>
               </div>
