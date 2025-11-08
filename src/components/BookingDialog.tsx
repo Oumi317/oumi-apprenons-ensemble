@@ -165,11 +165,22 @@ export default function BookingDialog({
 
     } catch (error: any) {
       console.error("Error booking session:", error);
+      
+      // Gérer l'erreur de chevauchement de créneau
+      const errorMessage = error.message.includes('déjà réservé') 
+        ? "Ce créneau horaire vient d'être réservé par un autre parent. Veuillez choisir un autre créneau."
+        : error.message;
+      
       toast({
         title: "Erreur",
-        description: error.message,
+        description: errorMessage,
         variant: "destructive"
       });
+      
+      // Recharger les créneaux disponibles
+      if (error.message.includes('déjà réservé')) {
+        fetchBookedSlots();
+      }
     } finally {
       setLoading(false);
     }
