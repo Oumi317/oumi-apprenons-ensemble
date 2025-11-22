@@ -19,6 +19,9 @@ import FavoriteTutors from "@/components/FavoriteTutors";
 import FamilyCalendar from "@/components/FamilyCalendar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TutorChat from "@/components/TutorChat";
+import { NotificationCenter } from "@/components/NotificationCenter";
+import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
+import { LearningRecommendations } from "@/components/LearningRecommendations";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -442,11 +445,14 @@ const ParentDashboard = () => {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="budget" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="budget">Gestion du Budget</TabsTrigger>
-                  <TabsTrigger value="favorites">Tuteurs Favoris</TabsTrigger>
-                  <TabsTrigger value="calendar">Calendrier Familial</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-7 gap-2">
+                  <TabsTrigger value="budget">Budget</TabsTrigger>
+                  <TabsTrigger value="favorites">Favoris</TabsTrigger>
+                  <TabsTrigger value="calendar">Calendrier</TabsTrigger>
                   <TabsTrigger value="chat">Messages</TabsTrigger>
+                  <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                  <TabsTrigger value="analytics">Analyses</TabsTrigger>
+                  <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
                 </TabsList>
                 <TabsContent value="budget">
                   <BudgetManagement />
@@ -459,6 +465,49 @@ const ParentDashboard = () => {
                 </TabsContent>
                 <TabsContent value="chat">
                   <TutorChat />
+                </TabsContent>
+                <TabsContent value="notifications">
+                  <NotificationCenter />
+                </TabsContent>
+                <TabsContent value="analytics">
+                  <PerformanceAnalytics 
+                    data={{
+                      subjectPerformance: [
+                        { matiere: "Mathématiques", average: 85, trend: "up", sessionsCount: 12 },
+                        { matiere: "Français", average: 78, trend: "up", sessionsCount: 10 },
+                        { matiere: "Anglais", average: 72, trend: "stable", sessionsCount: 8 },
+                        { matiere: "Sciences", average: 88, trend: "up", sessionsCount: 11 },
+                      ],
+                      weeklyActivity: [
+                        { week: "S1", sessions: 4, xpEarned: 120 },
+                        { week: "S2", sessions: 5, xpEarned: 150 },
+                        { week: "S3", sessions: 3, xpEarned: 90 },
+                        { week: "S4", sessions: 6, xpEarned: 180 },
+                      ],
+                      quizPerformance: [
+                        { date: "Lun", score: 75 },
+                        { date: "Mar", score: 82 },
+                        { date: "Mer", score: 78 },
+                        { date: "Jeu", score: 85 },
+                        { date: "Ven", score: 88 },
+                      ],
+                      totalStats: {
+                        totalSessions: totalSessions,
+                        totalXP: children[0]?.experience_points || 0,
+                        averageScore: 81,
+                        studyHours: Math.round(totalSessions * 1.2),
+                      }
+                    }}
+                  />
+                </TabsContent>
+                <TabsContent value="recommendations">
+                  <LearningRecommendations 
+                    studentId={children[0]?.id || ""}
+                    currentLevel={children[0]?.niveau_scolaire || "CE2"}
+                    weakSubjects={["Mathématiques"]}
+                    strongSubjects={["Français", "Sciences"]}
+                    recentScores={[85, 78, 82, 88, 75]}
+                  />
                 </TabsContent>
               </Tabs>
             </CardContent>
