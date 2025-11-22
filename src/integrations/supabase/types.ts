@@ -119,6 +119,33 @@ export type Database = {
           },
         ]
       }
+      api_rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          request_count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          request_count?: number
+          user_id: string
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          request_count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       budget_alerts: {
         Row: {
           alert_threshold: number | null
@@ -530,6 +557,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payment_nonces: {
+        Row: {
+          amount: number
+          created_at: string
+          expires_at: string
+          id: string
+          nonce: string
+          status: string
+          transaction_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce: string
+          status?: string
+          transaction_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          nonce?: string
+          status?: string
+          transaction_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       payments: {
         Row: {
@@ -1592,6 +1652,7 @@ export type Database = {
         Returns: undefined
       }
       calculate_level: { Args: { xp: number }; Returns: number }
+      cleanup_expired_nonces: { Args: never; Returns: undefined }
       generate_slug: { Args: { text_input: string }; Returns: string }
       has_role: {
         Args: {
