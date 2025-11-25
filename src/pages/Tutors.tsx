@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
@@ -14,6 +14,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { 
   GraduationCap, 
   Search, 
@@ -52,6 +55,10 @@ const Tutors = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedMatiere, setSelectedMatiere] = useState("Toutes");
   const [maxTarif, setMaxTarif] = useState(100);
+  const [minRating, setMinRating] = useState(0);
+  const [availableOnly, setAvailableOnly] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const tutorsPerPage = 12;
   const [bookingDialog, setBookingDialog] = useState<{
     open: boolean;
     tutorId: string;
@@ -79,7 +86,7 @@ const Tutors = () => {
 
   useEffect(() => {
     filterTutors();
-  }, [tutors, searchQuery, selectedMatiere, maxTarif]);
+  }, [tutors, searchQuery, selectedMatiere, maxTarif, minRating, availableOnly]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -122,7 +129,7 @@ const Tutors = () => {
     setLoading(false);
   };
 
-  const filterTutors = () => {
+  const filterTutors = useCallback(() => {
     let filtered = [...tutors];
 
     // Filtre par recherche
@@ -145,8 +152,21 @@ const Tutors = () => {
     // Filtre par tarif
     filtered = filtered.filter((tutor) => tutor.tarif_horaire_eur <= maxTarif);
 
+    // Filtre par note minimum
+    if (minRating > 0) {
+      filtered = filtered.filter((tutor) => (tutor.note_moyenne || 0) >= minRating);
+    }
+
+    // Filtre par disponibilité
+    if (availableOnly) {
+      filtered = filtered.filter(
+        (tutor) => tutor.disponibilites && Object.keys(tutor.disponibilites).length > 0
+      );
+    }
+
     setFilteredTutors(filtered);
-  };
+    setCurrentPage(1);
+  }, [tutors, searchQuery, selectedMatiere, maxTarif, minRating, availableOnly]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -157,10 +177,41 @@ const Tutors = () => {
     navigate("/");
   };
 
+  const paginatedTutors = useMemo(() => {
+    const startIndex = (currentPage - 1) * tutorsPerPage;
+    const endIndex = startIndex + tutorsPerPage;
+    return filteredTutors.slice(startIndex, endIndex);
+  }, [filteredTutors, currentPage, tutorsPerPage]);
+
+  const totalPages = Math.ceil(filteredTutors.length / tutorsPerPage);
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <NavigationHeader />
+        <div className="container mx-auto px-4 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4 mb-4">
+                    <Skeleton className="h-20 w-20 rounded-2xl" />
+                    <div className="flex-1">
+                      <Skeleton className="h-6 w-32 mb-2" />
+                      <Skeleton className="h-4 w-24" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-20 w-full mb-4" />
+                  <div className="flex gap-2 mb-4">
+                    <Skeleton className="h-6 w-20" />
+                    <Skeleton className="h-6 w-20" />
+                  </div>
+                  <Skeleton className="h-12 w-full" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -376,27 +427,61 @@ const Tutors = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium flex items-center gap-2">
-                      <Award className="h-4 w-4 text-primary" />
-                      Budget maximum par heure
-                    </label>
-                    <Badge className="text-base font-bold px-3 py-1">
-                      {maxTarif}€
-                    </Badge>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium flex items-center gap-2">
+                        <Award className="h-4 w-4 text-primary" />
+                        Budget maximum par heure
+                      </label>
+                      <Badge className="text-base font-bold px-3 py-1">
+                        {maxTarif}€
+                      </Badge>
+                    </div>
+                    <Slider
+                      value={[maxTarif]}
+                      onValueChange={(value) => setMaxTarif(value[0])}
+                      min={20}
+                      max={100}
+                      step={5}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground pt-1">
+                      <span>20€/h</span>
+                      <span>100€/h</span>
+                    </div>
                   </div>
-                  <Slider
-                    value={[maxTarif]}
-                    onValueChange={(value) => setMaxTarif(value[0])}
-                    min={20}
-                    max={100}
-                    step={5}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground pt-1">
-                    <span>20€/h</span>
-                    <span>100€/h</span>
+
+                  <div className="space-y-3 p-4 bg-muted/50 rounded-lg">
+                    <Label className="text-sm font-medium flex items-center gap-2">
+                      <Star className="h-4 w-4 text-primary" />
+                      Note minimum
+                    </Label>
+                    <Select value={minRating.toString()} onValueChange={(val) => setMinRating(Number(val))}>
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Toutes les notes" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="0">Toutes les notes</SelectItem>
+                        <SelectItem value="3">3★ et plus</SelectItem>
+                        <SelectItem value="4">4★ et plus</SelectItem>
+                        <SelectItem value="4.5">4.5★ et plus</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Checkbox
+                        id="available"
+                        checked={availableOnly}
+                        onCheckedChange={(checked) => setAvailableOnly(!!checked)}
+                      />
+                      <Label
+                        htmlFor="available"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        Afficher uniquement les tuteurs disponibles
+                      </Label>
+                    </div>
                   </div>
                 </div>
 
@@ -405,7 +490,7 @@ const Tutors = () => {
                     <Users className="h-4 w-4 mr-2" />
                     {filteredTutors.length} tuteur{filteredTutors.length > 1 ? "s" : ""} disponible{filteredTutors.length > 1 ? "s" : ""}
                   </Badge>
-                  {(searchQuery || selectedMatiere !== "Toutes" || maxTarif !== 100) && (
+                  {(searchQuery || selectedMatiere !== "Toutes" || maxTarif !== 100 || minRating > 0 || availableOnly) && (
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -413,6 +498,8 @@ const Tutors = () => {
                         setSearchQuery("");
                         setSelectedMatiere("Toutes");
                         setMaxTarif(100);
+                        setMinRating(0);
+                        setAvailableOnly(false);
                       }}
                     >
                       Réinitialiser
@@ -435,8 +522,9 @@ const Tutors = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTutors.map((tutor) => (
+            <>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedTutors.map((tutor) => (
                 <Card
                   key={tutor.id}
                   className="group hover:shadow-2xl transition-all hover:border-primary/50 cursor-pointer animate-fade-in hover:-translate-y-1 border-2"
@@ -534,7 +622,51 @@ const Tutors = () => {
                   </CardContent>
                 </Card>
               ))}
-            </div>
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-8 flex justify-center gap-2 flex-wrap">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  >
+                    Précédent
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {[...Array(totalPages)].map((_, i) => {
+                      const page = i + 1;
+                      if (
+                        page === 1 ||
+                        page === totalPages ||
+                        (page >= currentPage - 1 && page <= currentPage + 1)
+                      ) {
+                        return (
+                          <Button
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
+                            onClick={() => setCurrentPage(page)}
+                            className="w-10"
+                          >
+                            {page}
+                          </Button>
+                        );
+                      } else if (page === currentPage - 2 || page === currentPage + 2) {
+                        return <span key={page} className="px-2">...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    disabled={currentPage === totalPages}
+                  >
+                    Suivant
+                  </Button>
+                </div>
+              )}
+            </>
           )}
 
           {/* CTA Devenir Tuteur */}
