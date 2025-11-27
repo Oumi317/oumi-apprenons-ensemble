@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { LessonCard } from "@/components/LessonCard";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InteractiveLearning } from "@/components/InteractiveLearning";
+import { Skeleton } from "@/components/ui/skeleton";
 import { 
   GraduationCap, 
   BookOpen, 
@@ -19,7 +20,9 @@ import {
   Sparkles,
   Target,
   Video,
-  FileQuestion
+  FileQuestion,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +40,8 @@ const Lessons = () => {
   const [children, setChildren] = useState<any[]>([]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [interactiveResources, setInteractiveResources] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [lessonsPerPage] = useState(12);
   const [filters, setFilters] = useState({
     niveau: "",
     matiere: "",
@@ -160,7 +165,15 @@ const Lessons = () => {
     }
 
     setFilteredLessons(filtered);
+    setCurrentPage(1);
   };
+
+  const paginatedLessons = useMemo(() => {
+    const startIndex = (currentPage - 1) * lessonsPerPage;
+    return filteredLessons.slice(startIndex, startIndex + lessonsPerPage);
+  }, [filteredLessons, currentPage, lessonsPerPage]);
+
+  const totalPages = Math.ceil(filteredLessons.length / lessonsPerPage);
 
   const handleSearch = (query: string) => {
     let filtered = [...lessons];
@@ -205,8 +218,39 @@ const Lessons = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-background">
+        <NavigationHeader />
+        <main className="container mx-auto px-4 py-8">
+          <div className="space-y-8">
+            <div className="text-center space-y-6 py-8">
+              <Skeleton className="h-12 w-96 mx-auto" />
+              <Skeleton className="h-6 w-[600px] mx-auto" />
+              <div className="grid md:grid-cols-5 gap-4 max-w-5xl mx-auto pt-4">
+                {[...Array(5)].map((_, i) => (
+                  <Card key={i}>
+                    <CardContent className="p-6">
+                      <Skeleton className="h-8 w-8 mx-auto mb-2" />
+                      <Skeleton className="h-8 w-16 mx-auto mb-2" />
+                      <Skeleton className="h-4 w-24 mx-auto" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i}>
+                  <Skeleton className="h-48 w-full rounded-t-lg" />
+                  <CardContent className="p-4 space-y-2">
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
@@ -393,16 +437,69 @@ const Lessons = () => {
                   </CardContent>
                 </Card>
               ) : (
-                <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
-                  {filteredLessons.map((lesson, index) => (
-                    <LessonCard
-                      key={lesson.id}
-                      lesson={lesson}
-                      user={user}
-                      featured={index < 3}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-6" : "space-y-4"}>
+                    {paginatedLessons.map((lesson, index) => (
+                      <LessonCard
+                        key={lesson.id}
+                        lesson={lesson}
+                        user={user}
+                        featured={index < 3}
+                      />
+                    ))}
+                  </div>
+
+                  {/* Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-8">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4 mr-1" />
+                        Précédent
+                      </Button>
+                      
+                      <div className="flex items-center gap-1">
+                        {[...Array(totalPages)].map((_, i) => {
+                          const page = i + 1;
+                          if (
+                            page === 1 ||
+                            page === totalPages ||
+                            (page >= currentPage - 1 && page <= currentPage + 1)
+                          ) {
+                            return (
+                              <Button
+                                key={page}
+                                variant={currentPage === page ? "default" : "outline"}
+                                size="sm"
+                                onClick={() => setCurrentPage(page)}
+                                className="w-10"
+                              >
+                                {page}
+                              </Button>
+                            );
+                          } else if (page === currentPage - 2 || page === currentPage + 2) {
+                            return <span key={page}>...</span>;
+                          }
+                          return null;
+                        })}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                        disabled={currentPage === totalPages}
+                      >
+                        Suivant
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
             </TabsContent>
 

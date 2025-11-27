@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Calendar, Clock, DollarSign, Users, Star, ArrowLeft } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Calendar, Clock, DollarSign, Users, Star, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AvailabilityManager from "@/components/AvailabilityManager";
 import StudentTracking from "@/components/StudentTracking";
@@ -22,6 +23,8 @@ export default function TutorDashboard() {
   const [loading, setLoading] = useState(true);
   const [tutor, setTutor] = useState<any>(null);
   const [sessions, setSessions] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sessionsPerPage] = useState(10);
   const [stats, setStats] = useState({
     totalSessions: 0,
     upcomingSessions: 0,
@@ -114,13 +117,116 @@ export default function TutorDashboard() {
     return <Badge variant={info.variant}>{info.label}</Badge>;
   };
 
+  const upcomingSessions = useMemo(
+    () => sessions.filter(s => new Date(s.date_heure_debut) > new Date()),
+    [sessions]
+  );
+
+  const pastSessions = useMemo(
+    () => sessions.filter(s => new Date(s.date_heure_debut) <= new Date()),
+    [sessions]
+  );
+
+  const getPaginatedSessions = (sessionsList: any[]) => {
+    const startIndex = (currentPage - 1) * sessionsPerPage;
+    return sessionsList.slice(startIndex, startIndex + sessionsPerPage);
+  };
+
+  const getTotalPages = (sessionsList: any[]) => Math.ceil(sessionsList.length / sessionsPerPage);
+
+  const renderPagination = (sessionsList: any[]) => {
+    const totalPages = getTotalPages(sessionsList);
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-center gap-2 mt-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Précédent
+        </Button>
+        
+        <div className="flex items-center gap-1">
+          {[...Array(totalPages)].map((_, i) => {
+            const page = i + 1;
+            if (
+              page === 1 ||
+              page === totalPages ||
+              (page >= currentPage - 1 && page <= currentPage + 1)
+            ) {
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className="w-10"
+                >
+                  {page}
+                </Button>
+              );
+            } else if (page === currentPage - 2 || page === currentPage + 2) {
+              return <span key={page}>...</span>;
+            }
+            return null;
+          })}
+        </div>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+          disabled={currentPage === totalPages}
+        >
+          Suivant
+          <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Chargement...</p>
-        </div>
+      <div className="min-h-screen bg-background">
+        <header className="border-b bg-card">
+          <div className="container mx-auto px-4 py-4">
+            <Skeleton className="h-8 w-64" />
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-4 w-32" />
+                </CardHeader>
+                <CardContent>
+                  <Skeleton className="h-8 w-16" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="space-y-4">
+            {[...Array(3)].map((_, i) => (
+              <Card key={i}>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64 mt-2" />
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
@@ -210,16 +316,15 @@ export default function TutorDashboard() {
           </TabsList>
 
           <TabsContent value="upcoming" className="space-y-4">
-            {sessions.filter(s => new Date(s.date_heure_debut) > new Date()).length === 0 ? (
+            {upcomingSessions.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
                   Aucune session à venir
                 </CardContent>
               </Card>
             ) : (
-              sessions
-                .filter(s => new Date(s.date_heure_debut) > new Date())
-                .map((session) => (
+              <>
+                {getPaginatedSessions(upcomingSessions).map((session) => (
                   <Card key={session.id}>
                     <CardHeader>
                       <div className="flex items-start justify-between">
@@ -261,21 +366,22 @@ export default function TutorDashboard() {
                       )}
                     </CardContent>
                   </Card>
-                ))
+                ))}
+                {renderPagination(upcomingSessions)}
+              </>
             )}
           </TabsContent>
 
           <TabsContent value="past" className="space-y-4">
-            {sessions.filter(s => new Date(s.date_heure_debut) <= new Date()).length === 0 ? (
+            {pastSessions.length === 0 ? (
               <Card>
                 <CardContent className="py-8 text-center text-muted-foreground">
                   Aucune session passée
                 </CardContent>
               </Card>
             ) : (
-              sessions
-                .filter(s => new Date(s.date_heure_debut) <= new Date())
-                .map((session) => (
+              <>
+                {getPaginatedSessions(pastSessions).map((session) => (
                   <Card key={session.id}>
                     <CardHeader>
                       <div className="flex items-start justify-between">
@@ -314,7 +420,9 @@ export default function TutorDashboard() {
                       </div>
                     </CardContent>
                   </Card>
-                ))
+                ))}
+                {renderPagination(pastSessions)}
+              </>
             )}
           </TabsContent>
 
@@ -326,7 +434,8 @@ export default function TutorDashboard() {
                 </CardContent>
               </Card>
             ) : (
-              sessions.map((session) => (
+              <>
+                {getPaginatedSessions(sessions).map((session) => (
                 <Card key={session.id}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -357,9 +466,11 @@ export default function TutorDashboard() {
                         {session.montant_paye}€
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardContent>
+                  </Card>
+                ))}
+                {renderPagination(sessions)}
+              </>
             )}
           </TabsContent>
 
