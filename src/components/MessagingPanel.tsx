@@ -123,15 +123,24 @@ export function MessagingPanel({ conversationId }: { conversationId: string | nu
 
     setLoading(true);
     try {
-      const { error } = await supabase
+      const { data: newMsg, error } = await supabase
         .from("messages")
         .insert({
           conversation_id: conversationId,
           sender_id: currentUser.id,
           content: newMessage.trim(),
-        });
+        })
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Trigger notification creation
+      if (newMsg) {
+        await supabase.functions.invoke("create-message-notification", {
+          body: { messageId: newMsg.id }
+        });
+      }
 
       setNewMessage("");
     } catch (error: any) {
