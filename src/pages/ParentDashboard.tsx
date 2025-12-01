@@ -22,6 +22,7 @@ import TutorChat from "@/components/TutorChat";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
 import { LearningRecommendations } from "@/components/LearningRecommendations";
+import { RealtimeDashboardMetrics } from "@/components/RealtimeDashboardMetrics";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -378,6 +379,11 @@ const ParentDashboard = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Realtime Metrics Dashboard */}
+          {children.length > 0 && (
+            <RealtimeDashboardMetrics studentIds={children.map(c => c.id)} />
+          )}
 
           {/* Dashboard Content Grid */}
           {children.length > 0 && (
