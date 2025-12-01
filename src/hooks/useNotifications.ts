@@ -19,7 +19,19 @@ export function useNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [browserNotificationsEnabled, setBrowserNotificationsEnabled] = useState(false);
   const { toast } = useToast();
+
+  // Request browser notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().then(permission => {
+        setBrowserNotificationsEnabled(permission === 'granted');
+      });
+    } else if ('Notification' in window && Notification.permission === 'granted') {
+      setBrowserNotificationsEnabled(true);
+    }
+  }, []);
 
   useEffect(() => {
     fetchNotifications();
@@ -44,6 +56,17 @@ export function useNotifications() {
             title: newNotification.title,
             description: newNotification.message,
           });
+
+          // Show browser notification if enabled
+          if (browserNotificationsEnabled && document.hidden) {
+            new Notification(newNotification.title, {
+              body: newNotification.message,
+              icon: '/favicon.ico',
+              badge: '/favicon.ico',
+              tag: newNotification.id,
+              requireInteraction: false,
+            });
+          }
         }
       )
       .on(
