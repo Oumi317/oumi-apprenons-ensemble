@@ -16,6 +16,8 @@ import DynamicPricing from "@/components/DynamicPricing";
 import LessonPlanTemplates from "@/components/LessonPlanTemplates";
 import TutorResourceLibrary from "@/components/TutorResourceLibrary";
 import TutorChat from "@/components/TutorChat";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 
 export default function TutorDashboard() {
   const navigate = useNavigate();
@@ -232,28 +234,8 @@ export default function TutorDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold">Tableau de bord tuteur</h1>
-                <p className="text-sm text-muted-foreground">
-                  Bienvenue, {tutor?.bio?.split(" ")[0] || "Tuteur"}
-                </p>
-              </div>
-            </div>
-            <Badge variant={tutor?.statut_approbation === "approuve" ? "default" : "secondary"}>
-              {tutor?.statut_approbation === "approuve" ? "Approuvé" : "En attente"}
-            </Badge>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex flex-col">
+      <NavigationHeader />
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats Grid */}
@@ -507,6 +489,8 @@ export default function TutorDashboard() {
           </TabsContent>
         </Tabs>
       </main>
+      
+      <Footer />
     </div>
   );
 }

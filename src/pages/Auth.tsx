@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Footer } from "@/components/Footer";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { motion } from "framer-motion";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -119,16 +121,26 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero flex flex-col">
+      {/* Theme Toggle */}
+      <div className="absolute top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
       <div className="flex-grow flex items-center justify-center p-4 py-12">
         <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
           {/* Left Side - Benefits */}
-          <div className="hidden lg:block space-y-8">
+          <motion.div 
+            className="hidden lg:block space-y-8"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <div className="space-y-4">
-              <Link to="/" className="inline-flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
-                <GraduationCap className="h-8 w-8" />
-                <span className="text-2xl font-bold">Oumi'School</span>
+              <Link to="/" className="inline-flex items-center gap-2 text-white hover:opacity-80 transition-opacity group">
+                <GraduationCap className="h-8 w-8 transition-transform group-hover:scale-110" />
+                <span className="text-2xl font-display font-bold">Oumi'School</span>
               </Link>
-              <h2 className="text-4xl font-bold text-white">
+              <h2 className="text-4xl font-display font-bold text-white">
                 Rejoignez +1 000 familles satisfaites
               </h2>
               <p className="text-white/90 text-lg">
@@ -212,14 +224,18 @@ const Auth = () => {
                 <p className="text-sm text-white/90 font-medium">4.9/5 • 500+ avis vérifiés</p>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Side - Auth Form */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
             <div className="text-center mb-6 lg:hidden">
-              <Link to="/" className="inline-flex items-center gap-2 mb-4">
-                <GraduationCap className="h-10 w-10 text-white" />
-                <span className="text-3xl font-bold text-white">Oumi'School</span>
+              <Link to="/" className="inline-flex items-center gap-2 mb-4 group">
+                <GraduationCap className="h-10 w-10 text-white transition-transform group-hover:scale-110" />
+                <span className="text-3xl font-display font-bold text-white">Oumi'School</span>
               </Link>
               <p className="text-white/90">Excellence éducative francophone</p>
             </div>
@@ -380,7 +396,7 @@ const Auth = () => {
                 Plateforme sécurisée et conforme RGPD
               </p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
       <Footer />

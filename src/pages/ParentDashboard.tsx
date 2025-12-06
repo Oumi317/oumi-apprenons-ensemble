@@ -23,6 +23,8 @@ import { NotificationCenter } from "@/components/NotificationCenter";
 import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
 import { LearningRecommendations } from "@/components/LearningRecommendations";
 import { RealtimeDashboardMetrics } from "@/components/RealtimeDashboardMetrics";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -152,27 +154,8 @@ const ParentDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              Oumi'School
-            </h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-muted-foreground">
-              {user?.user_metadata?.first_name} {user?.user_metadata?.last_name}
-            </span>
-            <Button variant="outline" size="sm" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Déconnexion
-            </Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex flex-col">
+      <NavigationHeader />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
@@ -523,6 +506,8 @@ const ParentDashboard = () => {
       
       {/* Help Button */}
       <HelpButton />
+      
+      <Footer />
     </div>
   );
 };

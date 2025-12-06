@@ -13,6 +13,8 @@ import AdminResourceUpload from "@/components/AdminResourceUpload";
 import AdminLessonManager from "@/components/AdminLessonManager";
 import AdminTutorManager from "@/components/AdminTutorManager";
 import AdminUserManager from "@/components/AdminUserManager";
+import { NavigationHeader } from "@/components/NavigationHeader";
+import { Footer } from "@/components/Footer";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -179,24 +181,8 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" onClick={() => navigate("/")}>
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold">Tableau de bord administrateur</h1>
-                <p className="text-sm text-muted-foreground">Gestion de la plateforme Oumi'School</p>
-              </div>
-            </div>
-            <Badge variant="default">Admin</Badge>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-background flex flex-col">
+      <NavigationHeader />
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats Grid */}
@@ -390,6 +376,8 @@ export default function AdminDashboard() {
           </TabsContent>
         </Tabs>
       </main>
+      
+      <Footer />
     </div>
   );
 }
