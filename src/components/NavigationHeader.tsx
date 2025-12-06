@@ -57,7 +57,7 @@ export function NavigationHeader() {
             <Link to="/lessons" className="text-sm font-medium transition-colors hover:text-primary">
               <div className="flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
-                Cours
+                Ressources
               </div>
             </Link>
             <Link to="/tutors" className="text-sm font-medium transition-colors hover:text-primary">
@@ -142,9 +142,14 @@ export function NavigationHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={() => navigate("/auth")} className="hidden md:flex bg-gradient-primary">
-              Connexion
-            </Button>
+            <div className="hidden md:flex items-center gap-2">
+              <Button variant="ghost" onClick={() => navigate("/auth")}>
+                Connexion
+              </Button>
+              <Button onClick={() => navigate("/auth?mode=signup")} className="bg-gradient-primary">
+                Commencer gratuitement
+              </Button>
+            </div>
           )}
           
           <div className="md:hidden">

@@ -9,14 +9,13 @@ import {
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { MobileMenu } from "@/components/MobileMenu";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ScrollReveal";
 import { FloatingShapes } from "@/components/FloatingShapes";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubjectBadges } from "@/components/SubjectBadges";
 import { AnimatedIllustration, type IllustrationType } from "@/components/AnimatedIllustrations";
 import { HomeFAQ } from "@/components/HomeFAQ";
 import { ParallaxSection, ParallaxFloatingElement } from "@/components/ParallaxSection";
+import { NavigationHeader } from "@/components/NavigationHeader";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -24,47 +23,7 @@ const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m =
 const Home = () => {
   return (
     <div className="min-h-screen bg-background font-sans overflow-x-hidden">
-      {/* Header simplifié */}
-      <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="h-10 w-10 rounded-2xl bg-gradient-hero flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform">
-              <GraduationCap className="h-5 w-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold font-display text-foreground">
-              Oumi<span className="text-primary">&apos;</span>School
-            </span>
-          </Link>
-          
-          <nav className="hidden md:flex items-center gap-2">
-            <Link to="/lessons">
-              <Button variant="ghost" className="rounded-full font-medium">Ressources</Button>
-            </Link>
-            <Link to="/tutors">
-              <Button variant="ghost" className="rounded-full font-medium">Tuteurs</Button>
-            </Link>
-            <Link to="/faq">
-              <Button variant="ghost" className="rounded-full font-medium">FAQ</Button>
-            </Link>
-            <div className="w-px h-6 bg-border mx-2" />
-            <ThemeToggle />
-            <Link to="/auth">
-              <Button variant="ghost" className="rounded-full font-medium">Connexion</Button>
-            </Link>
-            <Link to="/auth?mode=signup">
-              <Button className="rounded-full bg-gradient-hero shadow-soft hover:shadow-md transition-shadow font-semibold px-6">
-                Commencer gratuitement
-              </Button>
-            </Link>
-          </nav>
-          
-          {/* Mobile menu */}
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeToggle />
-            <MobileMenu />
-          </div>
-        </div>
-      </header>
+      <NavigationHeader />
 
       {/* Hero Section - Chaleureux et simplifié */}
       <section className="relative py-16 md:py-24 lg:py-32">
