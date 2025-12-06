@@ -266,34 +266,20 @@ const TutorProfile = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Stats Overview */}
             <div className="grid md:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
-                  <div className="text-2xl font-bold">{tutor.nombre_sessions}</div>
-                  <div className="text-sm text-muted-foreground">Sessions données</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <TrendingUp className="h-8 w-8 mx-auto mb-2 text-success" />
-                  <div className="text-2xl font-bold">98%</div>
-                  <div className="text-sm text-muted-foreground">Taux de réussite</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <Clock className="h-8 w-8 mx-auto mb-2 text-secondary" />
-                  <div className="text-2xl font-bold">24h</div>
-                  <div className="text-sm text-muted-foreground">Temps de réponse</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6 text-center">
-                  <Heart className="h-8 w-8 mx-auto mb-2 text-accent" />
-                  <div className="text-2xl font-bold">96%</div>
-                  <div className="text-sm text-muted-foreground">Recommandations</div>
-                </CardContent>
-              </Card>
+              {[
+                { icon: Users, value: tutor.nombre_sessions, label: "Sessions données", color: "text-primary" },
+                { icon: TrendingUp, value: "98%", label: "Taux de réussite", color: "text-success" },
+                { icon: Clock, value: "24h", label: "Temps de réponse", color: "text-secondary" },
+                { icon: Heart, value: "96%", label: "Recommandations", color: "text-accent" }
+              ].map((stat, index) => (
+                <Card key={index} className="hover-scale animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <CardContent className="p-6 text-center">
+                    <stat.icon className={`h-8 w-8 mx-auto mb-2 ${stat.color}`} />
+                    <div className="text-2xl font-bold">{stat.value}</div>
+                    <div className="text-sm text-muted-foreground">{stat.label}</div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             {/* Bio */}

@@ -263,8 +263,8 @@ const Lessons = () => {
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
           {/* Hero Section */}
-          <div className="text-center space-y-6 py-8">
-            <h1 className="text-5xl font-bold">Bibliothèque de ressources</h1>
+          <div className="text-center space-y-6 py-8 animate-fade-in">
+            <h1 className="text-5xl font-display font-bold">Bibliothèque de ressources</h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Des milliers de leçons, exercices et quiz alignés avec le programme français
             </p>

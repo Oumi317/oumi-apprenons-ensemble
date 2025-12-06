@@ -226,45 +226,36 @@ const Tutors = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm inline-flex items-center gap-2 px-4 py-2">
+            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm inline-flex items-center gap-2 px-4 py-2 animate-fade-in">
               <Shield className="h-4 w-4" />
               +{tutors.length} tuteurs certifiés disponibles
             </Badge>
             
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+            <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-tight animate-fade-in">
               Trouvez le tuteur parfait pour votre enfant
             </h1>
             
-            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed animate-fade-in" style={{ animationDelay: "0.1s" }}>
               Des enseignants passionnés, rigoureusement sélectionnés pour leur excellence pédagogique et leur expérience
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-8">
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <Users className="h-8 w-8 mx-auto mb-2 text-white" />
-                <div className="text-3xl font-bold text-white">{tutors.length}+</div>
-                <div className="text-sm text-white/80">Tuteurs</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <Star className="h-8 w-8 mx-auto mb-2 text-white" />
-                <div className="text-3xl font-bold text-white">
-                  {tutors.length > 0 
-                    ? (tutors.reduce((sum, t) => sum + (t.note_moyenne || 0), 0) / tutors.length).toFixed(1)
-                    : "4.8"
-                  }
+              {[
+                { icon: Users, value: `${tutors.length}+`, label: "Tuteurs" },
+                { icon: Star, value: tutors.length > 0 ? (tutors.reduce((sum, t) => sum + (t.note_moyenne || 0), 0) / tutors.length).toFixed(1) : "4.8", label: "Note moyenne" },
+                { icon: CheckCircle, value: "100%", label: "Vérifiés" },
+                { icon: Clock, value: "24/7", label: "Disponibilité" }
+              ].map((stat, index) => (
+                <div 
+                  key={index}
+                  className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover-scale animate-fade-in"
+                  style={{ animationDelay: `${0.2 + index * 0.1}s` }}
+                >
+                  <stat.icon className="h-8 w-8 mx-auto mb-2 text-white" />
+                  <div className="text-3xl font-bold text-white">{stat.value}</div>
+                  <div className="text-sm text-white/80">{stat.label}</div>
                 </div>
-                <div className="text-sm text-white/80">Note moyenne</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <CheckCircle className="h-8 w-8 mx-auto mb-2 text-white" />
-                <div className="text-3xl font-bold text-white">100%</div>
-                <div className="text-sm text-white/80">Vérifiés</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
-                <Clock className="h-8 w-8 mx-auto mb-2 text-white" />
-                <div className="text-3xl font-bold text-white">24/7</div>
-                <div className="text-sm text-white/80">Disponibilité</div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
