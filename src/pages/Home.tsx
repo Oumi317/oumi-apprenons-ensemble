@@ -14,6 +14,7 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/Scroll
 import { FloatingShapes } from "@/components/FloatingShapes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubjectBadges } from "@/components/SubjectBadges";
+import { LottieAnimation, type AnimationType } from "@/components/LottieAnimation";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -155,32 +156,29 @@ const Home = () => {
             </motion.div>
           </div>
           
-          {/* Illustration cards */}
+          {/* Illustration cards avec animations Lottie */}
           <StaggerContainer 
             className="mt-16 md:mt-24 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6"
             staggerDelay={0.15}
           >
             {[
               { 
-                icon: BookOpen, 
+                animation: "book" as AnimationType,
                 title: "Cours interactifs", 
                 desc: "Leçons vivantes avec tableau blanc et outils ludiques",
-                bgColor: "bg-primary/10",
-                iconColor: "text-primary"
+                bgColor: "bg-primary/10"
               },
               { 
-                icon: Users, 
+                animation: "tutor" as AnimationType,
                 title: "Tuteurs bienveillants", 
                 desc: "Professionnels passionnés qui s'adaptent à chaque enfant",
-                bgColor: "bg-secondary/10",
-                iconColor: "text-secondary"
+                bgColor: "bg-secondary/10"
               },
               { 
-                icon: Heart, 
+                animation: "heart" as AnimationType,
                 title: "Valeurs respectées", 
                 desc: "Environnement adapté à vos convictions familiales",
-                bgColor: "bg-success/10",
-                iconColor: "text-success"
+                bgColor: "bg-success/10"
               },
             ].map((item, index) => (
               <StaggerItem key={index}>
@@ -188,8 +186,8 @@ const Home = () => {
                   className="group border-2 border-transparent hover:border-primary/20 bg-card/80 backdrop-blur-sm shadow-md hover:shadow-xl transition-all hover:-translate-y-1 rounded-3xl overflow-hidden h-full"
                 >
                   <CardContent className="p-6 text-center space-y-4">
-                    <div className={`w-16 h-16 mx-auto rounded-2xl ${item.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                      <item.icon className={`h-8 w-8 ${item.iconColor}`} />
+                    <div className={`mx-auto rounded-2xl ${item.bgColor} flex items-center justify-center p-2`}>
+                      <LottieAnimation type={item.animation} size="lg" />
                     </div>
                     <h3 className="text-lg font-bold font-display">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -316,7 +314,7 @@ const Home = () => {
           <StaggerContainer className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto" staggerDelay={0.15}>
             {[
               {
-                icon: BookOpen,
+                animation: "book" as AnimationType,
                 title: "Familles IEF",
                 desc: "Accompagnement aligné avec le socle commun pour une instruction réussie à domicile.",
                 features: ["Suivi du programme officiel", "Préparation aux contrôles"],
@@ -324,7 +322,7 @@ const Home = () => {
                 gradientTo: "to-primary/5"
               },
               {
-                icon: Globe,
+                animation: "globe" as AnimationType,
                 title: "Expatriés",
                 desc: "Maintenez le lien avec l'éducation française, où que vous soyez dans le monde.",
                 features: ["Horaires flexibles tous fuseaux", "Préparation retour en France"],
@@ -332,7 +330,7 @@ const Home = () => {
                 gradientTo: "to-secondary/5"
               },
               {
-                icon: Users,
+                animation: "family" as AnimationType,
                 title: "Familles en quête de valeurs",
                 desc: "Un environnement éducatif bienveillant respectant vos convictions.",
                 features: ["Tuteurs sensibles à vos besoins", "Contenu adapté"],
@@ -346,8 +344,8 @@ const Home = () => {
                 >
                   <div className={`h-2 bg-gradient-to-r ${item.gradientFrom} ${item.gradientTo}`} />
                   <CardContent className="p-8 space-y-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
-                      <item.icon className="h-7 w-7 text-primary" />
+                    <div className="rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center shadow-sm">
+                      <LottieAnimation type={item.animation} size="lg" />
                     </div>
                     <h3 className="text-xl font-bold font-display">{item.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -371,8 +369,10 @@ const Home = () => {
       <section className="py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4">
           <ScrollReveal className="text-center mb-16">
+            <div className="flex justify-center mb-4">
+              <LottieAnimation type="star" size="lg" />
+            </div>
             <Badge className="bg-success/10 text-success border-success/20 px-4 py-2 rounded-full mb-4">
-              <Star className="h-4 w-4 mr-2 fill-success" />
               Tarifs transparents
             </Badge>
             <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
