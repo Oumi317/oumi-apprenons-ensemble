@@ -15,6 +15,8 @@ import { WeeklyChallenges } from "@/components/WeeklyChallenges";
 import { PerformanceAnalytics } from "@/components/PerformanceAnalytics";
 import { LearningRecommendations } from "@/components/LearningRecommendations";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Layout } from "@/components/Layout";
+import { motion } from "framer-motion";
 
 const StudentProgress = () => {
   const { studentId } = useParams();
@@ -290,33 +292,28 @@ const StudentProgress = () => {
   const performanceData = preparePerformanceData();
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/dashboard/parent" className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              Oumi'School
-            </h1>
-          </Link>
-          <Link to="/dashboard/parent">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour
-            </Button>
-          </Link>
-        </div>
-      </header>
-
+    <Layout showFooter={false}>
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="max-w-6xl mx-auto space-y-8"
+        >
+          {/* Back button */}
+          <Link to="/dashboard/parent">
+            <Button variant="outline" size="sm" className="hover:bg-primary/10">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour au tableau de bord
+            </Button>
+          </Link>
+
           {/* Student Header */}
-          <div className="flex items-start justify-between">
+          <div className="flex items-start justify-between flex-wrap gap-4">
             <div>
-              <h2 className="text-3xl font-bold mb-2">Progrès de {student.prenom}</h2>
-              <div className="flex items-center gap-3">
+              <h2 className="text-3xl font-bold font-display mb-2">Progrès de {student.prenom}</h2>
+              <div className="flex items-center gap-3 flex-wrap">
                 <Badge variant="secondary" className="bg-primary/10 text-primary">
                   {student.niveau_scolaire}
                 </Badge>
@@ -327,7 +324,7 @@ const StudentProgress = () => {
                 )}
               </div>
             </div>
-            <Button className="bg-gradient-primary">
+            <Button className="bg-gradient-primary hover:opacity-90 transition-opacity">
               <Calendar className="h-4 w-4 mr-2" />
               Télécharger le rapport
             </Button>
@@ -335,7 +332,7 @@ const StudentProgress = () => {
 
           {/* Stats Grid */}
           <div className="grid md:grid-cols-4 gap-6">
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <BookOpen className="h-4 w-4" />
@@ -350,7 +347,7 @@ const StudentProgress = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Clock className="h-4 w-4" />
@@ -365,7 +362,7 @@ const StudentProgress = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Star className="h-4 w-4" />
@@ -380,7 +377,7 @@ const StudentProgress = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-3">
                 <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <GraduationCap className="h-4 w-4" />
@@ -611,9 +608,9 @@ const StudentProgress = () => {
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </main>
-    </div>
+    </Layout>
   );
 };
 

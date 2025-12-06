@@ -9,6 +9,8 @@ import {
   Users, Trophy, Sparkles, Gift, Zap 
 } from "lucide-react";
 import { ComparisonTable } from "@/components/ComparisonTable";
+import { Layout } from "@/components/Layout";
+import { motion } from "framer-motion";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -84,28 +86,33 @@ const Payment = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-muted/20 to-background">
+    <Layout>
       <div className="container max-w-7xl mx-auto px-4 py-8">
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-6 hover:bg-primary/10 transition-colors"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
 
-        <div className="text-center mb-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="text-center mb-12"
+        >
           <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
             ⚡ Offre limitée - Première session gratuite
           </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold font-display mb-4">
             Choisissez votre formule
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Des plans flexibles adaptés à vos besoins. Changez ou annulez à tout moment.
           </p>
-        </div>
+        </motion.div>
 
         {!selectedPlan ? (
           <>
@@ -260,7 +267,7 @@ const Payment = () => {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 };
 

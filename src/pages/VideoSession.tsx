@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, GraduationCap, ArrowLeft } from "lucide-react";
 import WaitingRoom from "@/components/WaitingRoom";
 import VideoConferenceRoom from "@/components/VideoConferenceRoom";
+import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function VideoSession() {
   const { sessionId } = useParams();
@@ -54,7 +56,7 @@ export default function VideoSession() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -62,8 +64,14 @@ export default function VideoSession() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Session introuvable</p>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
+        <p className="text-lg font-medium">Session introuvable</p>
+        <Link to="/dashboard/parent">
+          <Button variant="outline">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Retour au tableau de bord
+          </Button>
+        </Link>
       </div>
     );
   }
