@@ -14,7 +14,7 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/Scroll
 import { FloatingShapes } from "@/components/FloatingShapes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubjectBadges } from "@/components/SubjectBadges";
-import { LottieAnimation, type AnimationType } from "@/components/LottieAnimation";
+import { AnimatedIllustration, type IllustrationType } from "@/components/AnimatedIllustrations";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -163,19 +163,19 @@ const Home = () => {
           >
             {[
               { 
-                animation: "book" as AnimationType,
+                illustration: "book" as IllustrationType,
                 title: "Cours interactifs", 
                 desc: "Leçons vivantes avec tableau blanc et outils ludiques",
                 bgColor: "bg-primary/10"
               },
               { 
-                animation: "tutor" as AnimationType,
+                illustration: "tutor" as IllustrationType,
                 title: "Tuteurs bienveillants", 
                 desc: "Professionnels passionnés qui s'adaptent à chaque enfant",
                 bgColor: "bg-secondary/10"
               },
               { 
-                animation: "heart" as AnimationType,
+                illustration: "heart" as IllustrationType,
                 title: "Valeurs respectées", 
                 desc: "Environnement adapté à vos convictions familiales",
                 bgColor: "bg-success/10"
@@ -186,8 +186,8 @@ const Home = () => {
                   className="group border-2 border-transparent hover:border-primary/20 bg-card/80 backdrop-blur-sm shadow-md hover:shadow-xl transition-all hover:-translate-y-1 rounded-3xl overflow-hidden h-full"
                 >
                   <CardContent className="p-6 text-center space-y-4">
-                    <div className={`mx-auto rounded-2xl ${item.bgColor} flex items-center justify-center p-2`}>
-                      <LottieAnimation type={item.animation} size="lg" />
+                    <div className={`mx-auto rounded-2xl ${item.bgColor} flex items-center justify-center p-4`}>
+                      <AnimatedIllustration type={item.illustration} size="lg" />
                     </div>
                     <h3 className="text-lg font-bold font-display">{item.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -314,7 +314,7 @@ const Home = () => {
           <StaggerContainer className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto" staggerDelay={0.15}>
             {[
               {
-                animation: "book" as AnimationType,
+                illustration: "book" as IllustrationType,
                 title: "Familles IEF",
                 desc: "Accompagnement aligné avec le socle commun pour une instruction réussie à domicile.",
                 features: ["Suivi du programme officiel", "Préparation aux contrôles"],
@@ -322,7 +322,7 @@ const Home = () => {
                 gradientTo: "to-primary/5"
               },
               {
-                animation: "globe" as AnimationType,
+                illustration: "globe" as IllustrationType,
                 title: "Expatriés",
                 desc: "Maintenez le lien avec l'éducation française, où que vous soyez dans le monde.",
                 features: ["Horaires flexibles tous fuseaux", "Préparation retour en France"],
@@ -330,7 +330,7 @@ const Home = () => {
                 gradientTo: "to-secondary/5"
               },
               {
-                animation: "family" as AnimationType,
+                illustration: "family" as IllustrationType,
                 title: "Familles en quête de valeurs",
                 desc: "Un environnement éducatif bienveillant respectant vos convictions.",
                 features: ["Tuteurs sensibles à vos besoins", "Contenu adapté"],
@@ -344,8 +344,8 @@ const Home = () => {
                 >
                   <div className={`h-2 bg-gradient-to-r ${item.gradientFrom} ${item.gradientTo}`} />
                   <CardContent className="p-8 space-y-4">
-                    <div className="rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center shadow-sm">
-                      <LottieAnimation type={item.animation} size="lg" />
+                    <div className="rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center shadow-sm p-4">
+                      <AnimatedIllustration type={item.illustration} size="lg" />
                     </div>
                     <h3 className="text-xl font-bold font-display">{item.title}</h3>
                     <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -370,7 +370,7 @@ const Home = () => {
         <div className="container mx-auto px-4">
           <ScrollReveal className="text-center mb-16">
             <div className="flex justify-center mb-4">
-              <LottieAnimation type="star" size="lg" />
+              <AnimatedIllustration type="star" size="lg" />
             </div>
             <Badge className="bg-success/10 text-success border-success/20 px-4 py-2 rounded-full mb-4">
               Tarifs transparents
