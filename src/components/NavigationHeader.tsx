@@ -11,8 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, LayoutDashboard, BookOpen, Users, HelpCircle } from "lucide-react";
+import { User, LogOut, LayoutDashboard, BookOpen, Users, HelpCircle, GraduationCap } from "lucide-react";
 import { NotificationsDropdown } from "@/components/NotificationsDropdown";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileMenu } from "@/components/MobileMenu";
 
 export function NavigationHeader() {
   const [user, setUser] = useState<any>(null);
@@ -41,11 +43,12 @@ export function NavigationHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-lg supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <Link to="/" className="flex items-center space-x-2 group">
+            <GraduationCap className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
+            <span className="text-2xl font-display font-bold bg-gradient-hero bg-clip-text text-transparent">
               Oumi'School
             </span>
           </Link>
@@ -72,7 +75,9 @@ export function NavigationHeader() {
           </nav>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+          <ThemeToggle />
+          
           {user ? (
             <>
               <NotificationsDropdown />
@@ -81,7 +86,7 @@ export function NavigationHeader() {
                   variant="default"
                   size="sm"
                   onClick={() => navigate("/dashboard/admin")}
-                  className="hidden md:flex items-center gap-2"
+                  className="hidden md:flex items-center gap-2 bg-gradient-primary"
                 >
                   <LayoutDashboard className="h-4 w-4" />
                   Admin
@@ -137,10 +142,14 @@ export function NavigationHeader() {
               </DropdownMenu>
             </>
           ) : (
-            <Button onClick={() => navigate("/auth")}>
+            <Button onClick={() => navigate("/auth")} className="hidden md:flex bg-gradient-primary">
               Connexion
             </Button>
           )}
+          
+          <div className="md:hidden">
+            <MobileMenu />
+          </div>
         </div>
       </div>
     </header>
