@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,11 @@ import { motion } from "framer-motion";
 import { MobileMenu } from "@/components/MobileMenu";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ScrollReveal";
 import { FloatingShapes } from "@/components/FloatingShapes";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { SubjectBadges } from "@/components/SubjectBadges";
+
+// Lazy loaded components pour optimisation
+const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
 
 const Home = () => {
   return (
@@ -38,6 +44,7 @@ const Home = () => {
               <Button variant="ghost" className="rounded-full font-medium">FAQ</Button>
             </Link>
             <div className="w-px h-6 bg-border mx-2" />
+            <ThemeToggle />
             <Link to="/auth">
               <Button variant="ghost" className="rounded-full font-medium">Connexion</Button>
             </Link>
@@ -49,7 +56,10 @@ const Home = () => {
           </nav>
           
           {/* Mobile menu */}
-          <MobileMenu />
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <MobileMenu />
+          </div>
         </div>
       </header>
 
@@ -188,6 +198,28 @@ const Home = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Section Matières */}
+      <section className="py-16 md:py-20">
+        <div className="container mx-auto px-4">
+          <ScrollReveal className="text-center mb-12">
+            <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 rounded-full mb-4">
+              <BookOpen className="h-4 w-4 mr-2" />
+              Toutes les matières
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Explorez nos matières
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Cliquez sur une matière pour trouver un tuteur spécialisé
+            </p>
+          </ScrollReveal>
+          
+          <ScrollReveal delay={0.2}>
+            <SubjectBadges />
+          </ScrollReveal>
         </div>
       </section>
 
@@ -443,7 +475,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Témoignages simplifiés */}
+      {/* Témoignages avec lazy loading */}
       <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
           <ScrollReveal className="text-center mb-16">
