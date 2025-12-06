@@ -15,6 +15,7 @@ import { FloatingShapes } from "@/components/FloatingShapes";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubjectBadges } from "@/components/SubjectBadges";
 import { AnimatedIllustration, type IllustrationType } from "@/components/AnimatedIllustrations";
+import { HomeFAQ } from "@/components/HomeFAQ";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -531,6 +532,9 @@ const Home = () => {
           </StaggerContainer>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <HomeFAQ />
 
       {/* CTA Final */}
       <section className="py-20 md:py-28 bg-gradient-hero text-primary-foreground relative overflow-hidden">
