@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, GraduationCap } from "lucide-react";
+import { Menu, GraduationCap, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useTheme } from "next-themes";
 
 export const MobileMenu = () => {
   const [open, setOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   const links = [
     { to: "/lessons", label: "Ressources" },
@@ -47,6 +49,24 @@ export const MobileMenu = () => {
                 {link.label}
               </Link>
             ))}
+            
+            {/* Theme toggle in mobile */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-lg font-medium hover:bg-muted transition-colors"
+            >
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-5 w-5" />
+                  Mode clair
+                </>
+              ) : (
+                <>
+                  <Moon className="h-5 w-5" />
+                  Mode sombre
+                </>
+              )}
+            </button>
           </nav>
 
           {/* CTA */}
