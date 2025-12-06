@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Footer } from "@/components/Footer";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { MobileMenu } from "@/components/MobileMenu";
 import { ScrollReveal, StaggerContainer, StaggerItem } from "@/components/ScrollReveal";
 import { FloatingShapes } from "@/components/FloatingShapes";
@@ -16,6 +16,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SubjectBadges } from "@/components/SubjectBadges";
 import { AnimatedIllustration, type IllustrationType } from "@/components/AnimatedIllustrations";
 import { HomeFAQ } from "@/components/HomeFAQ";
+import { ParallaxSection, ParallaxFloatingElement } from "@/components/ParallaxSection";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -224,7 +225,7 @@ const Home = () => {
 
       {/* Section "Comment ça marche" - 3 étapes simples */}
       <section className="py-20 md:py-28 bg-muted/30 relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-radial from-primary/5 to-transparent rounded-full blur-3xl" />
+        <ParallaxFloatingElement speed={0.3} className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-radial from-primary/5 to-transparent rounded-full blur-3xl" />
         
         <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal className="text-center mb-16">
@@ -299,9 +300,11 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Section "Pour qui" - Simplifiée */}
-      <section className="py-20 md:py-28">
-        <div className="container mx-auto px-4">
+      {/* Section "Pour qui" - Simplifiée avec parallaxe */}
+      <section className="py-20 md:py-28 relative overflow-hidden">
+        <ParallaxFloatingElement speed={0.2} className="absolute -top-20 -right-40 w-80 h-80 rounded-full bg-gradient-to-br from-secondary/5 to-transparent blur-3xl" />
+        <ParallaxFloatingElement speed={0.4} className="absolute -bottom-20 -left-40 w-96 h-96 rounded-full bg-gradient-to-br from-primary/5 to-transparent blur-3xl" />
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal className="text-center mb-16">
             <Badge className="bg-secondary/10 text-secondary border-secondary/20 px-4 py-2 rounded-full mb-4">
               <Heart className="h-4 w-4 mr-2 fill-secondary" />
@@ -366,9 +369,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Section Tarifs - Simplifiée */}
-      <section className="py-20 md:py-28 bg-muted/30">
-        <div className="container mx-auto px-4">
+      {/* Section Tarifs - Simplifiée avec parallaxe */}
+      <section className="py-20 md:py-28 bg-muted/30 relative overflow-hidden">
+        <ParallaxFloatingElement speed={0.25} rotate className="absolute top-20 right-[10%] w-32 h-32 rounded-3xl bg-gradient-to-br from-success/10 to-transparent blur-xl" />
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollReveal className="text-center mb-16">
             <div className="flex justify-center mb-4">
               <AnimatedIllustration type="star" size="lg" />
