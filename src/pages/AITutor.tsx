@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { NavigationHeader } from "@/components/NavigationHeader";
+import { Layout } from "@/components/Layout";
 import { AITutorChat } from "@/components/AITutorChat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Loader2, Plus, MessageSquare } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
+import { motion } from "framer-motion";
 
 interface Student {
   id: string;
@@ -114,18 +115,27 @@ export default function AITutor() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <NavigationHeader />
+    <Layout showFooter={false}>
       <div className="container mx-auto p-6">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold">Assistant IA pour {student.prenom}</h1>
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6"
+        >
+          <h1 className="text-3xl font-bold font-display">Assistant IA pour {student.prenom}</h1>
           <p className="text-muted-foreground mt-2">
             Un assistant intelligent pour l'aider dans ses devoirs
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <Card className="lg:col-span-1">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="grid grid-cols-1 lg:grid-cols-4 gap-6"
+        >
+          <Card className="lg:col-span-1 hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
                 <span>Conversations</span>
@@ -167,7 +177,7 @@ export default function AITutor() {
             </CardContent>
           </Card>
 
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 hover:shadow-lg transition-shadow duration-300 rounded-lg">
             <AITutorChat
               studentId={studentId}
               conversationId={selectedConversation}
@@ -177,8 +187,8 @@ export default function AITutor() {
               }}
             />
           </div>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </Layout>
   );
 }

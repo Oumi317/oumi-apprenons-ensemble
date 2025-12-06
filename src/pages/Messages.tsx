@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { NavigationHeader } from "@/components/NavigationHeader";
+import { Layout } from "@/components/Layout";
 import { MessagingPanel } from "@/components/MessagingPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { MessageCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -131,13 +132,16 @@ export default function Messages() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <NavigationHeader />
-      
+    <Layout showFooter={false}>
       <main className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-3 gap-6 h-[calc(100vh-12rem)]">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="grid md:grid-cols-3 gap-6 h-[calc(100vh-12rem)]"
+        >
           {/* Conversations List */}
-          <Card className="md:col-span-1">
+          <Card className="md:col-span-1 hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageCircle className="h-5 w-5" />
@@ -203,8 +207,8 @@ export default function Messages() {
           <div className="md:col-span-2">
             <MessagingPanel conversationId={selectedConversation} />
           </div>
-        </div>
+        </motion.div>
       </main>
-    </div>
+    </Layout>
   );
 }

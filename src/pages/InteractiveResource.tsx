@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface InteractiveResource {
   id: string;
@@ -87,26 +88,35 @@ export default function InteractiveResource() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
+      <header className="border-b bg-card/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link to="/lessons">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Retour
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold">{resource.titre}</h1>
-              {resource.lessons && (
-                <p className="text-sm text-muted-foreground">
-                  {resource.lessons.matiere} - {resource.lessons.niveau_scolaire}
-                </p>
-              )}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to="/lessons" className="flex items-center gap-2">
+                <GraduationCap className="h-6 w-6 text-primary" />
+                <span className="font-display font-bold text-lg hidden sm:inline">Oumi'School</span>
+              </Link>
+              <Link to="/lessons">
+                <Button variant="ghost" size="sm" className="hover:bg-primary/10">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Retour
+                </Button>
+              </Link>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="text-right hidden md:block">
+                <h1 className="text-lg font-bold font-display">{resource.titre}</h1>
+                {resource.lessons && (
+                  <p className="text-xs text-muted-foreground">
+                    {resource.lessons.matiere} - {resource.lessons.niveau_scolaire}
+                  </p>
+                )}
+              </div>
+              <ThemeToggle />
             </div>
           </div>
           {resource.description && (
-            <p className="mt-2 text-muted-foreground">{resource.description}</p>
+            <p className="mt-2 text-muted-foreground text-sm">{resource.description}</p>
           )}
         </div>
       </header>

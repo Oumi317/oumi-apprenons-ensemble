@@ -13,7 +13,8 @@ import { VideoPlayer } from "@/components/VideoPlayer";
 import { LessonNotes } from "@/components/LessonNotes";
 import { LessonResources } from "@/components/LessonResources";
 import { InteractiveLearning } from "@/components/InteractiveLearning";
-import { Footer } from "@/components/Footer";
+import { Layout } from "@/components/Layout";
+import { motion } from "framer-motion";
 
 const difficulteColors = {
   facile: "bg-success/10 text-success",
@@ -207,33 +208,26 @@ const LessonDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/lessons" className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              Oumi'School
-            </h1>
-          </Link>
-          <div className="flex items-center gap-4">
-            <Link to="/lessons">
-              <Button variant="outline" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Retour aux leçons
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </header>
-
+    <Layout>
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-5xl mx-auto space-y-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="max-w-5xl mx-auto space-y-8"
+        >
+          {/* Back button */}
+          <Link to="/lessons">
+            <Button variant="outline" size="sm" className="hover:bg-primary/10">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour aux leçons
+            </Button>
+          </Link>
+
           {/* Lesson Header */}
           <div className="space-y-6">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Badge variant="secondary" className="bg-primary/10 text-primary">
                 {lesson.niveau_scolaire}
               </Badge>
@@ -252,7 +246,7 @@ const LessonDetail = () => {
                 </Badge>
               )}
             </div>
-            <h1 className="text-4xl font-bold">{lesson.titre}</h1>
+            <h1 className="text-4xl font-bold font-display">{lesson.titre}</h1>
             <p className="text-xl text-muted-foreground">{lesson.description}</p>
             
             {/* Lesson Stats */}
@@ -682,11 +676,9 @@ const LessonDetail = () => {
               </Card>
             </div>
           </div>
-        </div>
+        </motion.div>
       </main>
-
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 
