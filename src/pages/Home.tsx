@@ -3,599 +3,419 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   BookOpen, Users, Globe, GraduationCap, CheckCircle, Star, 
-  Award, TrendingUp, Calendar, Video, MessageSquare, Target,
-  Play, ChevronDown, Search, Clock, BarChart3, Shield
+  ArrowRight, Sparkles, Heart, Clock, MessageCircle
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Testimonials } from "@/components/Testimonials";
 import { Footer } from "@/components/Footer";
+import { motion } from "framer-motion";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+    <div className="min-h-screen bg-background font-sans">
+      {/* Header simplifié */}
+      <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-primary" />
-            <h1 className="text-2xl font-bold bg-gradient-hero bg-clip-text text-transparent">
-              Oumi'School
-            </h1>
-          </div>
-          <nav className="hidden md:flex items-center gap-6">
-            <a href="#segments" className="text-foreground/80 hover:text-foreground transition-colors">
-              Pour qui ?
-            </a>
-            <a href="#how-it-works" className="text-foreground/80 hover:text-foreground transition-colors">
-              Comment ça marche
-            </a>
-            <a href="#pricing" className="text-foreground/80 hover:text-foreground transition-colors">
-              Tarifs
-            </a>
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="h-10 w-10 rounded-2xl bg-gradient-hero flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform">
+              <GraduationCap className="h-5 w-5 text-primary-foreground" />
+            </div>
+            <span className="text-xl font-bold font-display text-foreground">
+              Oumi<span className="text-primary">'</span>School
+            </span>
+          </Link>
+          
+          <nav className="hidden md:flex items-center gap-2">
             <Link to="/lessons">
-              <Button variant="ghost">Ressources</Button>
+              <Button variant="ghost" className="rounded-full font-medium">Ressources</Button>
             </Link>
             <Link to="/tutors">
-              <Button variant="ghost">Tuteurs</Button>
+              <Button variant="ghost" className="rounded-full font-medium">Tuteurs</Button>
             </Link>
+            <Link to="/faq">
+              <Button variant="ghost" className="rounded-full font-medium">FAQ</Button>
+            </Link>
+            <div className="w-px h-6 bg-border mx-2" />
             <Link to="/auth">
-              <Button variant="outline">Connexion</Button>
+              <Button variant="ghost" className="rounded-full font-medium">Connexion</Button>
             </Link>
             <Link to="/auth?mode=signup">
-              <Button className="bg-gradient-primary">Commencer</Button>
+              <Button className="rounded-full bg-gradient-hero shadow-soft hover:shadow-md transition-shadow font-semibold px-6">
+                Commencer gratuitement
+              </Button>
             </Link>
           </nav>
+          
+          {/* Mobile menu button */}
+          <Link to="/auth?mode=signup" className="md:hidden">
+            <Button size="sm" className="rounded-full bg-gradient-hero">
+              Commencer
+            </Button>
+          </Link>
         </div>
       </header>
 
-      {/* Hero Section - Enhanced GoStudent Style */}
-      <section className="relative overflow-hidden bg-gradient-hero py-20 md:py-32">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-20"></div>
+      {/* Hero Section - Chaleureux et simplifié */}
+      <section className="relative overflow-hidden py-16 md:py-24 lg:py-32">
+        {/* Background décoratif */}
+        <div className="absolute inset-0 bg-gradient-soft" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/3 to-transparent rounded-full" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
-            <div className="text-white space-y-8 animate-fade-in">
-              <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30 backdrop-blur-sm inline-flex items-center gap-2">
-                <Award className="h-4 w-4" />
-                Rejoignez plus de 1 000 familles satisfaites
+          <div className="max-w-4xl mx-auto text-center space-y-8">
+            {/* Badge social proof */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Badge className="bg-success/10 text-success border-success/20 hover:bg-success/15 px-4 py-2 text-sm font-medium rounded-full">
+                <Heart className="h-4 w-4 mr-2 fill-success" />
+                Plus de 1 000 familles nous font confiance
               </Badge>
-              
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                92% des élèves <span className="text-white/90">progressent</span> avec notre tutorat
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-white/90 leading-relaxed">
-                Excellence éducative francophone accessible partout dans le monde, 
-                avec des tuteurs certifiés disponibles 7j/7
-              </p>
-
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
-                  </div>
-                  <p className="text-lg text-white/90">Tuteurs certifiés avec 5+ ans d'expérience</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
-                  </div>
-                  <p className="text-lg text-white/90">Salle de classe virtuelle avec tableau interactif</p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="h-5 w-5 text-white" />
-                  </div>
-                  <p className="text-lg text-white/90">Horaires ultra flexibles adaptés à votre fuseau</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link to="/auth?mode=signup" className="inline-block">
-                  <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-xl hover:scale-105 transition-transform text-lg h-14 px-8 font-semibold">
-                    Réserver un cours d'essai gratuit
-                  </Button>
-                </Link>
-                <Link to="/tutors" className="inline-block">
-                  <Button size="lg" variant="outline" className="border-2 border-white !text-white hover:bg-white/10 hover:!text-white h-14 px-8 font-semibold backdrop-blur-sm bg-white/5">
-                    Voir nos tuteurs
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-6 pt-4 border-t border-white/20">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-5 w-5 fill-white text-white" />
-                  ))}
-                </div>
-                <div className="text-white">
-                  <p className="font-semibold text-lg">4.8/5 Excellent</p>
-                  <p className="text-sm text-white/70">Basé sur 500+ avis vérifiés</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative animate-fade-in space-y-6" style={{ animationDelay: '0.2s' }}>
-              <div className="relative bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 shadow-2xl hover:shadow-3xl transition-shadow">
-                <div className="aspect-video bg-gradient-to-br from-white/5 to-white/10 rounded-2xl flex items-center justify-center relative overflow-hidden group cursor-pointer">
-                  <div className="absolute inset-0 bg-white/5 group-hover:bg-white/10 transition-colors"></div>
-                  <div className="relative">
-                    <div className="h-20 w-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Play className="h-10 w-10 text-white ml-1" />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-white/10 rounded-xl backdrop-blur-sm">
-                    <div className="h-12 w-12 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                      <Video className="h-6 w-6 text-white" />
-                    </div>
-                    <div className="text-white">
-                      <p className="font-semibold text-lg">Salle de classe interactive</p>
-                      <p className="text-sm text-white/70">Tableau blanc, partage d'écran et outils avancés</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { icon: Users, label: "1000+", desc: "Élèves actifs" },
-                  { icon: Award, label: "50+", desc: "Tuteurs certifiés" },
-                  { icon: Globe, label: "25+", desc: "Pays couverts" },
-                ].map((stat, index) => (
-                  <div 
-                    key={index}
-                    className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-center hover:bg-white/15 transition-colors"
-                  >
-                    <stat.icon className="h-6 w-6 text-white mx-auto mb-2" />
-                    <div className="text-2xl font-bold text-white">{stat.label}</div>
-                    <div className="text-xs text-white/70">{stat.desc}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-12 bg-muted/50 border-y">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto text-center">
-            <div className="space-y-2 animate-fade-in">
-              <div className="text-4xl font-bold text-primary">92%</div>
-              <p className="text-sm text-muted-foreground">D'élèves progressent</p>
-            </div>
-            <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="text-4xl font-bold text-primary">+15</div>
-              <p className="text-sm text-muted-foreground">Matières disponibles</p>
-            </div>
-            <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="text-4xl font-bold text-primary">50+</div>
-              <p className="text-sm text-muted-foreground">Tuteurs certifiés</p>
-            </div>
-            <div className="space-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="text-4xl font-bold text-primary">4.8/5</div>
-              <p className="text-sm text-muted-foreground">Note moyenne</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Matières Disponibles - Placé en haut pour plus de visibilité */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              📚 Nos matières
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              Tutorat en ligne pour toutes les matières scolaires
-            </h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              +15 matières disponibles, tous niveaux d'apprentissage
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
-            {[
-              { name: "Mathématiques", icon: "📐" },
-              { name: "Français", icon: "📖" },
-              { name: "Anglais", icon: "🇬🇧" },
-              { name: "Sciences", icon: "🔬" },
-              { name: "Histoire", icon: "🏛️" },
-              { name: "Géographie", icon: "🌍" },
-              { name: "Physique", icon: "⚛️" },
-              { name: "Chimie", icon: "🧪" },
-              { name: "Philosophie", icon: "💭" },
-              { name: "Arabe", icon: "📚" }
-            ].map((subject, index) => (
-              <Link 
-                key={index}
-                to={`/tutors?subject=${encodeURIComponent(subject.name)}`}
-              >
-                <Card 
-                  className="p-6 text-center hover:border-primary transition-all hover:shadow-lg hover:scale-105 cursor-pointer group animate-fade-in"
-                  style={{ animationDelay: `${index * 0.05}s` }}
+            </motion.div>
+            
+            {/* Titre principal */}
+            <motion.h1 
+              className="text-4xl md:text-5xl lg:text-6xl font-bold font-display leading-tight text-foreground"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              L'école à la maison,
+              <br />
+              <span className="bg-gradient-hero bg-clip-text text-transparent">
+                simple et bienveillante
+              </span>
+            </motion.h1>
+            
+            {/* Sous-titre */}
+            <motion.p 
+              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              Des tuteurs bienveillants accompagnent vos enfants du CP au lycée, 
+              avec des cours adaptés à votre rythme et vos valeurs.
+            </motion.p>
+            
+            {/* CTA principal */}
+            <motion.div 
+              className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <Link to="/auth?mode=signup">
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-gradient-hero shadow-lg hover:shadow-xl transition-all hover:scale-105 text-lg h-14 px-8 font-semibold group"
                 >
-                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{subject.icon}</div>
-                  <h4 className="font-semibold text-sm">{subject.name}</h4>
-                </Card>
+                  Essayer gratuitement
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
               </Link>
-            ))}
+              <Link to="/tutors">
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="rounded-full border-2 h-14 px-8 font-semibold hover:bg-muted/50"
+                >
+                  Découvrir nos tuteurs
+                </Button>
+              </Link>
+            </motion.div>
+            
+            {/* Stats simplifiées */}
+            <motion.div 
+              className="flex flex-wrap justify-center gap-8 pt-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              {[
+                { value: "92%", label: "de réussite" },
+                { value: "50+", label: "tuteurs certifiés" },
+                { value: "4.8/5", label: "satisfaction" },
+              ].map((stat, index) => (
+                <div key={index} className="text-center">
+                  <div className="text-2xl md:text-3xl font-bold font-display text-primary">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
+            </motion.div>
           </div>
-
-          <div className="text-center mt-12">
-            <Link to="/lessons">
-              <Button variant="outline" size="lg" className="group">
-                Voir toutes les matières
-                <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform" />
-              </Button>
-            </Link>
-          </div>
+          
+          {/* Illustration cards */}
+          <motion.div 
+            className="mt-16 md:mt-24 max-w-5xl mx-auto"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                { 
+                  icon: BookOpen, 
+                  title: "Cours interactifs", 
+                  desc: "Leçons vivantes avec tableau blanc et outils ludiques",
+                  color: "primary"
+                },
+                { 
+                  icon: Users, 
+                  title: "Tuteurs bienveillants", 
+                  desc: "Professionnels passionnés qui s'adaptent à chaque enfant",
+                  color: "secondary"
+                },
+                { 
+                  icon: Heart, 
+                  title: "Valeurs respectées", 
+                  desc: "Environnement adapté à vos convictions familiales",
+                  color: "success"
+                },
+              ].map((item, index) => (
+                <Card 
+                  key={index}
+                  className="group border-2 border-transparent hover:border-primary/20 bg-card/80 backdrop-blur-sm shadow-md hover:shadow-xl transition-all hover:-translate-y-1 rounded-3xl overflow-hidden"
+                >
+                  <CardContent className="p-6 text-center space-y-4">
+                    <div className={`w-16 h-16 mx-auto rounded-2xl bg-${item.color}/10 flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                      <item.icon className={`h-8 w-8 text-${item.color}`} />
+                    </div>
+                    <h3 className="text-lg font-bold font-display">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-
-      <section id="segments" className="py-20 bg-muted/30">
+      {/* Section "Comment ça marche" - 3 étapes simples */}
+      <section className="py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              🎯 Notre mission
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">Pour qui ?</h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Oumi'School accompagne les familles francophones du monde entier
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <Card className="group border-2 hover:border-primary transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
-              <CardContent className="pt-8 space-y-4 relative">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-primary flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <BookOpen className="h-7 w-7 text-primary-foreground" />
-                </div>
-                <h4 className="text-2xl font-bold">Familles IEF en France</h4>
-                <p className="text-muted-foreground leading-relaxed">
-                  Accompagnement personnalisé aligné avec le socle commun de connaissances 
-                  pour l'Instruction En Famille.
-                </p>
-                <ul className="space-y-3 pt-2">
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Suivi conforme aux exigences du rectorat</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Ressources alignées programme officiel</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="group border-2 hover:border-secondary transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
-              <CardContent className="pt-8 space-y-4 relative">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-warm flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Globe className="h-7 w-7 text-secondary-foreground" />
-                </div>
-                <h4 className="text-2xl font-bold">Expatriés francophones</h4>
-                <p className="text-muted-foreground leading-relaxed">
-                  Maintenez le lien avec la culture et le système éducatif français, 
-                  où que vous soyez.
-                </p>
-                <ul className="space-y-3 pt-2">
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Horaires adaptés à tous les fuseaux</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Préparation retour en France</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-
-            <Card className="group border-2 hover:border-success transition-all hover:shadow-2xl hover:-translate-y-2 duration-300 overflow-hidden animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform"></div>
-              <CardContent className="pt-8 space-y-4 relative">
-                <div className="h-14 w-14 rounded-2xl bg-gradient-success flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Users className="h-7 w-7 text-success-foreground" />
-                </div>
-                <h4 className="text-2xl font-bold">Familles recherchant des valeurs éthiques</h4>
-                <p className="text-muted-foreground leading-relaxed">
-                  Éducation de qualité respectant vos convictions, avec des tuteurs sensibles 
-                  à vos besoins spécifiques.
-                </p>
-                <ul className="space-y-3 pt-2">
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Environnement bienveillant</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="mt-0.5 h-5 w-5 rounded-full bg-success/10 flex items-center justify-center flex-shrink-0">
-                      <CheckCircle className="h-4 w-4 text-success" />
-                    </div>
-                    <span className="text-sm">Excellence académique</span>
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* Comment ça marche - Simplifié en 3 étapes */}
-      <section id="how-it-works" className="py-20 bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              🚀 Simple et rapide
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              Comment ça marche ?
-            </h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Trois étapes simples pour démarrer votre parcours d'apprentissage
+          <div className="text-center mb-16">
+            <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 rounded-full mb-4">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Simple comme bonjour
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Commencez en 3 étapes
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Pas de complications, juste un accompagnement bienveillant
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {/* Step 1 */}
-            <div className="relative group animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
-              <Card className="p-8 text-center h-full border-2 hover:border-primary/40 transition-all hover:shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
-                <div className="mb-6 relative">
-                  <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <Search className="w-10 h-10 text-primary-foreground" />
+          <div className="max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-3 gap-8 relative">
+              {/* Ligne de connexion */}
+              <div className="hidden md:block absolute top-16 left-[20%] right-[20%] h-0.5 bg-gradient-to-r from-primary via-secondary to-success" />
+              
+              {[
+                { 
+                  step: "1", 
+                  title: "Inscrivez-vous", 
+                  desc: "Créez votre compte famille en 2 minutes",
+                  color: "primary"
+                },
+                { 
+                  step: "2", 
+                  title: "Choisissez un tuteur", 
+                  desc: "Parcourez les profils et réservez un cours d'essai",
+                  color: "secondary"
+                },
+                { 
+                  step: "3", 
+                  title: "Apprenez sereinement", 
+                  desc: "Suivez les progrès de vos enfants en temps réel",
+                  color: "success"
+                },
+              ].map((item, index) => (
+                <div key={index} className="relative text-center">
+                  <div className={`w-14 h-14 mx-auto mb-6 rounded-full bg-${item.color} text-${item.color}-foreground flex items-center justify-center text-xl font-bold font-display shadow-lg relative z-10`}>
+                    {item.step}
                   </div>
-                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
-                    1
-                  </div>
+                  <h3 className="text-xl font-bold font-display mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.desc}</p>
                 </div>
-                <h3 className="text-2xl font-bold mb-3 relative">Trouvez votre tuteur parfait</h3>
-                <p className="text-muted-foreground relative leading-relaxed">
-                  Parcourez +50 tuteurs certifiés. Filtrez par matière, niveau et disponibilité pour trouver le match idéal.
-                </p>
-              </Card>
-              <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-primary to-transparent"></div>
+              ))}
             </div>
-
-            {/* Step 2 */}
-            <div className="relative group animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="absolute inset-0 bg-gradient-warm opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
-              <Card className="p-8 text-center h-full border-2 hover:border-secondary/40 transition-all hover:shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full -mr-16 -mt-16"></div>
-                <div className="mb-6 relative">
-                  <div className="w-20 h-20 bg-gradient-warm rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <Calendar className="w-10 h-10 text-secondary-foreground" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-secondary text-secondary-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
-                    2
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 relative">Réservez en 2 clics</h3>
-                <p className="text-muted-foreground relative leading-relaxed">
-                  Essai gratuit inclus ! Choisissez votre créneau flexible et commencez quand vous voulez, où vous voulez.
-                </p>
-              </Card>
-              <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-secondary to-transparent"></div>
+            
+            <div className="text-center mt-12">
+              <Link to="/auth?mode=signup">
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-gradient-hero shadow-lg hover:shadow-xl transition-all hover:scale-105 font-semibold group"
+                >
+                  Créer mon compte gratuit
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
-
-            {/* Step 3 */}
-            <div className="relative group animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="absolute inset-0 bg-gradient-success opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity"></div>
-              <Card className="p-8 text-center h-full border-2 hover:border-success/40 transition-all hover:shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-success/5 rounded-full -mr-16 -mt-16"></div>
-                <div className="mb-6 relative">
-                  <div className="w-20 h-20 bg-gradient-success rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-lg">
-                    <TrendingUp className="w-10 h-10 text-success-foreground" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-10 h-10 bg-success text-success-foreground rounded-full flex items-center justify-center font-bold text-lg shadow-md">
-                    3
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-3 relative">Suivez vos progrès</h3>
-                <p className="text-muted-foreground relative leading-relaxed">
-                  Tableaux de bord personnalisés, rapports détaillés et évolution en temps réel de vos résultats.
-                </p>
-              </Card>
-            </div>
-          </div>
-
-          <div className="text-center mt-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <Link to="/auth?mode=signup">
-              <Button size="lg" className="bg-gradient-primary hover:scale-105 transition-transform shadow-xl">
-                Réserver un cours d'essai gratuit
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
 
-      {/* Success Features */}
-      <section className="py-20 bg-background">
+      {/* Section "Pour qui" - Simplifiée */}
+      <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-16 animate-fade-in">
-            <div className="inline-block bg-success/10 text-success px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              ✨ Nos avantages
-            </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-4">
-              Ce qui fait notre succès
-            </h3>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Une approche complète et personnalisée pour chaque élève
-            </p>
+          <div className="text-center mb-16">
+            <Badge className="bg-secondary/10 text-secondary border-secondary/20 px-4 py-2 rounded-full mb-4">
+              <Heart className="h-4 w-4 mr-2 fill-secondary" />
+              Pour toutes les familles
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Nous accompagnons votre famille
+            </h2>
           </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
               {
-                icon: Shield,
-                title: "Tuteurs certifiés",
-                description: "100% vérifiés avec +5 ans d'expérience moyenne en pédagogie",
+                icon: BookOpen,
+                title: "Familles IEF",
+                desc: "Accompagnement aligné avec le socle commun pour une instruction réussie à domicile.",
+                features: ["Suivi du programme officiel", "Préparation aux contrôles"],
+                gradient: "from-primary/10 to-primary/5"
               },
               {
-                icon: Video,
-                title: "Salle interactive",
-                description: "Tableau blanc, partage d'écran et outils pédagogiques avancés",
+                icon: Globe,
+                title: "Expatriés",
+                desc: "Maintenez le lien avec l'éducation française, où que vous soyez dans le monde.",
+                features: ["Horaires flexibles tous fuseaux", "Préparation retour en France"],
+                gradient: "from-secondary/10 to-secondary/5"
               },
               {
-                icon: Clock,
-                title: "Horaires flexibles",
-                description: "7j/7 de 8h à 22h, annulation gratuite jusqu'à 24h avant",
+                icon: Users,
+                title: "Familles en quête de valeurs",
+                desc: "Un environnement éducatif bienveillant respectant vos convictions.",
+                features: ["Tuteurs sensibles à vos besoins", "Contenu adapté"],
+                gradient: "from-success/10 to-success/5"
               },
-              {
-                icon: BarChart3,
-                title: "Suivi détaillé",
-                description: "Rapports hebdomadaires et tableaux de bord en temps réel",
-              },
-            ].map((feature, index) => (
+            ].map((item, index) => (
               <Card 
                 key={index}
-                className="group p-8 hover:shadow-xl transition-all animate-fade-in border-2 hover:border-primary/40 relative overflow-hidden"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="group border-2 hover:border-primary/30 rounded-3xl overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1"
               >
-                <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-5 transition-opacity"></div>
-                <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <feature.icon className="w-7 h-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold mb-3 relative">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed relative">{feature.description}</p>
+                <div className={`h-2 bg-gradient-to-r ${item.gradient}`} />
+                <CardContent className="p-8 space-y-4">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-card to-muted flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                    <item.icon className="h-7 w-7 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold font-display">{item.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
+                  <ul className="space-y-2 pt-2">
+                    {item.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm">
+                        <CheckCircle className="h-4 w-4 text-success flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-20 bg-muted/30">
+      {/* Section Tarifs - Simplifiée */}
+      <section className="py-20 md:py-28 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">Tarifs transparents</h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choisissez la formule adaptée à vos besoins
+            <Badge className="bg-success/10 text-success border-success/20 px-4 py-2 rounded-full mb-4">
+              <Star className="h-4 w-4 mr-2 fill-success" />
+              Tarifs transparents
+            </Badge>
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Choisissez votre formule
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Commencez gratuitement, évoluez selon vos besoins
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="border-2">
-              <CardContent className="pt-6 space-y-6">
+          
+          <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+            {/* Gratuit */}
+            <Card className="rounded-3xl border-2 hover:border-muted-foreground/30 transition-all">
+              <CardContent className="p-8 space-y-6">
                 <div>
-                  <h4 className="text-2xl font-bold mb-2">Gratuit</h4>
+                  <h3 className="text-xl font-bold font-display mb-2">Gratuit</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold">0€</span>
+                    <span className="text-4xl font-bold font-display">0€</span>
                     <span className="text-muted-foreground">/mois</span>
                   </div>
                 </div>
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">5 leçons par semaine</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Accès communauté</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">1 session gratuite</span>
-                  </li>
+                  {["5 leçons par semaine", "1 session d'essai", "Accès communauté"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
                 <Link to="/auth?mode=signup" className="block">
-                  <Button variant="outline" className="w-full">
-                    Commencer gratuitement
+                  <Button variant="outline" className="w-full rounded-full font-semibold">
+                    Commencer
                   </Button>
                 </Link>
               </CardContent>
             </Card>
-
-            <Card className="border-2 border-primary relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-gradient-primary text-white px-3 py-1 text-xs font-bold">
-                POPULAIRE
-              </div>
-              <CardContent className="pt-6 space-y-6">
+            
+            {/* Premium - Populaire */}
+            <Card className="rounded-3xl border-2 border-primary relative overflow-hidden shadow-lg scale-105">
+              <div className="absolute top-0 inset-x-0 h-1 bg-gradient-hero" />
+              <Badge className="absolute top-4 right-4 bg-gradient-hero text-primary-foreground border-0 rounded-full">
+                Populaire
+              </Badge>
+              <CardContent className="p-8 space-y-6">
                 <div>
-                  <h4 className="text-2xl font-bold mb-2">Premium Individuel</h4>
+                  <h3 className="text-xl font-bold font-display mb-2">Premium</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold">9,99€</span>
+                    <span className="text-4xl font-bold font-display text-primary">9,99€</span>
                     <span className="text-muted-foreground">/mois</span>
                   </div>
                 </div>
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Accès illimité aux leçons</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">1 enfant</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Suivi personnalisé</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Rapports mensuels</span>
-                  </li>
+                  {["Accès illimité", "1 enfant", "Suivi personnalisé", "Rapports mensuels"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
                 <Link to="/auth?mode=signup" className="block">
-                  <Button className="w-full bg-gradient-primary">
+                  <Button className="w-full rounded-full bg-gradient-hero font-semibold shadow-md">
                     Choisir Premium
                   </Button>
                 </Link>
               </CardContent>
             </Card>
-
-            <Card className="border-2">
-              <CardContent className="pt-6 space-y-6">
+            
+            {/* Famille */}
+            <Card className="rounded-3xl border-2 hover:border-muted-foreground/30 transition-all">
+              <CardContent className="p-8 space-y-6">
                 <div>
-                  <h4 className="text-2xl font-bold mb-2">Premium Famille</h4>
+                  <h3 className="text-xl font-bold font-display mb-2">Famille</h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-bold">24,99€</span>
+                    <span className="text-4xl font-bold font-display">24,99€</span>
                     <span className="text-muted-foreground">/mois</span>
                   </div>
                 </div>
                 <ul className="space-y-3">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Tous les avantages Premium</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Jusqu'à 4 enfants</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Remise tutorat -10%</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-success mt-0.5" />
-                    <span className="text-sm">Support prioritaire</span>
-                  </li>
+                  {["Jusqu'à 4 enfants", "Tout Premium inclus", "-10% sur le tutorat", "Support prioritaire"].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm">
+                      <CheckCircle className="h-4 w-4 text-success" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
                 </ul>
                 <Link to="/auth?mode=signup" className="block">
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full rounded-full font-semibold">
                     Choisir Famille
                   </Button>
                 </Link>
@@ -605,196 +425,92 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Témoignages */}
-      <Testimonials />
-
-      {/* Badges de Confiance - Inspiré GoStudent */}
-      <section className="py-16 bg-background border-y">
+      {/* Témoignages simplifiés */}
+      <section className="py-20 md:py-28">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto">
-            <div className="text-center space-y-2 animate-fade-in">
-              <div className="h-16 w-16 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-3">
-                <Shield className="h-8 w-8 text-success" />
-              </div>
-              <h4 className="font-bold">Paiement sécurisé</h4>
-              <p className="text-sm text-muted-foreground">Transaction 100% sécurisée</p>
-            </div>
-            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.1s' }}>
-              <div className="h-16 w-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center mb-3">
-                <Clock className="h-8 w-8 text-primary" />
-              </div>
-              <h4 className="font-bold">Support 24/7</h4>
-              <p className="text-sm text-muted-foreground">Assistance disponible</p>
-            </div>
-            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-              <div className="h-16 w-16 mx-auto bg-secondary/10 rounded-full flex items-center justify-center mb-3">
-                <Award className="h-8 w-8 text-secondary" />
-              </div>
-              <h4 className="font-bold">Tuteurs certifiés</h4>
-              <p className="text-sm text-muted-foreground">Sélection rigoureuse</p>
-            </div>
-            <div className="text-center space-y-2 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="h-16 w-16 mx-auto bg-success/10 rounded-full flex items-center justify-center mb-3">
-                <BarChart3 className="h-8 w-8 text-success" />
-              </div>
-              <h4 className="font-bold">Suivi des progrès</h4>
-              <p className="text-sm text-muted-foreground">Rapports détaillés</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12 animate-fade-in">
-              <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
-                ❓ FAQ
-              </div>
-              <h3 className="text-4xl md:text-5xl font-bold mb-4">
-                Questions fréquentes
-              </h3>
-              <p className="text-xl text-muted-foreground">
-                Tout ce que vous devez savoir sur Oumi'School
-              </p>
-            </div>
-
-            <Accordion type="single" collapsible className="space-y-4">
-              <AccordionItem value="item-1" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Comment fonctionne l'essai gratuit ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  L'essai gratuit vous permet de réserver un cours de 50 minutes avec l'un de nos tuteurs certifiés. 
-                  Aucune carte bancaire n'est requise et il n'y a aucun engagement. Vous pourrez discuter des besoins 
-                  de votre enfant et découvrir notre plateforme interactive.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-2" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Les tuteurs sont-ils certifiés ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Oui, tous nos tuteurs sont rigoureusement sélectionnés. Ils possèdent au minimum une licence dans 
-                  leur domaine et ont une expérience pédagogique prouvée. Beaucoup sont professeurs de l'Éducation 
-                  nationale ou ont des certifications spécifiques (CAPES, agrégation, etc.).
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-3" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Puis-je changer de tuteur si nécessaire ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Absolument ! Si le courant ne passe pas avec un tuteur, vous pouvez en changer à tout moment 
-                  sans frais supplémentaires. Notre objectif est de trouver le match parfait pour votre enfant.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-4" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Les cours sont-ils conformes au programme français ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Oui, tous nos contenus sont 100% alignés avec le programme de l'Éducation nationale française, 
-                  du CP à la Terminale. Nous suivons le socle commun de connaissances et nos tuteurs adaptent 
-                  leurs cours aux exigences officielles.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-5" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Quels sont les horaires disponibles ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Nos tuteurs sont disponibles 7j/7 de 8h à 22h (heure de Paris). Nous nous adaptons également 
-                  aux fuseaux horaires pour nos familles expatriées partout dans le monde.
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="item-6" className="bg-background border rounded-lg px-6">
-                <AccordionTrigger className="text-left hover:no-underline">
-                  <span className="font-semibold">Puis-je annuler mon abonnement à tout moment ?</span>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">
-                  Oui, il n'y a aucun engagement de durée. Vous pouvez annuler votre abonnement à tout moment 
-                  depuis votre tableau de bord. L'annulation prendra effet à la fin de votre période de facturation en cours.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-
-            <div className="text-center mt-12">
-              <p className="text-muted-foreground mb-4">Vous avez d'autres questions ?</p>
-              <Link to="/faq">
-                <Button variant="outline" size="lg">
-                  Voir toutes les FAQ
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final - Enhanced */}
-      <section className="relative py-24 bg-gradient-hero overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNnoiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLW9wYWNpdHk9Ii4xIi8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
-        
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <div className="max-w-4xl mx-auto space-y-8">
-            <Badge className="bg-white/20 text-white border-white/30 backdrop-blur-sm inline-flex items-center gap-2 px-6 py-2">
-              <Target className="h-4 w-4" />
-              Offre de lancement
+          <div className="text-center mb-16">
+            <Badge className="bg-primary/10 text-primary border-primary/20 px-4 py-2 rounded-full mb-4">
+              <MessageCircle className="h-4 w-4 mr-2" />
+              Témoignages
             </Badge>
-            
-            <h3 className="text-3xl md:text-6xl font-bold text-white leading-tight">
-              Commencez votre aventure éducative dès aujourd'hui
-            </h3>
-            
-            <p className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto leading-relaxed">
-              Première session de 30 minutes <span className="font-bold text-white">100% gratuite</span> et sans engagement. 
-              Découvrez pourquoi +1 000 familles nous font confiance.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center pt-6">
-              <Link to="/auth?mode=signup">
-                <Button size="lg" className="bg-white text-primary hover:bg-white/90 shadow-2xl hover:scale-105 transition-transform text-lg h-16 px-10 font-bold">
-                  Réserver mon cours gratuit
-                </Button>
-              </Link>
-              <Link to="/tutors">
-                <Button size="lg" variant="outline" className="border-2 border-white !text-white hover:bg-white/10 hover:!text-white h-16 px-10 font-semibold backdrop-blur-sm bg-white/5">
-                  Parcourir les tuteurs
-                </Button>
-              </Link>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-8 pt-8 border-t border-white/20">
-              <div className="flex items-center gap-3 text-white">
-                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6" />
-                </div>
-                <span className="font-semibold">Sans carte bancaire</span>
-              </div>
-              <div className="flex items-center gap-3 text-white">
-                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6" />
-                </div>
-                <span className="font-semibold">Sans engagement</span>
-              </div>
-              <div className="flex items-center gap-3 text-white">
-                <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <CheckCircle className="h-6 w-6" />
-                </div>
-                <span className="font-semibold">Annulation gratuite</span>
-              </div>
-            </div>
+            <h2 className="text-3xl md:text-4xl font-bold font-display mb-4">
+              Ce que disent nos familles
+            </h2>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                quote: "Mes enfants adorent leurs cours ! Les tuteurs sont patients et vraiment à l'écoute.",
+                author: "Sarah M.",
+                role: "Maman IEF de 3 enfants",
+                rating: 5
+              },
+              {
+                quote: "Depuis Dubaï, mes filles suivent le programme français sans problème. Une vraie tranquillité d'esprit.",
+                author: "Fatima A.",
+                role: "Expatriée aux Émirats",
+                rating: 5
+              },
+              {
+                quote: "Le suivi personnalisé et les rapports détaillés nous aident vraiment à accompagner notre fils.",
+                author: "Ahmed K.",
+                role: "Papa de 2 enfants",
+                rating: 5
+              },
+            ].map((testimonial, index) => (
+              <Card key={index} className="rounded-3xl border-2 hover:shadow-lg transition-all">
+                <CardContent className="p-8 space-y-4">
+                  <div className="flex gap-1">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-secondary text-secondary" />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground italic leading-relaxed">
+                    "{testimonial.quote}"
+                  </p>
+                  <div className="pt-4 border-t">
+                    <p className="font-semibold font-display">{testimonial.author}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Footer */}
+      {/* CTA Final */}
+      <section className="py-20 md:py-28 bg-gradient-hero text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxjaXJjbGUgY3g9IjMwIiBjeT0iMzAiIHI9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-50" />
+        
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-display">
+              Prêt à commencer l'aventure ?
+            </h2>
+            <p className="text-xl text-primary-foreground/90">
+              Rejoignez plus de 1 000 familles qui ont choisi Oumi'School pour l'éducation de leurs enfants.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/auth?mode=signup">
+                <Button 
+                  size="lg" 
+                  className="rounded-full bg-white text-primary hover:bg-white/90 shadow-xl hover:scale-105 transition-all h-14 px-8 font-semibold text-lg group"
+                >
+                  Créer mon compte gratuit
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+            <p className="text-sm text-primary-foreground/70 flex items-center justify-center gap-2">
+              <Clock className="h-4 w-4" />
+              Inscription en moins de 2 minutes
+            </p>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

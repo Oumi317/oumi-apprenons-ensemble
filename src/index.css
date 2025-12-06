@@ -46,23 +46,32 @@ All colors MUST be HSL.
     --input: 220 13% 91%;
     --ring: 221 83% 53%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Gradients éducatifs */
-    --gradient-primary: linear-gradient(135deg, hsl(221 83% 53%), hsl(221 83% 43%));
-    --gradient-warm: linear-gradient(135deg, hsl(24 95% 53%), hsl(38 92% 50%));
-    --gradient-success: linear-gradient(135deg, hsl(158 64% 52%), hsl(142 71% 45%));
-    --gradient-hero: linear-gradient(135deg, hsl(221 83% 53%) 0%, hsl(24 95% 53%) 100%);
+    /* Gradients chaleureux */
+    --gradient-primary: linear-gradient(145deg, hsl(221 83% 58%), hsl(221 83% 48%));
+    --gradient-warm: linear-gradient(145deg, hsl(24 95% 58%), hsl(38 92% 55%));
+    --gradient-success: linear-gradient(145deg, hsl(158 64% 52%), hsl(142 71% 45%));
+    --gradient-hero: linear-gradient(160deg, hsl(221 83% 58%) 0%, hsl(260 70% 55%) 50%, hsl(24 95% 58%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(221 83% 98%) 0%, hsl(221 40% 96%) 100%);
+    
+    /* Couleurs d'illustration */
+    --illustration-1: 221 83% 53%;
+    --illustration-2: 24 95% 53%;
+    --illustration-3: 158 64% 52%;
+    --illustration-4: 260 70% 55%;
 
-    /* Shadows élégantes */
-    --shadow-sm: 0 1px 2px 0 hsl(221 83% 53% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(221 83% 53% / 0.1), 0 2px 4px -1px hsl(221 83% 53% / 0.06);
-    --shadow-lg: 0 10px 15px -3px hsl(221 83% 53% / 0.1), 0 4px 6px -2px hsl(221 83% 53% / 0.05);
-    --shadow-xl: 0 20px 25px -5px hsl(221 83% 53% / 0.15), 0 10px 10px -5px hsl(221 83% 53% / 0.04);
+    /* Shadows douces et arrondies */
+    --shadow-sm: 0 2px 8px -2px hsl(221 40% 20% / 0.08);
+    --shadow-md: 0 8px 24px -8px hsl(221 40% 20% / 0.12);
+    --shadow-lg: 0 16px 40px -12px hsl(221 40% 20% / 0.15);
+    --shadow-xl: 0 24px 56px -16px hsl(221 40% 20% / 0.18);
+    --shadow-soft: 0 4px 20px -4px hsl(221 83% 53% / 0.2);
 
-    /* Transitions douces */
+    /* Transitions fluides */
     --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .dark {
