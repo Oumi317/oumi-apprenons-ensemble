@@ -16,6 +16,7 @@ import { AnimatedIllustration, type IllustrationType } from "@/components/Animat
 import { HomeFAQ } from "@/components/HomeFAQ";
 import { ParallaxSection, ParallaxFloatingElement } from "@/components/ParallaxSection";
 import { NavigationHeader } from "@/components/NavigationHeader";
+import { AnimatedCounter } from "@/components/AnimatedCounter";
 
 // Lazy loaded components pour optimisation
 const LazyTestimonials = lazy(() => import("@/components/Testimonials").then(m => ({ default: m.Testimonials })));
@@ -97,24 +98,16 @@ const Home = () => {
               </Link>
             </motion.div>
             
-            {/* Stats simplifiées */}
-            <motion.div 
-              className="flex flex-wrap justify-center gap-8 pt-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
+            {/* Stats animées */}
+            <div className="flex flex-wrap justify-center gap-8 pt-8">
               {[
                 { value: "92%", label: "de réussite" },
                 { value: "50+", label: "tuteurs certifiés" },
                 { value: "4.8/5", label: "satisfaction" },
               ].map((stat, index) => (
-                <div key={index} className="text-center">
-                  <div className="text-2xl md:text-3xl font-bold font-display text-primary">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground">{stat.label}</div>
-                </div>
+                <AnimatedCounter key={index} value={stat.value} label={stat.label} />
               ))}
-            </motion.div>
+            </div>
           </div>
           
           {/* Illustration cards avec animations Lottie */}
