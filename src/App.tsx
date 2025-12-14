@@ -25,6 +25,7 @@ import AITutor from "./pages/AITutor";
 import Notifications from "./pages/Notifications";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
+import StudentDashboard from "./pages/StudentDashboard";
 
 const queryClient = new QueryClient();
 
@@ -130,6 +131,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Notifications />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/student-dashboard" 
+              element={
+                <ProtectedRoute requiredRole="student">
+                  <StudentDashboard />
                 </ProtectedRoute>
               } 
             />
