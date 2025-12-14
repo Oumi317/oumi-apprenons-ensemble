@@ -54,7 +54,7 @@ export function QuickAIChat({ studentId, studentName }: QuickAIChatProps) {
     }
   }, [messages]);
 
-  const sendMessage = async (messageContent: string) => {
+  const sendMessage = async (messageContent: string, mode?: string) => {
     if (!messageContent.trim() || loading) return;
 
     const userMessage: Message = { role: "user", content: messageContent };
@@ -63,12 +63,27 @@ export function QuickAIChat({ studentId, studentName }: QuickAIChatProps) {
     setSelectedAction(null);
     setLoading(true);
 
+    // Determine mode from quick action prefix
+    let aiMode = mode;
+    if (!aiMode) {
+      if (messageContent.startsWith("Explique-moi comme si j'avais 6 ans")) {
+        aiMode = "explain_simple";
+      } else if (messageContent.startsWith("Donne-moi un exemple")) {
+        aiMode = "give_example";
+      } else if (messageContent.startsWith("Fais-moi un résumé")) {
+        aiMode = "make_summary";
+      } else if (messageContent.startsWith("Pose-moi 3 questions")) {
+        aiMode = "quick_quiz";
+      }
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("ai-tutor", {
         body: {
           messages: [...messages, userMessage],
           studentId,
-          studentName
+          studentName,
+          mode: aiMode
         }
       });
 
