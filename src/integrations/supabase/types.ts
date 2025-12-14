@@ -1652,6 +1652,10 @@ export type Database = {
         Returns: undefined
       }
       calculate_level: { Args: { xp: number }; Returns: number }
+      check_and_award_achievements: {
+        Args: { p_student_id: string }
+        Returns: undefined
+      }
       cleanup_expired_nonces: { Args: never; Returns: undefined }
       generate_slug: { Args: { text_input: string }; Returns: string }
       has_role: {
