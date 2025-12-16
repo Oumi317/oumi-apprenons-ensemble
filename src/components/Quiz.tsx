@@ -22,9 +22,10 @@ interface QuizProps {
   lessonId: string;
   studentId: string;
   onComplete?: () => void;
+  onXPGain?: (amount: number) => void;
 }
 
-export function Quiz({ lessonId, studentId, onComplete }: QuizProps) {
+export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, { answer: string; is_correct: boolean }>>({});
@@ -133,6 +134,7 @@ export function Quiz({ lessonId, studentId, onComplete }: QuizProps) {
           setCurrentQuestionIndex(0);
           setShowResults(false);
         }}
+        onXPGain={onXPGain}
       />
     );
   }
