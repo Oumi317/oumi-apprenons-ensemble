@@ -4,10 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Video, VideoOff, Mic, MicOff, PhoneOff, Copy, Check } from "lucide-react";
+import { Loader2, Video, VideoOff, Mic, MicOff, PhoneOff, Copy, Check, Users, Clock, BookOpen, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { motion, AnimatePresence } from "framer-motion";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Session {
   id: string;
@@ -30,11 +32,25 @@ export default function VideoConferenceRoom() {
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [linkCopied, setLinkCopied] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [notes, setNotes] = useState("");
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [sessionStarted, setSessionStarted] = useState(false);
 
   useEffect(() => {
     loadSession();
     checkUser();
   }, [sessionId]);
+
+  // Timer for session duration
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (sessionStarted) {
+      interval = setInterval(() => {
+        setTimeElapsed(prev => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [sessionStarted]);
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -52,7 +68,6 @@ export default function VideoConferenceRoom() {
       if (error) throw error;
       setSession(data);
 
-      // Generate meeting link if not exists
       if (!data.lien_zoom) {
         await generateMeetingLink(data.id);
       }
@@ -93,11 +108,25 @@ export default function VideoConferenceRoom() {
     }
   };
 
+  const startSession = async () => {
+    setSessionStarted(true);
+    await supabase
+      .from("sessions_tutorat")
+      .update({ statut: "en_cours" })
+      .eq("id", sessionId);
+    
+    setSession(prev => prev ? { ...prev, statut: "en_cours" } : null);
+    toast({
+      title: "Session démarrée",
+      description: "La session de tutorat a commencé",
+    });
+  };
+
   const endCall = async () => {
     try {
       await supabase
         .from("sessions_tutorat")
-        .update({ statut: "completee" })
+        .update({ statut: "completee", notes_tuteur: notes || null })
         .eq("id", sessionId);
 
       toast({
@@ -110,20 +139,37 @@ export default function VideoConferenceRoom() {
     }
   };
 
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center"
+        >
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Connexion à la session...</p>
+        </motion.div>
       </div>
     );
   }
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card>
-          <CardContent className="pt-6">
-            <p>Session introuvable</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="max-w-md">
+          <CardContent className="pt-6 text-center">
+            <Video className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <p className="text-lg font-medium">Session introuvable</p>
+            <Button onClick={() => navigate(-1)} className="mt-4">
+              Retour
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -131,45 +177,180 @@ export default function VideoConferenceRoom() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <div className="max-w-7xl mx-auto space-y-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
+      <div className="max-w-7xl mx-auto p-4 space-y-4">
         {/* Header */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle>{session.matiere}</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {format(new Date(session.date_heure_debut), "PPP 'à' HH:mm", { locale: fr })}
-                </p>
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Card className="border-primary/20">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-primary/10">
+                    <BookOpen className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">{session.matiere}</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {format(new Date(session.date_heure_debut), "EEEE d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  {sessionStarted && (
+                    <Badge variant="outline" className="text-lg px-3 py-1 border-red-500 text-red-500">
+                      <span className="w-2 h-2 bg-red-500 rounded-full mr-2 animate-pulse" />
+                      {formatTime(timeElapsed)}
+                    </Badge>
+                  )}
+                  <Badge 
+                    variant={session.statut === "en_cours" ? "default" : "secondary"}
+                    className="capitalize"
+                  >
+                    {session.statut.replace("_", " ")}
+                  </Badge>
+                </div>
               </div>
-              <Badge variant={session.statut === "en_cours" ? "default" : "secondary"}>
-                {session.statut}
-              </Badge>
-            </div>
-          </CardHeader>
-        </Card>
+            </CardHeader>
+          </Card>
+        </motion.div>
 
-        {/* Video Area */}
-        <Card>
-          <CardContent className="p-0">
-            <div className="aspect-video bg-muted flex items-center justify-center relative">
-              <div className="text-center">
-                <Video className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-lg font-medium">Salle de visioconférence</p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  La vidéo apparaîtra ici une fois connecté
-                </p>
-                {session.lien_zoom && (
+        <div className="grid lg:grid-cols-4 gap-4">
+          {/* Main Video Area */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="lg:col-span-3"
+          >
+            <Card className="overflow-hidden">
+              <CardContent className="p-0">
+                <div className="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center relative">
+                  {/* Placeholder video grid */}
+                  <div className="absolute inset-4 grid grid-cols-2 gap-4">
+                    <div className="bg-slate-700/50 rounded-xl flex items-center justify-center border border-slate-600/30">
+                      <div className="text-center">
+                        <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-3">
+                          <Users className="h-10 w-10 text-primary" />
+                        </div>
+                        <p className="text-white/80 font-medium">Tuteur</p>
+                        <p className="text-white/50 text-sm">En attente...</p>
+                      </div>
+                    </div>
+                    <div className="bg-slate-700/50 rounded-xl flex items-center justify-center border border-slate-600/30">
+                      <div className="text-center">
+                        <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                          <Users className="h-10 w-10 text-accent" />
+                        </div>
+                        <p className="text-white/80 font-medium">Élève</p>
+                        <p className="text-white/50 text-sm">En attente...</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Overlay for non-started session */}
+                  <AnimatePresence>
+                    {!sessionStarted && (
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center"
+                      >
+                        <div className="text-center">
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 200 }}
+                          >
+                            <Video className="h-16 w-16 mx-auto mb-4 text-white" />
+                          </motion.div>
+                          <h3 className="text-xl font-bold text-white mb-2">Prêt à commencer ?</h3>
+                          <p className="text-white/70 mb-6 max-w-sm">
+                            Cliquez sur le bouton ci-dessous pour démarrer la session de tutorat
+                          </p>
+                          <Button size="lg" onClick={startSession} className="gap-2">
+                            <Video className="h-5 w-5" />
+                            Démarrer la session
+                          </Button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Controls Bar */}
+                <div className="p-4 bg-card border-t flex items-center justify-center gap-3">
+                  <Button
+                    size="lg"
+                    variant={isVideoOn ? "default" : "secondary"}
+                    onClick={() => setIsVideoOn(!isVideoOn)}
+                    className="rounded-full h-14 w-14 p-0"
+                  >
+                    {isVideoOn ? <Video className="h-5 w-5" /> : <VideoOff className="h-5 w-5" />}
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    variant={isAudioOn ? "default" : "secondary"}
+                    onClick={() => setIsAudioOn(!isAudioOn)}
+                    className="rounded-full h-14 w-14 p-0"
+                  >
+                    {isAudioOn ? <Mic className="h-5 w-5" /> : <MicOff className="h-5 w-5" />}
+                  </Button>
+
+                  <Button
+                    size="lg"
+                    variant="destructive"
+                    onClick={endCall}
+                    className="rounded-full h-14 w-14 p-0"
+                  >
+                    <PhoneOff className="h-5 w-5" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Sidebar */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="space-y-4"
+          >
+            {/* Session Info */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  Informations
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Durée prévue</span>
+                  <span className="font-medium">{session.duree_minutes} min</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Statut</span>
+                  <Badge variant="outline" className="capitalize">
+                    {session.statut.replace("_", " ")}
+                  </Badge>
+                </div>
+                <div className="pt-2 border-t">
                   <Button
                     onClick={copyMeetingLink}
                     variant="outline"
-                    className="mt-4"
+                    size="sm"
+                    className="w-full"
                   >
                     {linkCopied ? (
                       <>
                         <Check className="mr-2 h-4 w-4" />
-                        Copié
+                        Copié !
                       </>
                     ) : (
                       <>
@@ -178,69 +359,29 @@ export default function VideoConferenceRoom() {
                       </>
                     )}
                   </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+                </div>
+              </CardContent>
+            </Card>
 
-        {/* Controls */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-center gap-4">
-              <Button
-                size="lg"
-                variant={isVideoOn ? "default" : "secondary"}
-                onClick={() => setIsVideoOn(!isVideoOn)}
-                className="rounded-full h-14 w-14 p-0"
-              >
-                {isVideoOn ? (
-                  <Video className="h-6 w-6" />
-                ) : (
-                  <VideoOff className="h-6 w-6" />
-                )}
-              </Button>
-
-              <Button
-                size="lg"
-                variant={isAudioOn ? "default" : "secondary"}
-                onClick={() => setIsAudioOn(!isAudioOn)}
-                className="rounded-full h-14 w-14 p-0"
-              >
-                {isAudioOn ? (
-                  <Mic className="h-6 w-6" />
-                ) : (
-                  <MicOff className="h-6 w-6" />
-                )}
-              </Button>
-
-              <Button
-                size="lg"
-                variant="destructive"
-                onClick={endCall}
-                className="rounded-full h-14 w-14 p-0"
-              >
-                <PhoneOff className="h-6 w-6" />
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Info */}
-        <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="text-muted-foreground">Durée prévue</p>
-                <p className="font-medium">{session.duree_minutes} minutes</p>
-              </div>
-              <div>
-                <p className="text-muted-foreground">Lien de la session</p>
-                <p className="font-medium truncate">{session.lien_zoom || "Génération..."}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Notes */}
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Notes de session
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Textarea
+                  placeholder="Prenez des notes pendant la session..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  className="min-h-[150px] resize-none"
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
