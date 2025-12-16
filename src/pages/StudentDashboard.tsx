@@ -46,6 +46,64 @@ export default function StudentDashboard() {
     checkAuthAndLoadData();
   }, []);
 
+  // Realtime subscription for achievements
+  useEffect(() => {
+    if (!student) return;
+
+    const channel = supabase
+      .channel('student-achievements')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'achievements',
+          filter: `student_id=eq.${student.id}`
+        },
+        (payload) => {
+          const newAchievement = payload.new as Achievement;
+          setAchievements(prev => [newAchievement, ...prev]);
+          // Trigger XP gain popup for the achievement
+          handleXPGain(newAchievement.points);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [student?.id]);
+
+  // Realtime subscription for XP updates
+  useEffect(() => {
+    if (!student) return;
+
+    const channel = supabase
+      .channel('student-xp')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'students',
+          filter: `id=eq.${student.id}`
+        },
+        (payload) => {
+          const updatedStudent = payload.new as Student;
+          if (updatedStudent.experience_points > student.experience_points) {
+            const xpDiff = updatedStudent.experience_points - student.experience_points;
+            setXpGain({ amount: xpDiff, show: true });
+          }
+          setStudent(updatedStudent);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [student?.id, student?.experience_points]);
+
   const checkAuthAndLoadData = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
