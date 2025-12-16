@@ -5,13 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { Send, Bot, User, Loader2, Sparkles } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, BookOpen, Lightbulb, FileText, HelpCircle } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+type AIMode = "explain_simple" | "give_example" | "make_summary" | "quick_quiz" | null;
 
 interface AITutorChatProps {
   studentId: string;
@@ -19,11 +22,19 @@ interface AITutorChatProps {
   onConversationCreated?: (id: string) => void;
 }
 
+const quickActions = [
+  { mode: "explain_simple" as AIMode, icon: BookOpen, label: "Explique simplement", color: "text-blue-500" },
+  { mode: "give_example" as AIMode, icon: Lightbulb, label: "Donne un exemple", color: "text-yellow-500" },
+  { mode: "make_summary" as AIMode, icon: FileText, label: "Résumé", color: "text-green-500" },
+  { mode: "quick_quiz" as AIMode, icon: HelpCircle, label: "Quiz rapide", color: "text-purple-500" },
+];
+
 export function AITutorChat({ studentId, conversationId, onConversationCreated }: AITutorChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(conversationId);
+  const [selectedMode, setSelectedMode] = useState<AIMode>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -82,10 +93,11 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
     return data.id;
   };
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (customMessage?: string, mode?: AIMode) => {
+    const messageToSend = customMessage || input;
+    if (!messageToSend.trim() || isLoading) return;
 
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage: Message = { role: "user", content: messageToSend };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -102,6 +114,7 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
           messages: [...messages, userMessage],
           conversationId: convId,
           studentId,
+          mode: mode || selectedMode,
         },
       });
 
@@ -125,6 +138,17 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
       });
     } finally {
       setIsLoading(false);
+      setSelectedMode(null);
+    }
+  };
+
+  const handleQuickAction = (mode: AIMode, label: string) => {
+    setSelectedMode(mode);
+    const lastAssistantMessage = [...messages].reverse().find(m => m.role === "assistant");
+    if (lastAssistantMessage) {
+      sendMessage(`${label} : ${lastAssistantMessage.content.slice(0, 100)}...`, mode);
+    } else {
+      setInput(`${label} : `);
     }
   };
 
@@ -147,49 +171,78 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
         <ScrollArea className="flex-1 p-4" ref={scrollRef}>
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center p-8">
-              <Bot className="h-16 w-16 text-muted-foreground mb-4" />
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", stiffness: 200 }}
+              >
+                <Bot className="h-16 w-16 text-muted-foreground mb-4" />
+              </motion.div>
               <h3 className="text-lg font-medium mb-2">Bonjour ! 👋</h3>
-              <p className="text-muted-foreground max-w-md">
+              <p className="text-muted-foreground max-w-md mb-6">
                 Je suis ton assistant pédagogique. Pose-moi tes questions sur tes devoirs,
                 je suis là pour t'aider à comprendre et progresser !
               </p>
+              <div className="grid grid-cols-2 gap-2 max-w-sm">
+                {quickActions.map((action) => (
+                  <Button
+                    key={action.mode}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                    onClick={() => setInput(`${action.label} : `)}
+                  >
+                    <action.icon className={`h-4 w-4 ${action.color}`} />
+                    <span className="text-xs">{action.label}</span>
+                  </Button>
+                ))}
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex gap-3 ${
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {message.role === "assistant" && (
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        <Bot className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  <div
-                    className={`rounded-lg px-4 py-2 max-w-[80%] ${
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted"
+              <AnimatePresence>
+                {messages.map((message, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className={`flex gap-3 ${
+                      message.role === "user" ? "justify-end" : "justify-start"
                     }`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                  {message.role === "user" && (
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback>
-                        <User className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ))}
+                    {message.role === "assistant" && (
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-primary-foreground">
+                          <Bot className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <div
+                      className={`rounded-lg px-4 py-2 max-w-[80%] ${
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted"
+                      }`}
+                    >
+                      <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                    {message.role === "user" && (
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback>
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               {isLoading && (
-                <div className="flex gap-3 justify-start">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="flex gap-3 justify-start"
+                >
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       <Bot className="h-4 w-4" />
@@ -198,11 +251,31 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
                   <div className="bg-muted rounded-lg px-4 py-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
           )}
         </ScrollArea>
+
+        {/* Quick Actions Bar */}
+        {messages.length > 0 && (
+          <div className="border-t px-4 py-2 flex gap-2 overflow-x-auto">
+            {quickActions.map((action) => (
+              <Button
+                key={action.mode}
+                variant="ghost"
+                size="sm"
+                className="flex-shrink-0 text-xs"
+                onClick={() => handleQuickAction(action.mode, action.label)}
+                disabled={isLoading}
+              >
+                <action.icon className={`h-3 w-3 mr-1 ${action.color}`} />
+                {action.label}
+              </Button>
+            ))}
+          </div>
+        )}
+
         <div className="border-t p-4">
           <div className="flex gap-2">
             <Input
@@ -213,7 +286,7 @@ export function AITutorChat({ studentId, conversationId, onConversationCreated }
               disabled={isLoading}
               className="flex-1"
             />
-            <Button onClick={sendMessage} disabled={isLoading || !input.trim()}>
+            <Button onClick={() => sendMessage()} disabled={isLoading || !input.trim()}>
               <Send className="h-4 w-4" />
             </Button>
           </div>
