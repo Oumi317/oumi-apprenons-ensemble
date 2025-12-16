@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, BookOpen, Bot, Trophy, Target, Flame } from "lucide-react";
+import { Loader2, BookOpen, Bot, Trophy, Target, Flame, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { LevelProgress } from "@/components/LevelProgress";
 import { StudyStreak } from "@/components/StudyStreak";
@@ -10,6 +10,7 @@ import { WeeklyChallenges } from "@/components/WeeklyChallenges";
 import { DailyLessons } from "@/components/DailyLessons";
 import { QuickAIChat } from "@/components/QuickAIChat";
 import { XPGainPopup } from "@/components/XPGainPopup";
+import { StudentLeaderboard } from "@/components/StudentLeaderboard";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -261,7 +262,7 @@ export default function StudentDashboard() {
 
         {/* Main Content */}
         <Tabs defaultValue="apprendre" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 lg:w-auto lg:inline-grid">
             <TabsTrigger value="apprendre" className="gap-2">
               <BookOpen className="h-4 w-4" />
               <span className="hidden sm:inline">Apprendre</span>
@@ -273,6 +274,10 @@ export default function StudentDashboard() {
             <TabsTrigger value="defis" className="gap-2">
               <Target className="h-4 w-4" />
               <span className="hidden sm:inline">Défis</span>
+            </TabsTrigger>
+            <TabsTrigger value="classement" className="gap-2">
+              <Users className="h-4 w-4" />
+              <span className="hidden sm:inline">Classement</span>
             </TabsTrigger>
             <TabsTrigger value="succes" className="gap-2">
               <Trophy className="h-4 w-4" />
@@ -310,6 +315,13 @@ export default function StudentDashboard() {
 
           <TabsContent value="defis">
             <WeeklyChallenges studentId={student.id} />
+          </TabsContent>
+
+          <TabsContent value="classement">
+            <StudentLeaderboard 
+              studentId={student.id} 
+              niveauScolaire={student.niveau_scolaire} 
+            />
           </TabsContent>
 
           <TabsContent value="succes">
