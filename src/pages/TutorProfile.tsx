@@ -30,6 +30,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import BookingDialog from "@/components/BookingDialog";
+import { TutorBadges } from "@/components/TutorBadges";
 
 const TutorProfile = () => {
   const { id } = useParams();
@@ -197,6 +198,11 @@ const TutorProfile = () => {
                   <span className="text-sm text-muted-foreground">
                     ({tutor.nombre_sessions} sessions)
                   </span>
+                </div>
+                
+                {/* Tutor Badges */}
+                <div className="mt-4">
+                  <TutorBadges tutorId={tutor.id} compact />
                 </div>
               </CardHeader>
               <CardContent className="space-y-6">
