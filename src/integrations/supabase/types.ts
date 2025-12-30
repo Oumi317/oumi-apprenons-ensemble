@@ -790,6 +790,127 @@ export type Database = {
           },
         ]
       }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          current_uses: number
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          owner_id: string
+          reward_months: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          owner_id: string
+          reward_months?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          owner_id?: string
+          reward_months?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          applied_at: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          referral_id: string
+          reward_type: string
+          reward_value: number
+          user_id: string
+        }
+        Insert: {
+          applied_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          referral_id: string
+          reward_type: string
+          reward_value: number
+          user_id: string
+        }
+        Update: {
+          applied_at?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          referral_id?: string
+          reward_type?: string
+          reward_value?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referral_rewards_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      referrals: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          referral_code_id: string
+          referred_id: string
+          referrer_id: string
+          reward_applied: boolean
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code_id: string
+          referred_id: string
+          referrer_id: string
+          reward_applied?: boolean
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          referral_code_id?: string
+          referred_id?: string
+          referrer_id?: string
+          reward_applied?: boolean
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_referral_code_id_fkey"
+            columns: ["referral_code_id"]
+            isOneToOne: false
+            referencedRelation: "referral_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       session_feedback: {
         Row: {
           areas_for_improvement: string | null
@@ -1647,6 +1768,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_referral: {
+        Args: { p_code: string; p_user_id: string }
+        Returns: Json
+      }
       award_experience: {
         Args: { student_uuid: string; xp_amount: number }
         Returns: undefined
@@ -1657,6 +1782,7 @@ export type Database = {
         Returns: undefined
       }
       cleanup_expired_nonces: { Args: never; Returns: undefined }
+      generate_referral_code: { Args: never; Returns: string }
       generate_slug: { Args: { text_input: string }; Returns: string }
       has_role: {
         Args: {
