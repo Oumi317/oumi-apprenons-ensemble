@@ -25,6 +25,8 @@ import { LearningRecommendations } from "@/components/LearningRecommendations";
 import { RealtimeDashboardMetrics } from "@/components/RealtimeDashboardMetrics";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
+import { SessionHistory } from "@/components/SessionHistory";
+import { ProgressPDFExport } from "@/components/ProgressPDFExport";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -434,7 +436,7 @@ const ParentDashboard = () => {
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="budget" className="space-y-4">
-                <TabsList className="grid w-full grid-cols-7 gap-2">
+                <TabsList className="flex flex-wrap justify-start gap-2">
                   <TabsTrigger value="budget">Budget</TabsTrigger>
                   <TabsTrigger value="favorites">Favoris</TabsTrigger>
                   <TabsTrigger value="calendar">Calendrier</TabsTrigger>
@@ -442,6 +444,8 @@ const ParentDashboard = () => {
                   <TabsTrigger value="notifications">Notifications</TabsTrigger>
                   <TabsTrigger value="analytics">Analyses</TabsTrigger>
                   <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
+                  <TabsTrigger value="history">Historique</TabsTrigger>
+                  <TabsTrigger value="export">Export PDF</TabsTrigger>
                 </TabsList>
                 <TabsContent value="budget">
                   <BudgetManagement />
@@ -497,6 +501,12 @@ const ParentDashboard = () => {
                     strongSubjects={["Français", "Sciences"]}
                     recentScores={[85, 78, 82, 88, 75]}
                   />
+                </TabsContent>
+                <TabsContent value="history">
+                  <SessionHistory />
+                </TabsContent>
+                <TabsContent value="export">
+                  <ProgressPDFExport students={children.map(c => ({ id: c.id, prenom: c.prenom, niveau_scolaire: c.niveau_scolaire }))} />
                 </TabsContent>
               </Tabs>
             </CardContent>
