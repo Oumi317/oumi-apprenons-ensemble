@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus, Sparkles, Clock, TrendingUp, Award } from "lucide-react";
+import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus, Sparkles, Clock, TrendingUp, Award, Gift } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AddChildDialog } from "@/components/AddChildDialog";
@@ -27,6 +27,7 @@ import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
 import { SessionHistory } from "@/components/SessionHistory";
 import { ProgressPDFExport } from "@/components/ProgressPDFExport";
+import { ReferralSystem } from "@/components/ReferralSystem";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -446,6 +447,10 @@ const ParentDashboard = () => {
                   <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
                   <TabsTrigger value="history">Historique</TabsTrigger>
                   <TabsTrigger value="export">Export PDF</TabsTrigger>
+                  <TabsTrigger value="referral" className="flex items-center gap-1">
+                    <Gift className="h-4 w-4" />
+                    Parrainage
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="budget">
                   <BudgetManagement />
@@ -507,6 +512,9 @@ const ParentDashboard = () => {
                 </TabsContent>
                 <TabsContent value="export">
                   <ProgressPDFExport students={children.map(c => ({ id: c.id, prenom: c.prenom, niveau_scolaire: c.niveau_scolaire }))} />
+                </TabsContent>
+                <TabsContent value="referral">
+                  <ReferralSystem />
                 </TabsContent>
               </Tabs>
             </CardContent>
