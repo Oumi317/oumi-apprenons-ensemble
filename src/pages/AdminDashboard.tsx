@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, Sparkles } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, Sparkles, Wand2 } from "lucide-react";
 import AdminResourceUpload from "@/components/AdminResourceUpload";
+import AdminResourceGenerator from "@/components/AdminResourceGenerator";
 import AdminLessonManager from "@/components/AdminLessonManager";
 import AdminTutorManager from "@/components/AdminTutorManager";
 import AdminUserManager from "@/components/AdminUserManager";
@@ -258,6 +259,10 @@ export default function AdminDashboard() {
               <Sparkles className="h-4 w-4 mr-2" />
               Ressources interactives
             </TabsTrigger>
+            <TabsTrigger value="generator">
+              <Wand2 className="h-4 w-4 mr-2" />
+              Générateur CREADOC
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="users">
@@ -373,6 +378,10 @@ export default function AdminDashboard() {
               lessons={lessons}
               onUploadSuccess={fetchAdminData}
             />
+          </TabsContent>
+
+          <TabsContent value="generator">
+            <AdminResourceGenerator />
           </TabsContent>
         </Tabs>
       </main>

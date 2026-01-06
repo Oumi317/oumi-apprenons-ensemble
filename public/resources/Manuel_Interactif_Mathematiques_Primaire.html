@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Interactif Mathématiques Primaire (CP-CM2)</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-light: #74b9ff;
+            --bg-light: #f8f9fa;
+            --bg-dark: #1a1a2e;
+            --text-light: #333;
+            --text-dark: #e8e8e8;
+            --success: #27ae60;
+            --error: #e74c3c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .theme-toggle {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .progress-container {
+            background: rgba(0,0,0,0.1);
+            border-radius: 25px;
+            height: 30px;
+            overflow: hidden;
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-content { grid-template-columns: 1fr; }
+            .sidebar { order: 2; }
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        body.dark-mode .sidebar { background: #252540; }
+        
+        .sidebar h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+            color: inherit;
+        }
+        
+        .nav-item:hover { background: rgba(52, 152, 219, 0.1); }
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+        }
+        .nav-item.completed .nav-status { color: var(--success); }
+        
+        .nav-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .nav-title {
+            flex: 1;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .content-area { background: #252540; }
+        
+        .lesson-header {
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .lesson-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .lesson-header h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+        
+        .lesson-content {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+        
+        .lesson-content p { margin-bottom: 15px; }
+        
+        .info-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+            border-left: 4px solid #3498db;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .examples-box {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.05));
+            border-left: 4px solid #27ae60;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .examples-box h4 { color: #27ae60; margin-bottom: 10px; }
+        .examples-box ul { list-style: none; }
+        .examples-box li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        .examples-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+        }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .number-box {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .exercises-section {
+            background: rgba(0,0,0,0.02);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        body.dark-mode .exercises-section { background: rgba(255,255,255,0.05); }
+        
+        .exercises-section h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .exercise {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        body.dark-mode .exercise { background: #1a1a2e; }
+        
+        .exercise-question {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        body.dark-mode .option { background: rgba(255,255,255,0.05); }
+        
+        .option:hover { background: rgba(52, 152, 219, 0.1); }
+        .option input { width: 18px; height: 18px; accent-color: var(--primary); }
+        .option.correct { background: rgba(39, 174, 96, 0.2); border: 2px solid var(--success); }
+        .option.incorrect { background: rgba(231, 76, 60, 0.2); border: 2px solid var(--error); }
+        
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .btn-validate:hover { transform: translateY(-2px); }
+        
+        .lesson-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .btn-nav {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-nav:hover, .btn-nav.btn-next {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-certificate {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .certificate {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border: 5px solid #f1c40f;
+            border-radius: 20px;
+        }
+        
+        .certificate h2 { color: #e67e22; font-size: 2.5rem; margin-bottom: 20px; }
+        .certificate .trophy { font-size: 5rem; margin: 20px 0; }
+        .certificate .score { font-size: 3rem; color: var(--primary); font-weight: bold; }
+        .certificate .message { font-size: 1.3rem; color: #666; margin: 20px 0; }
+        .certificate .badge {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+        
+        .btn-print {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        @media print {
+            .sidebar, .controls, .btn-print, .lesson-navigation { display: none !important; }
+            .certificate { display: block !important; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📐 Mathématiques Primaire</h1>
+            <p class="subtitle">Manuel Interactif - Du CP au CM2</p>
+        </header>
+        
+        <div class="controls">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Mode sombre</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>📖 Sommaire</h3>
+                <nav id="lessonNav"></nav>
+            </aside>
+            
+            <main class="content-area" id="contentArea">
+                <!-- Les leçons seront injectées ici -->
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        const lessons = [
+            {
+                title: "Les nombres de 1 à 10",
+                content: `
+                    <p>Les nombres sont nos amis pour compter ! Apprenons à reconnaître les nombres de 1 à 10.</p>
+                    <div class="number-grid">
+                        <div class="number-box">1</div>
+                        <div class="number-box">2</div>
+                        <div class="number-box">3</div>
+                        <div class="number-box">4</div>
+                        <div class="number-box">5</div>
+                        <div class="number-box">6</div>
+                        <div class="number-box">7</div>
+                        <div class="number-box">8</div>
+                        <div class="number-box">9</div>
+                        <div class="number-box">10</div>
+                    </div>
+                    <div class="info-box">
+                        <strong>💡 Astuce :</strong> Utilise tes doigts pour compter ! Tu as 10 doigts, comme les 10 premiers nombres.
+                    </div>
+                `,
+                examples: ["1 pomme 🍎", "2 bananes 🍌🍌", "5 étoiles ⭐⭐⭐⭐⭐"],
+                exercises: [
+                    { question: "Combien y a-t-il de doigts sur une main ?", options: ["3", "4", "5", "6"], correct: 2, explanation: "Une main a 5 doigts !" },
+                    { question: "Quel nombre vient après 7 ?", options: ["6", "8", "9", "10"], correct: 1, explanation: "Après 7 vient 8. On compte : 7, 8, 9..." },
+                    { question: "🍎🍎🍎 Combien de pommes ?", options: ["2", "3", "4", "5"], correct: 1, explanation: "Il y a 3 pommes !" }
+                ]
+            },
+            {
+                title: "Les nombres de 10 à 100",
+                content: `
+                    <p>Maintenant, apprenons les dizaines ! De 10 à 100, c'est facile.</p>
+                    <div class="number-grid">
+                        <div class="number-box">10</div>
+                        <div class="number-box">20</div>
+                        <div class="number-box">30</div>
+                        <div class="number-box">40</div>
+                        <div class="number-box">50</div>
+                        <div class="number-box">60</div>
+                        <div class="number-box">70</div>
+                        <div class="number-box">80</div>
+                        <div class="number-box">90</div>
+                        <div class="number-box">100</div>
+                    </div>
+                    <div class="info-box">
+                        <strong>💡 Les dizaines :</strong> 10 = dix, 20 = vingt, 30 = trente, 40 = quarante, 50 = cinquante...
+                    </div>
+                `,
+                examples: ["25 = vingt-cinq (20 + 5)", "47 = quarante-sept (40 + 7)", "83 = quatre-vingt-trois (80 + 3)"],
+                exercises: [
+                    { question: "Comment s'écrit cinquante-six ?", options: ["46", "56", "65", "66"], correct: 1, explanation: "Cinquante-six s'écrit 56 (50 + 6)." },
+                    { question: "Combien font 30 + 40 ?", options: ["60", "70", "80", "100"], correct: 1, explanation: "30 + 40 = 70 (3 dizaines + 4 dizaines = 7 dizaines)" },
+                    { question: "Quel nombre vient après 99 ?", options: ["98", "100", "101", "109"], correct: 1, explanation: "Après 99 vient 100 !" }
+                ]
+            },
+            {
+                title: "L'addition simple",
+                content: `
+                    <p>L'addition, c'est mettre ensemble ! On utilise le signe <strong>+</strong> (plus).</p>
+                    <div class="info-box">
+                        <strong>🧮 Formule :</strong> nombre + nombre = somme<br>
+                        Exemple : 3 + 2 = 5
+                    </div>
+                    <p>Quand on additionne, le résultat est toujours plus grand !</p>
+                `,
+                examples: ["2 + 3 = 5 (deux pommes plus trois pommes = cinq pommes)", "4 + 1 = 5", "6 + 4 = 10"],
+                exercises: [
+                    { question: "Combien font 5 + 3 ?", options: ["7", "8", "9", "10"], correct: 1, explanation: "5 + 3 = 8. On compte 5, puis 3 de plus : 6, 7, 8 !" },
+                    { question: "7 + 2 = ?", options: ["8", "9", "10", "11"], correct: 1, explanation: "7 + 2 = 9" },
+                    { question: "4 + 4 = ?", options: ["6", "7", "8", "9"], correct: 2, explanation: "4 + 4 = 8 (le double de 4)" }
+                ]
+            },
+            {
+                title: "La soustraction simple",
+                content: `
+                    <p>La soustraction, c'est enlever ! On utilise le signe <strong>-</strong> (moins).</p>
+                    <div class="info-box">
+                        <strong>🧮 Formule :</strong> nombre - nombre = différence<br>
+                        Exemple : 5 - 2 = 3
+                    </div>
+                    <p>Quand on soustrait, le résultat est toujours plus petit !</p>
+                `,
+                examples: ["5 - 2 = 3 (cinq bonbons moins deux = trois bonbons)", "8 - 3 = 5", "10 - 4 = 6"],
+                exercises: [
+                    { question: "Combien font 7 - 3 ?", options: ["3", "4", "5", "6"], correct: 1, explanation: "7 - 3 = 4. On enlève 3 à 7." },
+                    { question: "10 - 5 = ?", options: ["4", "5", "6", "7"], correct: 1, explanation: "10 - 5 = 5 (la moitié de 10)" },
+                    { question: "9 - 4 = ?", options: ["4", "5", "6", "7"], correct: 1, explanation: "9 - 4 = 5" }
+                ]
+            },
+            {
+                title: "Les formes géométriques",
+                content: `
+                    <p>Découvrons les formes qui nous entourent !</p>
+                    <div class="info-box">
+                        <strong>🔷 Les formes de base :</strong><br>
+                        • Cercle ⭕ : rond, sans coin<br>
+                        • Carré ⬜ : 4 côtés égaux, 4 coins<br>
+                        • Triangle 🔺 : 3 côtés, 3 coins<br>
+                        • Rectangle ▭ : 4 côtés, 2 longs et 2 courts
+                    </div>
+                `,
+                examples: ["Une roue est un cercle", "Une fenêtre peut être un carré ou un rectangle", "Un panneau de signalisation peut être un triangle"],
+                exercises: [
+                    { question: "Combien de côtés a un triangle ?", options: ["2", "3", "4", "5"], correct: 1, explanation: "Un triangle a 3 côtés (tri = trois)." },
+                    { question: "Quelle forme n'a pas de coin ?", options: ["Carré", "Triangle", "Cercle", "Rectangle"], correct: 2, explanation: "Le cercle est rond, il n'a pas de coin !" },
+                    { question: "Un carré a combien de côtés égaux ?", options: ["2", "3", "4", "5"], correct: 2, explanation: "Un carré a 4 côtés tous égaux." }
+                ]
+            },
+            {
+                title: "Mesurer les longueurs",
+                content: `
+                    <p>Pour mesurer, on utilise des unités comme le mètre (m) et le centimètre (cm).</p>
+                    <div class="info-box">
+                        <strong>📏 À retenir :</strong><br>
+                        • 1 mètre (m) = 100 centimètres (cm)<br>
+                        • On utilise une règle pour mesurer<br>
+                        • Pour les grandes distances : le kilomètre (km) = 1000 m
+                    </div>
+                `,
+                examples: ["Une règle mesure souvent 30 cm", "Un adulte mesure environ 1 m 70 cm", "Une fourmi mesure quelques millimètres"],
+                exercises: [
+                    { question: "Combien de cm dans 1 mètre ?", options: ["10", "50", "100", "1000"], correct: 2, explanation: "1 mètre = 100 centimètres" },
+                    { question: "Qu'utilise-t-on pour mesurer ?", options: ["Une balance", "Une règle", "Un thermomètre", "Une horloge"], correct: 1, explanation: "On utilise une règle pour mesurer les longueurs." },
+                    { question: "1 km = combien de mètres ?", options: ["10", "100", "500", "1000"], correct: 3, explanation: "1 kilomètre = 1000 mètres" }
+                ]
+            },
+            {
+                title: "L'heure et le temps",
+                content: `
+                    <p>Apprendre à lire l'heure, c'est important !</p>
+                    <div class="info-box">
+                        <strong>🕐 Les bases :</strong><br>
+                        • Une journée = 24 heures<br>
+                        • Une heure = 60 minutes<br>
+                        • La petite aiguille montre les heures<br>
+                        • La grande aiguille montre les minutes
+                    </div>
+                `,
+                examples: ["8h00 = huit heures (heure du petit-déjeuner)", "12h00 = midi (heure du déjeuner)", "20h00 = huit heures du soir"],
+                exercises: [
+                    { question: "Combien de minutes dans 1 heure ?", options: ["30", "45", "60", "100"], correct: 2, explanation: "1 heure = 60 minutes" },
+                    { question: "Midi, c'est quelle heure ?", options: ["10h", "11h", "12h", "13h"], correct: 2, explanation: "Midi = 12 heures" },
+                    { question: "Combien d'heures dans une journée ?", options: ["12", "20", "24", "30"], correct: 2, explanation: "Une journée complète = 24 heures" }
+                ]
+            },
+            {
+                title: "La multiplication",
+                content: `
+                    <p>La multiplication, c'est additionner plusieurs fois le même nombre !</p>
+                    <div class="info-box">
+                        <strong>✖️ Le signe :</strong> × (fois)<br>
+                        3 × 4 = 12 signifie : 4 + 4 + 4 = 12 (3 fois 4)
+                    </div>
+                    <p>C'est plus rapide que d'additionner plusieurs fois !</p>
+                `,
+                examples: ["2 × 3 = 6 (2 + 2 + 2 = 6)", "4 × 2 = 8 (4 + 4 = 8)", "5 × 5 = 25"],
+                exercises: [
+                    { question: "Combien font 3 × 3 ?", options: ["6", "9", "12", "15"], correct: 1, explanation: "3 × 3 = 9 (3 + 3 + 3 = 9)" },
+                    { question: "5 × 2 = ?", options: ["7", "8", "10", "12"], correct: 2, explanation: "5 × 2 = 10 (5 + 5 = 10)" },
+                    { question: "4 × 4 = ?", options: ["12", "14", "16", "18"], correct: 2, explanation: "4 × 4 = 16 (le carré de 4)" }
+                ]
+            },
+            {
+                title: "Les tables de multiplication",
+                content: `
+                    <p>Les tables de multiplication, c'est comme un super-pouvoir en maths !</p>
+                    <div class="info-box">
+                        <strong>📊 Astuces :</strong><br>
+                        • Table de 2 : tous les résultats sont pairs<br>
+                        • Table de 5 : termine par 0 ou 5<br>
+                        • Table de 10 : ajoute un 0 au nombre
+                    </div>
+                `,
+                examples: ["Table de 2 : 2, 4, 6, 8, 10, 12...", "Table de 5 : 5, 10, 15, 20, 25...", "Table de 10 : 10, 20, 30, 40, 50..."],
+                exercises: [
+                    { question: "6 × 5 = ?", options: ["25", "30", "35", "40"], correct: 1, explanation: "6 × 5 = 30" },
+                    { question: "7 × 10 = ?", options: ["17", "70", "77", "100"], correct: 1, explanation: "7 × 10 = 70 (on ajoute un 0)" },
+                    { question: "8 × 2 = ?", options: ["14", "16", "18", "20"], correct: 1, explanation: "8 × 2 = 16" }
+                ]
+            },
+            {
+                title: "La division",
+                content: `
+                    <p>Diviser, c'est partager en parts égales !</p>
+                    <div class="info-box">
+                        <strong>➗ Le signe :</strong> ÷ (divisé par)<br>
+                        12 ÷ 3 = 4 signifie : 12 partagé en 3 parts égales donne 4
+                    </div>
+                    <p>C'est l'inverse de la multiplication !</p>
+                `,
+                examples: ["10 ÷ 2 = 5 (10 bonbons partagés entre 2 enfants = 5 chacun)", "15 ÷ 3 = 5", "20 ÷ 4 = 5"],
+                exercises: [
+                    { question: "12 ÷ 4 = ?", options: ["2", "3", "4", "6"], correct: 1, explanation: "12 ÷ 4 = 3 (12 en 4 parts = 3 chacun)" },
+                    { question: "18 ÷ 2 = ?", options: ["6", "8", "9", "10"], correct: 2, explanation: "18 ÷ 2 = 9 (la moitié de 18)" },
+                    { question: "25 ÷ 5 = ?", options: ["4", "5", "6", "7"], correct: 1, explanation: "25 ÷ 5 = 5" }
+                ]
+            },
+            {
+                title: "Les fractions simples",
+                content: `
+                    <p>Une fraction, c'est une partie d'un tout !</p>
+                    <div class="info-box">
+                        <strong>🍕 Exemple avec une pizza :</strong><br>
+                        • 1/2 = la moitié (1 part sur 2)<br>
+                        • 1/4 = un quart (1 part sur 4)<br>
+                        • 3/4 = trois quarts (3 parts sur 4)
+                    </div>
+                `,
+                examples: ["1/2 d'une pizza = une moitié 🍕", "1/4 d'un gâteau = un quart 🎂", "2/3 signifie 2 parts sur 3"],
+                exercises: [
+                    { question: "1/2 représente quelle partie ?", options: ["Un tiers", "La moitié", "Un quart", "Le tout"], correct: 1, explanation: "1/2 = une moitié = une part sur deux" },
+                    { question: "Combien font 1/4 + 1/4 ?", options: ["1/4", "2/4", "3/4", "4/4"], correct: 1, explanation: "1/4 + 1/4 = 2/4 (= 1/2)" },
+                    { question: "3/4 c'est plus ou moins que 1/2 ?", options: ["Plus", "Moins", "Égal", "On ne peut pas savoir"], correct: 0, explanation: "3/4 > 1/2 (3/4 = 0,75 et 1/2 = 0,5)" }
+                ]
+            },
+            {
+                title: "Les nombres décimaux",
+                content: `
+                    <p>Les nombres décimaux permettent d'exprimer des quantités entre les nombres entiers.</p>
+                    <div class="info-box">
+                        <strong>🔢 La virgule :</strong><br>
+                        • À gauche : partie entière<br>
+                        • À droite : partie décimale<br>
+                        Exemple : 3,5 = 3 entiers et 5 dixièmes
+                    </div>
+                `,
+                examples: ["1,5 = un et demi", "2,25 € = deux euros et vingt-cinq centimes", "0,5 = la moitié = 1/2"],
+                exercises: [
+                    { question: "Comment lit-on 2,5 ?", options: ["Vingt-cinq", "Deux virgule cinq", "Deux cent cinq", "Cinquante-deux"], correct: 1, explanation: "2,5 se lit 'deux virgule cinq'" },
+                    { question: "Quel nombre est le plus grand : 3,2 ou 3,8 ?", options: ["3,2", "3,8", "Ils sont égaux", "On ne peut pas savoir"], correct: 1, explanation: "3,8 > 3,2 (8 dixièmes > 2 dixièmes)" },
+                    { question: "0,5 + 0,5 = ?", options: ["0,10", "0,55", "1", "10"], correct: 2, explanation: "0,5 + 0,5 = 1 (deux moitiés font un entier)" }
+                ]
+            },
+            {
+                title: "Résoudre des problèmes",
+                content: `
+                    <p>Pour résoudre un problème de maths, suivez ces étapes :</p>
+                    <div class="info-box">
+                        <strong>📝 Méthode :</strong><br>
+                        1. Lis bien l'énoncé<br>
+                        2. Repère les informations importantes<br>
+                        3. Choisis la bonne opération (+, -, ×, ÷)<br>
+                        4. Calcule<br>
+                        5. Vérifie ta réponse
+                    </div>
+                `,
+                examples: ["'J'ai 5 billes et j'en gagne 3' → Addition : 5 + 3 = 8", "'Je partage 12 bonbons entre 4 amis' → Division : 12 ÷ 4 = 3", "'J'achète 4 livres à 5€ chacun' → Multiplication : 4 × 5 = 20€"],
+                exercises: [
+                    { question: "Marie a 8 bonbons. Elle en mange 3. Combien lui en reste-t-il ?", options: ["3", "5", "8", "11"], correct: 1, explanation: "8 - 3 = 5 bonbons restants" },
+                    { question: "Paul a 4 paquets de 6 billes. Combien a-t-il de billes ?", options: ["10", "18", "24", "46"], correct: 2, explanation: "4 × 6 = 24 billes" },
+                    { question: "15 enfants doivent former 3 groupes égaux. Combien par groupe ?", options: ["3", "5", "12", "18"], correct: 1, explanation: "15 ÷ 3 = 5 enfants par groupe" }
+                ]
+            },
+            {
+                title: "La géométrie avancée",
+                content: `
+                    <p>Approfondissons nos connaissances en géométrie !</p>
+                    <div class="info-box">
+                        <strong>📐 Notions clés :</strong><br>
+                        • Périmètre : tour de la figure<br>
+                        • Aire : surface de la figure<br>
+                        • Symétrie : image miroir<br>
+                        • Parallèles : lignes qui ne se croisent jamais
+                    </div>
+                `,
+                examples: ["Périmètre du carré = 4 × côté", "Aire du rectangle = longueur × largeur", "Un papillon a une symétrie"],
+                exercises: [
+                    { question: "Le périmètre d'un carré de côté 5 cm est ?", options: ["10 cm", "15 cm", "20 cm", "25 cm"], correct: 2, explanation: "Périmètre = 4 × 5 = 20 cm" },
+                    { question: "L'aire d'un rectangle 4 cm × 3 cm est ?", options: ["7 cm²", "12 cm²", "14 cm²", "24 cm²"], correct: 1, explanation: "Aire = 4 × 3 = 12 cm²" },
+                    { question: "Deux droites parallèles...", options: ["Se croisent", "Ne se croisent jamais", "Sont perpendiculaires", "Forment un angle"], correct: 1, explanation: "Les droites parallèles ne se croisent jamais." }
+                ]
+            },
+            {
+                title: "Révision générale",
+                content: `
+                    <p>Bravo ! Tu as parcouru tout le manuel. Voici une révision de tous les concepts !</p>
+                    <div class="info-box">
+                        <strong>🎓 Ce que tu as appris :</strong><br>
+                        • Les nombres de 1 à 100<br>
+                        • Les 4 opérations (+, -, ×, ÷)<br>
+                        • Les formes géométriques<br>
+                        • Les mesures<br>
+                        • Les fractions et décimaux<br>
+                        • La résolution de problèmes
+                    </div>
+                    <p>Teste tes connaissances avec ces exercices de révision !</p>
+                `,
+                examples: [],
+                exercises: [
+                    { question: "45 + 28 = ?", options: ["63", "73", "83", "93"], correct: 1, explanation: "45 + 28 = 73" },
+                    { question: "7 × 8 = ?", options: ["48", "54", "56", "64"], correct: 2, explanation: "7 × 8 = 56" },
+                    { question: "100 - 37 = ?", options: ["53", "63", "67", "73"], correct: 1, explanation: "100 - 37 = 63" },
+                    { question: "Le périmètre d'un carré de 6 cm est ?", options: ["12 cm", "18 cm", "24 cm", "36 cm"], correct: 2, explanation: "4 × 6 = 24 cm" }
+                ]
+            }
+        ];
+        
+        let completedLessons = new Set();
+        let lessonScores = {};
+        
+        function init() {
+            renderNav();
+            renderLessons();
+            goToLesson(0);
+        }
+        
+        function renderNav() {
+            const nav = document.getElementById('lessonNav');
+            nav.innerHTML = lessons.map((lesson, index) => `
+                <button class="nav-item ${index === 0 ? 'active' : ''}" onclick="goToLesson(${index})">
+                    <span class="nav-number">${index + 1}</span>
+                    <span class="nav-title">${lesson.title}</span>
+                    <span class="nav-status">○</span>
+                </button>
+            `).join('');
+        }
+        
+        function renderLessons() {
+            const content = document.getElementById('contentArea');
+            let html = lessons.map((lesson, index) => {
+                const exercisesHtml = lesson.exercises.map((ex, exIndex) => `
+                    <div class="exercise" data-correct="${ex.correct}">
+                        <p class="exercise-question">${exIndex + 1}. ${ex.question}</p>
+                        <div class="options">
+                            ${ex.options.map((opt, optIndex) => `
+                                <label class="option">
+                                    <input type="radio" name="q${index}_${exIndex}" value="${optIndex}">
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div class="feedback" style="display: none;">
+                            <p>${ex.explanation}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const examplesHtml = lesson.examples.length > 0 ? `
+                    <div class="examples-box">
+                        <h4>📝 Exemples</h4>
+                        <ul>${lesson.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                    </div>
+                ` : '';
+                
+                return `
+                    <section class="lesson" id="lesson-${index}" style="display: none;">
+                        <div class="lesson-header">
+                            <span class="lesson-number">Leçon ${index + 1}</span>
+                            <h2>${lesson.title}</h2>
+                        </div>
+                        <div class="lesson-content">
+                            ${lesson.content}
+                            ${examplesHtml}
+                        </div>
+                        <div class="exercises-section">
+                            <h3>🎯 Exercices</h3>
+                            ${exercisesHtml}
+                            <button class="btn-validate" onclick="validateLesson(${index})">Valider mes réponses</button>
+                        </div>
+                        <div class="lesson-navigation">
+                            ${index > 0 ? `<button class="btn-nav" onclick="goToLesson(${index - 1})">← Leçon précédente</button>` : '<span></span>'}
+                            ${index < lessons.length - 1 
+                                ? `<button class="btn-nav btn-next" onclick="goToLesson(${index + 1})">Leçon suivante →</button>` 
+                                : `<button class="btn-certificate" onclick="showCertificate()">🏆 Obtenir mon certificat</button>`}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+            
+            html += `
+                <div class="certificate" id="certificate">
+                    <h2>🎓 Certificat de Réussite</h2>
+                    <div class="trophy">🏆</div>
+                    <p>Félicitations ! Tu as terminé le manuel</p>
+                    <p><strong>Mathématiques Primaire</strong></p>
+                    <div class="score" id="finalScore">0%</div>
+                    <p class="message" id="certificateMessage"></p>
+                    <div class="badge" id="levelBadge"></div>
+                    <br>
+                    <button class="btn-print" onclick="window.print()">🖨️ Imprimer mon certificat</button>
+                </div>
+            `;
+            
+            content.innerHTML = html;
+        }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('dark-mode') ? '☀️ Mode clair' : '🌙 Mode sombre';
+        }
+        
+        function goToLesson(index) {
+            document.querySelectorAll('.lesson').forEach(l => l.style.display = 'none');
+            document.getElementById('lesson-' + index).style.display = 'block';
+            document.getElementById('certificate').style.display = 'none';
+            
+            document.querySelectorAll('.nav-item').forEach((item, i) => {
+                item.classList.toggle('active', i === index);
+            });
+        }
+        
+        function validateLesson(lessonIndex) {
+            const lesson = document.getElementById('lesson-' + lessonIndex);
+            const exercises = lesson.querySelectorAll('.exercise');
+            let correct = 0;
+            let total = exercises.length;
+            
+            exercises.forEach((ex) => {
+                const correctAnswer = parseInt(ex.dataset.correct);
+                const selected = ex.querySelector('input:checked');
+                const options = ex.querySelectorAll('.option');
+                const feedback = ex.querySelector('.feedback');
+                
+                options.forEach((opt, optIndex) => {
+                    opt.classList.remove('correct', 'incorrect');
+                    if (optIndex === correctAnswer) {
+                        opt.classList.add('correct');
+                    }
+                });
+                
+                if (selected) {
+                    const selectedValue = parseInt(selected.value);
+                    if (selectedValue === correctAnswer) {
+                        correct++;
+                    } else {
+                        options[selectedValue].classList.add('incorrect');
+                    }
+                }
+                
+                feedback.style.display = 'block';
+            });
+            
+            const score = Math.round((correct / total) * 100);
+            lessonScores[lessonIndex] = score;
+            
+            if (score >= 70) {
+                completedLessons.add(lessonIndex);
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems[lessonIndex].classList.add('completed');
+                navItems[lessonIndex].querySelector('.nav-status').textContent = '✓';
+            }
+            
+            updateProgress();
+            
+            const message = score === 100 ? '🌟 Parfait ! Excellent travail !' :
+                           score >= 80 ? '👏 Très bien ! Continue comme ça !' :
+                           score >= 70 ? '👍 Bien ! Tu peux passer à la suite.' :
+                           '💪 Révise encore un peu et réessaie !';
+            
+            alert(message + '\nScore : ' + score + '%');
+        }
+        
+        function updateProgress() {
+            const progress = Math.round((completedLessons.size / lessons.length) * 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '%';
+        }
+        
+        function showCertificate() {
+            if (completedLessons.size < lessons.length) {
+                alert('Tu dois compléter toutes les leçons avec au moins 70% de bonnes réponses pour obtenir ton certificat !');
+                return;
+            }
+            
+            document.querySelectorAll('.lesson').forEach(l => l.style.display = 'none');
+            const cert = document.getElementById('certificate');
+            cert.style.display = 'block';
+            
+            const avgScore = Math.round(Object.values(lessonScores).reduce((a, b) => a + b, 0) / lessons.length);
+            document.getElementById('finalScore').textContent = avgScore + '%';
+            
+            let level, message;
+            if (avgScore >= 95) {
+                level = '🥇 Expert en Mathématiques';
+                message = 'Tu maîtrises parfaitement les maths !';
+            } else if (avgScore >= 85) {
+                level = '🥈 Mathématicien Avancé';
+                message = 'Excellente maîtrise des mathématiques !';
+            } else if (avgScore >= 75) {
+                level = '🥉 Bon Calculateur';
+                message = 'Bonne compréhension des maths !';
+            } else {
+                level = '📚 Apprenti Mathématicien';
+                message = 'Tu as terminé le parcours, continue à progresser !';
+            }
+            
+            document.getElementById('certificateMessage').textContent = message;
+            document.getElementById('levelBadge').textContent = level;
+        }
+        
+        init();
+    </script>
+</body>
+</html>

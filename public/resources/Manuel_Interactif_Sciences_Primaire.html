@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Interactif Sciences Primaire (CP-CM2)</title>
+    <style>
+        :root {
+            --primary: #e67e22;
+            --primary-light: #f39c12;
+            --bg-light: #f8f9fa;
+            --bg-dark: #1a1a2e;
+            --text-light: #333;
+            --text-dark: #e8e8e8;
+            --success: #27ae60;
+            --error: #e74c3c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+        header .subtitle { font-size: 1.2rem; opacity: 0.9; }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .theme-toggle {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .progress-container {
+            background: rgba(0,0,0,0.1);
+            border-radius: 25px;
+            height: 30px;
+            overflow: hidden;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 25px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .main-content { display: grid; grid-template-columns: 280px 1fr; gap: 30px; }
+        
+        @media (max-width: 900px) {
+            .main-content { grid-template-columns: 1fr; }
+            .sidebar { order: 2; }
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        
+        body.dark-mode .sidebar { background: #252540; }
+        
+        .sidebar h3 { color: var(--primary); margin-bottom: 15px; }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+            margin-bottom: 5px;
+            color: inherit;
+        }
+        
+        .nav-item:hover { background: rgba(230, 126, 34, 0.1); }
+        .nav-item.active { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; }
+        .nav-item.completed .nav-status { color: var(--success); }
+        
+        .nav-number {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.1);
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .nav-title { flex: 1; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .content-area {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        body.dark-mode .content-area { background: #252540; }
+        
+        .lesson-header { border-bottom: 3px solid var(--primary); padding-bottom: 15px; margin-bottom: 25px; }
+        
+        .lesson-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .lesson-header h2 { color: var(--primary); font-size: 1.8rem; }
+        .lesson-content { font-size: 1.1rem; margin-bottom: 30px; }
+        .lesson-content p { margin-bottom: 15px; }
+        
+        .info-box {
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.1), rgba(230, 126, 34, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .examples-box {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(39, 174, 96, 0.05));
+            border-left: 4px solid #27ae60;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .examples-box h4 { color: #27ae60; margin-bottom: 10px; }
+        .examples-box ul { list-style: none; }
+        .examples-box li { padding: 5px 0; padding-left: 20px; position: relative; }
+        .examples-box li::before { content: "✓"; position: absolute; left: 0; color: #27ae60; }
+        
+        .science-illustration {
+            text-align: center;
+            font-size: 4rem;
+            margin: 20px 0;
+        }
+        
+        .exercises-section {
+            background: rgba(0,0,0,0.02);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+        
+        body.dark-mode .exercises-section { background: rgba(255,255,255,0.05); }
+        
+        .exercises-section h3 { color: var(--primary); margin-bottom: 20px; }
+        
+        .exercise {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        body.dark-mode .exercise { background: #1a1a2e; }
+        
+        .exercise-question { font-weight: 600; margin-bottom: 15px; font-size: 1.1rem; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        body.dark-mode .option { background: rgba(255,255,255,0.05); }
+        
+        .option:hover { background: rgba(230, 126, 34, 0.1); }
+        .option input { width: 18px; height: 18px; accent-color: var(--primary); }
+        .option.correct { background: rgba(39, 174, 96, 0.2); border: 2px solid var(--success); }
+        .option.incorrect { background: rgba(231, 76, 60, 0.2); border: 2px solid var(--error); }
+        
+        .feedback { margin-top: 15px; padding: 15px; border-radius: 8px; background: rgba(230, 126, 34, 0.1); }
+        
+        .btn-validate {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        .lesson-navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .btn-nav {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-nav:hover, .btn-nav.btn-next { background: var(--primary); color: white; }
+        
+        .btn-certificate {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        
+        .certificate {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #fff9e6, #fff);
+            border: 5px solid #f1c40f;
+            border-radius: 20px;
+        }
+        
+        .certificate h2 { color: #e67e22; font-size: 2.5rem; margin-bottom: 20px; }
+        .certificate .trophy { font-size: 5rem; margin: 20px 0; }
+        .certificate .score { font-size: 3rem; color: var(--primary); font-weight: bold; }
+        .certificate .message { font-size: 1.3rem; color: #666; margin: 20px 0; }
+        .certificate .badge {
+            display: inline-block;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 25px;
+        }
+        
+        .btn-print { background: #333; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; margin-top: 20px; }
+        
+        @media print {
+            .sidebar, .controls, .btn-print, .lesson-navigation { display: none !important; }
+            .certificate { display: block !important; border: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 Sciences Primaire</h1>
+            <p class="subtitle">Découvre les merveilles de la nature - Du CP au CM2</p>
+        </header>
+        
+        <div class="controls">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Mode sombre</button>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%">
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>📖 Sommaire</h3>
+                <nav id="lessonNav"></nav>
+            </aside>
+            
+            <main class="content-area" id="contentArea"></main>
+        </div>
+    </div>
+    
+    <script>
+        const lessons = [
+            {
+                title: "Les 5 sens",
+                content: `
+                    <p>Notre corps possède 5 sens pour découvrir le monde !</p>
+                    <div class="science-illustration">👁️ 👂 👃 👅 ✋</div>
+                    <div class="info-box">
+                        <strong>🧠 Les 5 sens :</strong><br>
+                        • La vue (les yeux) 👁️ - pour voir<br>
+                        • L'ouïe (les oreilles) 👂 - pour entendre<br>
+                        • L'odorat (le nez) 👃 - pour sentir<br>
+                        • Le goût (la langue) 👅 - pour goûter<br>
+                        • Le toucher (la peau) ✋ - pour sentir les textures
+                    </div>
+                `,
+                examples: ["On voit les couleurs avec les yeux", "On entend la musique avec les oreilles", "On sent les fleurs avec le nez"],
+                exercises: [
+                    { question: "Quel sens utilise-t-on pour écouter de la musique ?", options: ["La vue", "L'ouïe", "L'odorat", "Le goût"], correct: 1, explanation: "On utilise l'ouïe (les oreilles) pour entendre la musique." },
+                    { question: "Avec quel organe peut-on goûter ?", options: ["Le nez", "Les yeux", "La langue", "Les oreilles"], correct: 2, explanation: "La langue nous permet de goûter les saveurs." },
+                    { question: "Combien avons-nous de sens ?", options: ["3", "4", "5", "6"], correct: 2, explanation: "Nous avons 5 sens : vue, ouïe, odorat, goût et toucher." }
+                ]
+            },
+            {
+                title: "Le corps humain",
+                content: `
+                    <p>Notre corps est une machine incroyable composée de nombreuses parties !</p>
+                    <div class="science-illustration">🧍‍♂️ 🫀 🧠 🦴</div>
+                    <div class="info-box">
+                        <strong>🏃 Les parties du corps :</strong><br>
+                        • La tête : cerveau, yeux, oreilles, nez, bouche<br>
+                        • Le tronc : cœur, poumons, estomac<br>
+                        • Les membres : bras, mains, jambes, pieds<br>
+                        • Le squelette : 206 os chez l'adulte !
+                    </div>
+                `,
+                examples: ["Le cœur pompe le sang", "Les poumons nous permettent de respirer", "Le cerveau contrôle tout le corps"],
+                exercises: [
+                    { question: "Quel organe pompe le sang ?", options: ["Les poumons", "Le cerveau", "Le cœur", "L'estomac"], correct: 2, explanation: "Le cœur pompe le sang dans tout le corps." },
+                    { question: "Combien d'os a un adulte environ ?", options: ["100", "150", "206", "300"], correct: 2, explanation: "Un adulte a 206 os dans son squelette." },
+                    { question: "Quel organe nous permet de respirer ?", options: ["Le cœur", "Les poumons", "L'estomac", "Le foie"], correct: 1, explanation: "Les poumons nous permettent de respirer l'air." }
+                ]
+            },
+            {
+                title: "Les animaux et leur habitat",
+                content: `
+                    <p>Les animaux vivent dans des milieux adaptés à leurs besoins !</p>
+                    <div class="science-illustration">🦁 🐟 🦅 🐸</div>
+                    <div class="info-box">
+                        <strong>🏠 Les différents habitats :</strong><br>
+                        • La forêt : cerfs, écureuils, hiboux<br>
+                        • La savane : lions, éléphants, girafes<br>
+                        • L'océan : poissons, dauphins, requins<br>
+                        • La banquise : ours polaires, manchots<br>
+                        • Le désert : chameaux, serpents, scorpions
+                    </div>
+                `,
+                examples: ["L'ours polaire vit sur la banquise car il supporte le froid", "Le chameau vit dans le désert car il peut stocker l'eau", "Le poisson vit dans l'eau car il respire par des branchies"],
+                exercises: [
+                    { question: "Où vit l'ours polaire ?", options: ["Dans la forêt", "Dans le désert", "Sur la banquise", "Dans la savane"], correct: 2, explanation: "L'ours polaire vit sur la banquise, dans les régions froides." },
+                    { question: "Quel animal vit dans la savane ?", options: ["Le manchot", "Le lion", "L'ours", "Le dauphin"], correct: 1, explanation: "Le lion vit dans la savane africaine." },
+                    { question: "Comment respirent les poissons ?", options: ["Par les poumons", "Par la peau", "Par les branchies", "Par le nez"], correct: 2, explanation: "Les poissons respirent grâce à leurs branchies." }
+                ]
+            },
+            {
+                title: "Les végétaux",
+                content: `
+                    <p>Les plantes sont des êtres vivants qui grandissent et ont besoin de soins !</p>
+                    <div class="science-illustration">🌱 🌿 🌳 🌻</div>
+                    <div class="info-box">
+                        <strong>🌱 Les parties d'une plante :</strong><br>
+                        • Les racines : absorbent l'eau et les minéraux<br>
+                        • La tige : transporte la sève<br>
+                        • Les feuilles : captent la lumière<br>
+                        • La fleur : permet la reproduction<br>
+                        • Le fruit : contient les graines
+                    </div>
+                `,
+                examples: ["Une graine + eau + lumière = une plante", "Les arbres perdent leurs feuilles en automne", "Les fleurs attirent les abeilles"],
+                exercises: [
+                    { question: "Que font les racines ?", options: ["Captent la lumière", "Absorbent l'eau", "Produisent des fruits", "Font des fleurs"], correct: 1, explanation: "Les racines absorbent l'eau et les minéraux du sol." },
+                    { question: "De quoi a besoin une plante pour vivre ?", options: ["Eau et lumière", "Chocolat et bonbons", "Viande et poisson", "Seulement de l'air"], correct: 0, explanation: "Les plantes ont besoin d'eau, de lumière et de terre pour vivre." },
+                    { question: "Où trouve-t-on les graines ?", options: ["Dans les racines", "Dans les feuilles", "Dans le fruit", "Dans la tige"], correct: 2, explanation: "Les graines se trouvent dans le fruit." }
+                ]
+            },
+            {
+                title: "Le cycle de l'eau",
+                content: `
+                    <p>L'eau voyage sans cesse entre le ciel et la terre !</p>
+                    <div class="science-illustration">💧 ☁️ 🌧️ 🌊</div>
+                    <div class="info-box">
+                        <strong>🔄 Les étapes du cycle :</strong><br>
+                        1. Évaporation : l'eau des océans s'évapore avec la chaleur du soleil<br>
+                        2. Condensation : la vapeur forme des nuages<br>
+                        3. Précipitation : l'eau tombe (pluie, neige)<br>
+                        4. Ruissellement : l'eau retourne vers la mer
+                    </div>
+                `,
+                examples: ["Quand tu fais bouillir de l'eau, elle s'évapore", "Les nuages sont formés de minuscules gouttes d'eau", "La pluie remplit les rivières qui vont vers la mer"],
+                exercises: [
+                    { question: "Comment s'appelle le passage de l'eau liquide à la vapeur ?", options: ["Condensation", "Évaporation", "Précipitation", "Solidification"], correct: 1, explanation: "L'évaporation est le passage de l'eau liquide à l'état gazeux (vapeur)." },
+                    { question: "Qu'est-ce qui forme les nuages ?", options: ["De la fumée", "De la vapeur d'eau condensée", "Du coton", "De la poussière"], correct: 1, explanation: "Les nuages sont formés de vapeur d'eau condensée en minuscules gouttes." },
+                    { question: "Comment s'appelle la pluie, la neige ou la grêle ?", options: ["Évaporation", "Condensation", "Précipitation", "Ruissellement"], correct: 2, explanation: "La pluie, la neige et la grêle sont des précipitations." }
+                ]
+            },
+            {
+                title: "Les états de la matière",
+                content: `
+                    <p>La matière peut exister sous trois formes différentes !</p>
+                    <div class="science-illustration">🧊 💧 💨</div>
+                    <div class="info-box">
+                        <strong>📊 Les 3 états :</strong><br>
+                        • Solide 🧊 : forme fixe (glace, bois, pierre)<br>
+                        • Liquide 💧 : prend la forme du récipient (eau, lait, huile)<br>
+                        • Gaz 💨 : occupe tout l'espace (air, vapeur)
+                    </div>
+                `,
+                examples: ["L'eau devient glace en dessous de 0°C", "La glace fond et devient liquide", "L'eau bout à 100°C et devient vapeur"],
+                exercises: [
+                    { question: "La glace est à l'état...", options: ["Liquide", "Solide", "Gazeux", "Plasma"], correct: 1, explanation: "La glace est de l'eau à l'état solide." },
+                    { question: "À quelle température l'eau gèle-t-elle ?", options: ["-10°C", "0°C", "50°C", "100°C"], correct: 1, explanation: "L'eau gèle à 0°C (zéro degré Celsius)." },
+                    { question: "Quel état n'a pas de forme propre ?", options: ["Solide", "Liquide", "Les deux"], correct: 1, explanation: "Le liquide prend la forme du récipient qui le contient." }
+                ]
+            },
+            {
+                title: "L'alimentation et la nutrition",
+                content: `
+                    <p>Bien manger, c'est donner à son corps ce dont il a besoin !</p>
+                    <div class="science-illustration">🍎 🥦 🍞 🥛</div>
+                    <div class="info-box">
+                        <strong>🍽️ Les groupes d'aliments :</strong><br>
+                        • Fruits et légumes : vitamines 🥕🍇<br>
+                        • Féculents : énergie 🍞🍚<br>
+                        • Protéines : muscles 🍖🥚<br>
+                        • Produits laitiers : os solides 🥛🧀<br>
+                        • Eau : hydratation 💧
+                    </div>
+                `,
+                examples: ["Les carottes sont bonnes pour les yeux", "Le lait renforce les os", "Les pâtes donnent de l'énergie"],
+                exercises: [
+                    { question: "Quel aliment est bon pour les os ?", options: ["Les bonbons", "Le lait", "Les chips", "Le soda"], correct: 1, explanation: "Le lait contient du calcium qui renforce les os." },
+                    { question: "Les fruits et légumes apportent...", options: ["Des vitamines", "Du chocolat", "Du sucre uniquement", "Rien d'important"], correct: 0, explanation: "Les fruits et légumes sont riches en vitamines essentielles." },
+                    { question: "Quelle boisson est la meilleure pour s'hydrater ?", options: ["Le soda", "Le jus de fruits", "L'eau", "Le café"], correct: 2, explanation: "L'eau est la meilleure boisson pour s'hydrater." }
+                ]
+            },
+            {
+                title: "L'électricité",
+                content: `
+                    <p>L'électricité fait fonctionner beaucoup de choses autour de nous !</p>
+                    <div class="science-illustration">⚡ 💡 🔌 🔋</div>
+                    <div class="info-box">
+                        <strong>⚡ À savoir :</strong><br>
+                        • L'électricité circule dans les fils<br>
+                        • Elle fait fonctionner les appareils<br>
+                        • Elle peut être dangereuse !<br>
+                        • On peut la produire : éoliennes, centrales, panneaux solaires
+                    </div>
+                `,
+                examples: ["Une ampoule s'allume grâce à l'électricité", "Les piles contiennent de l'électricité", "Ne jamais toucher une prise avec les mains mouillées !"],
+                exercises: [
+                    { question: "Que faut-il pour allumer une ampoule ?", options: ["De l'eau", "De l'électricité", "Du vent", "De la chaleur"], correct: 1, explanation: "Une ampoule s'allume grâce à l'électricité." },
+                    { question: "L'électricité circule dans...", options: ["L'eau", "L'air", "Les fils électriques", "Le bois"], correct: 2, explanation: "L'électricité circule dans les fils électriques conducteurs." },
+                    { question: "Que contient une pile ?", options: ["De l'eau", "De l'électricité", "De l'air", "Du sable"], correct: 1, explanation: "Une pile stocke de l'électricité pour faire fonctionner les appareils." }
+                ]
+            },
+            {
+                title: "Le système solaire",
+                content: `
+                    <p>Notre Terre fait partie d'une grande famille : le système solaire !</p>
+                    <div class="science-illustration">☀️ 🌍 🌙 ⭐</div>
+                    <div class="info-box">
+                        <strong>🪐 Les 8 planètes :</strong><br>
+                        Mercure, Vénus, Terre, Mars, Jupiter, Saturne, Uranus, Neptune<br><br>
+                        <strong>💡 À retenir :</strong> "Me Voici Tout Mouillé, J'ai Suivi Un Nuage"
+                    </div>
+                `,
+                examples: ["Le Soleil est une étoile", "La Terre tourne autour du Soleil en 1 an", "La Lune tourne autour de la Terre"],
+                exercises: [
+                    { question: "Combien de planètes dans le système solaire ?", options: ["6", "7", "8", "9"], correct: 2, explanation: "Il y a 8 planètes dans notre système solaire." },
+                    { question: "Le Soleil est...", options: ["Une planète", "Une étoile", "Une lune", "Un satellite"], correct: 1, explanation: "Le Soleil est une étoile qui produit lumière et chaleur." },
+                    { question: "Quelle planète est la plus proche du Soleil ?", options: ["La Terre", "Mars", "Vénus", "Mercure"], correct: 3, explanation: "Mercure est la planète la plus proche du Soleil." }
+                ]
+            },
+            {
+                title: "Les saisons",
+                content: `
+                    <p>La Terre tourne autour du Soleil et c'est ce qui crée les saisons !</p>
+                    <div class="science-illustration">🌸 ☀️ 🍂 ❄️</div>
+                    <div class="info-box">
+                        <strong>📅 Les 4 saisons :</strong><br>
+                        • Printemps 🌸 : mars à juin (la nature se réveille)<br>
+                        • Été ☀️ : juin à septembre (il fait chaud)<br>
+                        • Automne 🍂 : septembre à décembre (les feuilles tombent)<br>
+                        • Hiver ❄️ : décembre à mars (il fait froid)
+                    </div>
+                `,
+                examples: ["En hiver, les jours sont plus courts", "En été, il fait jour plus longtemps", "Les hirondelles migrent en automne"],
+                exercises: [
+                    { question: "Combien y a-t-il de saisons ?", options: ["2", "3", "4", "5"], correct: 2, explanation: "Il y a 4 saisons : printemps, été, automne et hiver." },
+                    { question: "En quelle saison les feuilles tombent-elles ?", options: ["Printemps", "Été", "Automne", "Hiver"], correct: 2, explanation: "Les feuilles tombent en automne." },
+                    { question: "Quelle est la saison la plus chaude ?", options: ["Printemps", "Été", "Automne", "Hiver"], correct: 1, explanation: "L'été est la saison la plus chaude." }
+                ]
+            },
+            {
+                title: "L'environnement et l'écologie",
+                content: `
+                    <p>Protéger notre planète, c'est l'affaire de tous !</p>
+                    <div class="science-illustration">🌍 ♻️ 🌳 💚</div>
+                    <div class="info-box">
+                        <strong>🌱 Les gestes éco-responsables :</strong><br>
+                        • Éteindre la lumière en sortant<br>
+                        • Ne pas gaspiller l'eau<br>
+                        • Trier ses déchets<br>
+                        • Utiliser les transports en commun ou le vélo<br>
+                        • Respecter la nature
+                    </div>
+                `,
+                examples: ["Recycler le papier sauve des arbres", "Fermer le robinet pendant qu'on se brosse les dents", "Utiliser un sac réutilisable pour les courses"],
+                exercises: [
+                    { question: "Que signifie ♻️ ?", options: ["Poubelle", "Recyclage", "Danger", "Interdit"], correct: 1, explanation: "Le symbole ♻️ signifie que l'objet peut être recyclé." },
+                    { question: "Quel geste permet d'économiser l'eau ?", options: ["Laisser couler l'eau", "Prendre des bains", "Fermer le robinet", "Arroser tous les jours"], correct: 2, explanation: "Fermer le robinet quand on n'en a pas besoin économise l'eau." },
+                    { question: "Pourquoi trier ses déchets ?", options: ["Pour s'amuser", "Pour recycler", "Par obligation", "Sans raison"], correct: 1, explanation: "Trier ses déchets permet de les recycler et de protéger la planète." }
+                ]
+            },
+            {
+                title: "Les forces et le mouvement",
+                content: `
+                    <p>Les forces font bouger ou arrêter les objets !</p>
+                    <div class="science-illustration">🏃 🚗 🧲 🌍</div>
+                    <div class="info-box">
+                        <strong>⚡ Les types de forces :</strong><br>
+                        • La gravité : nous attire vers le sol<br>
+                        • La friction : ralentit les objets<br>
+                        • La poussée : fait avancer<br>
+                        • L'attraction magnétique : les aimants
+                    </div>
+                `,
+                examples: ["Une balle lancée retombe à cause de la gravité", "Les freins utilisent la friction pour arrêter le vélo", "Un aimant attire le fer"],
+                exercises: [
+                    { question: "Qu'est-ce qui fait tomber les objets ?", options: ["Le vent", "La gravité", "La lumière", "Le son"], correct: 1, explanation: "La gravité est la force qui attire les objets vers le sol." },
+                    { question: "Un aimant attire quel matériau ?", options: ["Le bois", "Le plastique", "Le fer", "Le verre"], correct: 2, explanation: "Les aimants attirent le fer et certains métaux." },
+                    { question: "Qu'est-ce qui ralentit une balle qui roule ?", options: ["La gravité", "La friction", "Le magnétisme", "La lumière"], correct: 1, explanation: "La friction (frottement) ralentit les objets en mouvement." }
+                ]
+            },
+            {
+                title: "La chaîne alimentaire",
+                content: `
+                    <p>Dans la nature, les êtres vivants dépendent les uns des autres pour se nourrir !</p>
+                    <div class="science-illustration">🌿 🐛 🐸 🦅</div>
+                    <div class="info-box">
+                        <strong>🔗 La chaîne alimentaire :</strong><br>
+                        • Producteurs : plantes (fabriquent leur nourriture)<br>
+                        • Consommateurs herbivores : mangent les plantes<br>
+                        • Consommateurs carnivores : mangent les herbivores<br>
+                        • Décomposeurs : recyclent la matière morte
+                    </div>
+                `,
+                examples: ["Herbe → Lapin → Renard", "Plante → Chenille → Oiseau → Chat", "Algue → Petit poisson → Gros poisson → Requin"],
+                exercises: [
+                    { question: "Qui est au début de la chaîne alimentaire ?", options: ["Les carnivores", "Les herbivores", "Les plantes", "Les décomposeurs"], correct: 2, explanation: "Les plantes (producteurs) sont au début de la chaîne alimentaire." },
+                    { question: "Un lapin est...", options: ["Un carnivore", "Un herbivore", "Un producteur", "Un décomposeur"], correct: 1, explanation: "Le lapin mange des plantes, c'est un herbivore." },
+                    { question: "Le renard mange le lapin. Le renard est...", options: ["Un herbivore", "Un producteur", "Un carnivore", "Une plante"], correct: 2, explanation: "Le renard mange de la viande, c'est un carnivore (ou prédateur)." }
+                ]
+            },
+            {
+                title: "Les énergies renouvelables",
+                content: `
+                    <p>Certaines sources d'énergie ne s'épuisent jamais !</p>
+                    <div class="science-illustration">☀️ 💨 🌊 ♻️</div>
+                    <div class="info-box">
+                        <strong>🌱 Énergies renouvelables :</strong><br>
+                        • Solaire ☀️ : panneaux solaires<br>
+                        • Éolienne 💨 : éoliennes (vent)<br>
+                        • Hydraulique 🌊 : barrages (eau)<br>
+                        • Géothermique 🌋 : chaleur de la Terre<br>
+                        • Biomasse 🌿 : bois, déchets organiques
+                    </div>
+                `,
+                examples: ["Les panneaux solaires transforment la lumière en électricité", "Les éoliennes tournent grâce au vent", "Les barrages utilisent la force de l'eau"],
+                exercises: [
+                    { question: "Quelle énergie utilise le vent ?", options: ["Solaire", "Éolienne", "Hydraulique", "Géothermique"], correct: 1, explanation: "L'énergie éolienne utilise la force du vent." },
+                    { question: "Les panneaux solaires utilisent...", options: ["Le vent", "L'eau", "La lumière du soleil", "Le gaz"], correct: 2, explanation: "Les panneaux solaires transforment la lumière du soleil en électricité." },
+                    { question: "Pourquoi dit-on 'renouvelable' ?", options: ["C'est nouveau", "Ça ne s'épuise pas", "C'est cher", "C'est rare"], correct: 1, explanation: "Une énergie renouvelable ne s'épuise pas (soleil, vent, eau...)." }
+                ]
+            },
+            {
+                title: "Révision générale",
+                content: `
+                    <p>Bravo, futur scientifique ! Tu as découvert les merveilles de la science !</p>
+                    <div class="science-illustration">🎓 🔬 🧪 ⭐</div>
+                    <div class="info-box">
+                        <strong>🏆 Ce que tu as appris :</strong><br>
+                        • Le corps humain et les 5 sens<br>
+                        • Les animaux, les plantes, les habitats<br>
+                        • L'eau, la matière, l'électricité<br>
+                        • Le système solaire et les saisons<br>
+                        • L'environnement et les énergies<br>
+                        • Les forces et la chaîne alimentaire
+                    </div>
+                `,
+                examples: [],
+                exercises: [
+                    { question: "Combien avons-nous de sens ?", options: ["3", "4", "5", "6"], correct: 2, explanation: "Nous avons 5 sens : vue, ouïe, odorat, goût, toucher." },
+                    { question: "Combien d'états a la matière ?", options: ["2", "3", "4", "5"], correct: 1, explanation: "La matière a 3 états : solide, liquide et gazeux." },
+                    { question: "Combien de planètes dans le système solaire ?", options: ["6", "7", "8", "9"], correct: 2, explanation: "Il y a 8 planètes dans notre système solaire." },
+                    { question: "Que signifie le symbole ♻️ ?", options: ["Danger", "Recyclage", "Électricité", "Eau"], correct: 1, explanation: "♻️ est le symbole du recyclage." }
+                ]
+            }
+        ];
+        
+        let completedLessons = new Set();
+        let lessonScores = {};
+        
+        function init() {
+            renderNav();
+            renderLessons();
+            goToLesson(0);
+        }
+        
+        function renderNav() {
+            document.getElementById('lessonNav').innerHTML = lessons.map((lesson, index) => `
+                <button class="nav-item ${index === 0 ? 'active' : ''}" onclick="goToLesson(${index})">
+                    <span class="nav-number">${index + 1}</span>
+                    <span class="nav-title">${lesson.title}</span>
+                    <span class="nav-status">○</span>
+                </button>
+            `).join('');
+        }
+        
+        function renderLessons() {
+            let html = lessons.map((lesson, index) => {
+                const exercisesHtml = lesson.exercises.map((ex, exIndex) => `
+                    <div class="exercise" data-correct="${ex.correct}">
+                        <p class="exercise-question">${exIndex + 1}. ${ex.question}</p>
+                        <div class="options">
+                            ${ex.options.map((opt, optIndex) => `
+                                <label class="option">
+                                    <input type="radio" name="q${index}_${exIndex}" value="${optIndex}">
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                        <div class="feedback" style="display: none;"><p>${ex.explanation}</p></div>
+                    </div>
+                `).join('');
+                
+                const examplesHtml = lesson.examples.length > 0 ? `
+                    <div class="examples-box">
+                        <h4>📝 Exemples</h4>
+                        <ul>${lesson.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
+                    </div>
+                ` : '';
+                
+                return `
+                    <section class="lesson" id="lesson-${index}" style="display: none;">
+                        <div class="lesson-header">
+                            <span class="lesson-number">Leçon ${index + 1}</span>
+                            <h2>${lesson.title}</h2>
+                        </div>
+                        <div class="lesson-content">${lesson.content}${examplesHtml}</div>
+                        <div class="exercises-section">
+                            <h3>🎯 Exercices</h3>
+                            ${exercisesHtml}
+                            <button class="btn-validate" onclick="validateLesson(${index})">Valider mes réponses</button>
+                        </div>
+                        <div class="lesson-navigation">
+                            ${index > 0 ? `<button class="btn-nav" onclick="goToLesson(${index - 1})">← Leçon précédente</button>` : '<span></span>'}
+                            ${index < lessons.length - 1 
+                                ? `<button class="btn-nav btn-next" onclick="goToLesson(${index + 1})">Leçon suivante →</button>` 
+                                : `<button class="btn-certificate" onclick="showCertificate()">🏆 Obtenir mon certificat</button>`}
+                        </div>
+                    </section>
+                `;
+            }).join('');
+            
+            html += `
+                <div class="certificate" id="certificate">
+                    <h2>🎓 Certificat de Réussite</h2>
+                    <div class="trophy">🔬</div>
+                    <p>Félicitations ! Tu as terminé le manuel</p>
+                    <p><strong>Sciences Primaire</strong></p>
+                    <div class="score" id="finalScore">0%</div>
+                    <p class="message" id="certificateMessage"></p>
+                    <div class="badge" id="levelBadge"></div>
+                    <br>
+                    <button class="btn-print" onclick="window.print()">🖨️ Imprimer mon certificat</button>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = html;
+        }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.theme-toggle').textContent = document.body.classList.contains('dark-mode') ? '☀️ Mode clair' : '🌙 Mode sombre';
+        }
+        
+        function goToLesson(index) {
+            document.querySelectorAll('.lesson').forEach(l => l.style.display = 'none');
+            document.getElementById('lesson-' + index).style.display = 'block';
+            document.getElementById('certificate').style.display = 'none';
+            document.querySelectorAll('.nav-item').forEach((item, i) => item.classList.toggle('active', i === index));
+        }
+        
+        function validateLesson(lessonIndex) {
+            const lesson = document.getElementById('lesson-' + lessonIndex);
+            const exercises = lesson.querySelectorAll('.exercise');
+            let correct = 0;
+            
+            exercises.forEach((ex) => {
+                const correctAnswer = parseInt(ex.dataset.correct);
+                const selected = ex.querySelector('input:checked');
+                const options = ex.querySelectorAll('.option');
+                
+                options.forEach((opt, optIndex) => {
+                    opt.classList.remove('correct', 'incorrect');
+                    if (optIndex === correctAnswer) opt.classList.add('correct');
+                });
+                
+                if (selected) {
+                    const selectedValue = parseInt(selected.value);
+                    if (selectedValue === correctAnswer) correct++;
+                    else options[selectedValue].classList.add('incorrect');
+                }
+                
+                ex.querySelector('.feedback').style.display = 'block';
+            });
+            
+            const score = Math.round((correct / exercises.length) * 100);
+            lessonScores[lessonIndex] = score;
+            
+            if (score >= 70) {
+                completedLessons.add(lessonIndex);
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems[lessonIndex].classList.add('completed');
+                navItems[lessonIndex].querySelector('.nav-status').textContent = '✓';
+            }
+            
+            updateProgress();
+            alert((score === 100 ? '🌟 Parfait !' : score >= 80 ? '👏 Très bien !' : score >= 70 ? '👍 Bien !' : '💪 Révise encore !') + '\nScore : ' + score + '%');
+        }
+        
+        function updateProgress() {
+            const progress = Math.round((completedLessons.size / lessons.length) * 100);
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = progress + '%';
+        }
+        
+        function showCertificate() {
+            if (completedLessons.size < lessons.length) {
+                alert('Tu dois compléter toutes les leçons avec au moins 70% pour obtenir ton certificat !');
+                return;
+            }
+            
+            document.querySelectorAll('.lesson').forEach(l => l.style.display = 'none');
+            document.getElementById('certificate').style.display = 'block';
+            
+            const avgScore = Math.round(Object.values(lessonScores).reduce((a, b) => a + b, 0) / lessons.length);
+            document.getElementById('finalScore').textContent = avgScore + '%';
+            
+            let level, message;
+            if (avgScore >= 95) { level = '🥇 Expert Scientifique'; message = 'Tu maîtrises parfaitement les sciences !'; }
+            else if (avgScore >= 85) { level = '🥈 Scientifique Avancé'; message = 'Excellente maîtrise des sciences !'; }
+            else if (avgScore >= 75) { level = '🥉 Jeune Scientifique'; message = 'Bonne compréhension des sciences !'; }
+            else { level = '📚 Apprenti Chercheur'; message = 'Continue à explorer la science !'; }
+            
+            document.getElementById('certificateMessage').textContent = message;
+            document.getElementById('levelBadge').textContent = level;
+        }
+        
+        init();
+    </script>
+</body>
+</html>
