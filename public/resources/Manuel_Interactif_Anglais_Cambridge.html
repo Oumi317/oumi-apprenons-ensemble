@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive English Manual - Cambridge Style (Primary-Middle School)</title>
+    <style>
+        :root {
+            --primary: #e74c3c;
+            --primary-light: #fd79a8;
+            --primary-dark: #c0392b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --bg: #fef9f9;
+            --text: #2c3e50;
+            --card-bg: #ffffff;
+            --border: #f5e1e1;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1214;
+            --text: #ecf0f1;
+            --card-bg: #2d2025;
+            --border: #4a3540;
+            --primary-light: #c0392b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .progress-container {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        nav {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        nav h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-item.completed {
+            border-left: 4px solid var(--success);
+        }
+
+        .nav-item .status {
+            margin-left: auto;
+            font-size: 1.2rem;
+        }
+
+        .lesson {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lesson.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lesson h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-light);
+        }
+
+        .lesson-content {
+            margin-bottom: 30px;
+        }
+
+        .lesson-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+            border-left: 4px solid var(--info);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(243, 156, 18, 0.05));
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .vocab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .vocab-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+        }
+
+        .vocab-card .emoji {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .vocab-card .english {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .vocab-card .french {
+            color: var(--text);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .exercise-section {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.05), rgba(253, 121, 168, 0.1));
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .exercise-section h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question p {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(231, 76, 60, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .option input {
+            margin-right: 12px;
+            accent-color: var(--primary);
+        }
+
+        .validate-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+
+        .validate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feedback.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.1);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .feedback.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .certificate {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #fef9f9, #fff0f0);
+            border: 4px solid var(--primary);
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+
+        .certificate.show {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        .certificate h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .certificate .trophy {
+            font-size: 5rem;
+            margin: 20px 0;
+        }
+
+        .certificate .score {
+            font-size: 3rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .certificate .badge {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            margin-top: 20px;
+        }
+
+        .dialogue-box {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--border);
+        }
+
+        .dialogue-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .dialogue-line.speaker-a {
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .dialogue-line.speaker-b {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .dialogue-line .avatar {
+            font-size: 1.5rem;
+        }
+
+        .dialogue-line .text {
+            flex: 1;
+        }
+
+        .dialogue-line .text strong {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        @media print {
+            .controls, nav, .exercise-section, .validate-btn {
+                display: none;
+            }
+            .certificate {
+                border: 2px solid #e74c3c;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🇬🇧 Interactive English Manual</h1>
+            <p>Learn English from Primary to Middle School - 15 interactive lessons with Cambridge-style exercises</p>
+        </header>
+
+        <div class="controls">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark mode</button>
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Overall Progress</span>
+                    <span id="progressText">0/15 lessons</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <nav id="lessonNav"></nav>
+            <main id="contentArea"></main>
+        </div>
+    </div>
+
+    <script>
+        const lessons = [
+            {
+                title: "The Alphabet and Phonics",
+                content: `
+                    <p>Welcome to your first English lesson! The English <strong>alphabet</strong> has 26 letters: A to Z. Learning to pronounce them correctly is the first step to reading and speaking English.</p>
+                    
+                    <div class="info-box">
+                        <strong>📚 The 26 Letters:</strong>
+                        <p style="margin-top: 10px; font-size: 1.2rem; letter-spacing: 3px;">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🔤 Vowels and Consonants:</strong>
+                        <p style="margin-top: 10px;"><strong>Vowels (5):</strong> A, E, I, O, U</p>
+                        <p><strong>Consonants (21):</strong> All the other letters!</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>💡 Tip:</strong> In English, the same letter can have different sounds! For example, the letter "A" sounds different in "cat" and "cake".
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How many letters are in the English alphabet?",
+                        options: ["24", "25", "26", "27"],
+                        correct: 2
+                    },
+                    {
+                        question: "Which of these is a vowel?",
+                        options: ["B", "C", "E", "D"],
+                        correct: 2
+                    },
+                    {
+                        question: "How many vowels are there in English?",
+                        options: ["4", "5", "6", "7"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Greetings and Introductions",
+                content: `
+                    <p>Learning to greet people and introduce yourself is essential in English. Here are the most common <strong>greetings</strong>!</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">👋</div>
+                            <div class="english">Hello / Hi</div>
+                            <div class="french">Bonjour / Salut</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🌅</div>
+                            <div class="english">Good morning</div>
+                            <div class="french">Bonjour (matin)</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">☀️</div>
+                            <div class="english">Good afternoon</div>
+                            <div class="french">Bon après-midi</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🌙</div>
+                            <div class="english">Good evening</div>
+                            <div class="french">Bonsoir</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">😴</div>
+                            <div class="english">Good night</div>
+                            <div class="french">Bonne nuit</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👋</div>
+                            <div class="english">Goodbye / Bye</div>
+                            <div class="french">Au revoir</div>
+                        </div>
+                    </div>
+
+                    <div class="dialogue-box">
+                        <h4 style="margin-bottom: 15px;">📝 Example Dialogue:</h4>
+                        <div class="dialogue-line speaker-a">
+                            <span class="avatar">👧</span>
+                            <div class="text">
+                                <strong>Emma:</strong>
+                                Hello! My name is Emma. What's your name?
+                            </div>
+                        </div>
+                        <div class="dialogue-line speaker-b">
+                            <span class="avatar">👦</span>
+                            <div class="text">
+                                <strong>Tom:</strong>
+                                Hi Emma! I'm Tom. Nice to meet you!
+                            </div>
+                        </div>
+                        <div class="dialogue-line speaker-a">
+                            <span class="avatar">👧</span>
+                            <div class="text">
+                                <strong>Emma:</strong>
+                                Nice to meet you too! How are you?
+                            </div>
+                        </div>
+                        <div class="dialogue-line speaker-b">
+                            <span class="avatar">👦</span>
+                            <div class="text">
+                                <strong>Tom:</strong>
+                                I'm fine, thank you. And you?
+                            </div>
+                        </div>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say 'Bonjour' in the morning?",
+                        options: ["Good night", "Good evening", "Good morning", "Goodbye"],
+                        correct: 2
+                    },
+                    {
+                        question: "What do you answer to 'How are you?'",
+                        options: ["My name is...", "I'm fine, thank you", "Goodbye", "Nice to meet you"],
+                        correct: 1
+                    },
+                    {
+                        question: "How do you ask someone's name?",
+                        options: ["How are you?", "What's your name?", "Where are you from?", "How old are you?"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Numbers 1-100",
+                content: `
+                    <p>Learning <strong>numbers</strong> in English is very useful for everyday life: telling time, counting money, giving your phone number...</p>
+                    
+                    <div class="info-box">
+                        <strong>🔢 Numbers 1-20:</strong>
+                        <p style="margin-top: 10px;">1 = one, 2 = two, 3 = three, 4 = four, 5 = five, 6 = six, 7 = seven, 8 = eight, 9 = nine, 10 = ten</p>
+                        <p>11 = eleven, 12 = twelve, 13 = thirteen, 14 = fourteen, 15 = fifteen, 16 = sixteen, 17 = seventeen, 18 = eighteen, 19 = nineteen, 20 = twenty</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🔢 Tens (20-100):</strong>
+                        <p style="margin-top: 10px;">20 = twenty, 30 = thirty, 40 = forty, 50 = fifty, 60 = sixty, 70 = seventy, 80 = eighty, 90 = ninety, 100 = one hundred</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>💡 How to form numbers:</strong>
+                        <p style="margin-top: 10px;">For 21-99, combine tens + units: 21 = twenty-one, 35 = thirty-five, 99 = ninety-nine</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say '15' in English?",
+                        options: ["Fifty", "Fifteen", "Five", "Fiveteen"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is 'forty-two' in numbers?",
+                        options: ["24", "42", "44", "402"],
+                        correct: 1
+                    },
+                    {
+                        question: "How do you write 87 in English?",
+                        options: ["Eighty-seven", "Eight-seven", "Seventy-eight", "Eighty seven"],
+                        correct: 0
+                    }
+                ]
+            },
+            {
+                title: "Colors and Shapes",
+                content: `
+                    <p>Let's learn the <strong>colors</strong> and <strong>shapes</strong> in English! They are useful for describing things around you.</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">🔴</div>
+                            <div class="english">Red</div>
+                            <div class="french">Rouge</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🔵</div>
+                            <div class="english">Blue</div>
+                            <div class="french">Bleu</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🟢</div>
+                            <div class="english">Green</div>
+                            <div class="french">Vert</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🟡</div>
+                            <div class="english">Yellow</div>
+                            <div class="french">Jaune</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🟠</div>
+                            <div class="english">Orange</div>
+                            <div class="french">Orange</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🟣</div>
+                            <div class="english">Purple</div>
+                            <div class="french">Violet</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">⬛</div>
+                            <div class="english">Black</div>
+                            <div class="french">Noir</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">⬜</div>
+                            <div class="english">White</div>
+                            <div class="french">Blanc</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>📐 Shapes:</strong>
+                        <p style="margin-top: 10px;">Circle (cercle) • Square (carré) • Triangle (triangle) • Rectangle (rectangle) • Star (étoile) • Heart (cœur)</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "What color is the sky usually?",
+                        options: ["Red", "Green", "Blue", "Yellow"],
+                        correct: 2
+                    },
+                    {
+                        question: "How do you say 'carré' in English?",
+                        options: ["Circle", "Triangle", "Rectangle", "Square"],
+                        correct: 3
+                    },
+                    {
+                        question: "What color do you get by mixing blue and yellow?",
+                        options: ["Purple", "Orange", "Green", "Pink"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Family Members",
+                content: `
+                    <p>Let's learn the words for <strong>family members</strong> in English. This vocabulary is very important!</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">👨</div>
+                            <div class="english">Father / Dad</div>
+                            <div class="french">Père / Papa</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👩</div>
+                            <div class="english">Mother / Mum</div>
+                            <div class="french">Mère / Maman</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👦</div>
+                            <div class="english">Brother</div>
+                            <div class="french">Frère</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👧</div>
+                            <div class="english">Sister</div>
+                            <div class="french">Sœur</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👴</div>
+                            <div class="english">Grandfather</div>
+                            <div class="french">Grand-père</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👵</div>
+                            <div class="english">Grandmother</div>
+                            <div class="french">Grand-mère</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👨‍👩‍👧‍👦</div>
+                            <div class="english">Parents</div>
+                            <div class="french">Parents</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👶</div>
+                            <div class="english">Baby</div>
+                            <div class="french">Bébé</div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>👨‍👩‍👧 Example sentences:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>This is my mother. Her name is Sarah.</li>
+                            <li>I have two brothers and one sister.</li>
+                            <li>My grandparents live in London.</li>
+                        </ul>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say 'frère' in English?",
+                        options: ["Sister", "Brother", "Father", "Uncle"],
+                        correct: 1
+                    },
+                    {
+                        question: "What do you call your father's mother?",
+                        options: ["Aunt", "Mother", "Grandmother", "Sister"],
+                        correct: 2
+                    },
+                    {
+                        question: "Complete: 'My mother and father are my...'",
+                        options: ["Brothers", "Sisters", "Parents", "Grandparents"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Days, Months and Seasons",
+                content: `
+                    <p>Knowing the <strong>days</strong>, <strong>months</strong> and <strong>seasons</strong> is essential to talk about time and make plans!</p>
+                    
+                    <div class="info-box">
+                        <strong>📅 Days of the Week:</strong>
+                        <p style="margin-top: 10px;">Monday (lundi) • Tuesday (mardi) • Wednesday (mercredi) • Thursday (jeudi) • Friday (vendredi) • Saturday (samedi) • Sunday (dimanche)</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>📆 Months of the Year:</strong>
+                        <p style="margin-top: 10px;">January • February • March • April • May • June • July • August • September • October • November • December</p>
+                    </div>
+
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">🌸</div>
+                            <div class="english">Spring</div>
+                            <div class="french">Printemps</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">☀️</div>
+                            <div class="english">Summer</div>
+                            <div class="french">Été</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🍂</div>
+                            <div class="english">Autumn/Fall</div>
+                            <div class="french">Automne</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">❄️</div>
+                            <div class="english">Winter</div>
+                            <div class="french">Hiver</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>💡 Remember:</strong> In English, days and months always start with a capital letter!
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Which day comes after Wednesday?",
+                        options: ["Tuesday", "Thursday", "Friday", "Monday"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which season is associated with snow?",
+                        options: ["Spring", "Summer", "Autumn", "Winter"],
+                        correct: 3
+                    },
+                    {
+                        question: "Which month comes after July?",
+                        options: ["June", "August", "September", "May"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Animals and Pets",
+                content: `
+                    <p>Let's discover the names of <strong>animals</strong> in English! Some are pets, others live in the wild.</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">🐕</div>
+                            <div class="english">Dog</div>
+                            <div class="french">Chien</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐈</div>
+                            <div class="english">Cat</div>
+                            <div class="french">Chat</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐦</div>
+                            <div class="english">Bird</div>
+                            <div class="french">Oiseau</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐟</div>
+                            <div class="english">Fish</div>
+                            <div class="french">Poisson</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐰</div>
+                            <div class="english">Rabbit</div>
+                            <div class="french">Lapin</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐴</div>
+                            <div class="english">Horse</div>
+                            <div class="french">Cheval</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🦁</div>
+                            <div class="english">Lion</div>
+                            <div class="french">Lion</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🐘</div>
+                            <div class="english">Elephant</div>
+                            <div class="french">Éléphant</div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🏠 Talking about pets:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>I have a dog. His name is Max.</li>
+                            <li>Do you have any pets?</li>
+                            <li>My cat is black and white.</li>
+                        </ul>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say 'chat' in English?",
+                        options: ["Dog", "Bird", "Cat", "Fish"],
+                        correct: 2
+                    },
+                    {
+                        question: "Which animal says 'woof woof'?",
+                        options: ["Cat", "Dog", "Bird", "Fish"],
+                        correct: 1
+                    },
+                    {
+                        question: "What is the biggest land animal?",
+                        options: ["Lion", "Horse", "Elephant", "Dog"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Food and Drinks",
+                content: `
+                    <p>Let's learn the vocabulary for <strong>food</strong> and <strong>drinks</strong>! Very useful when you're hungry or thirsty!</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">🍎</div>
+                            <div class="english">Apple</div>
+                            <div class="french">Pomme</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🍊</div>
+                            <div class="english">Orange</div>
+                            <div class="french">Orange</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🍞</div>
+                            <div class="english">Bread</div>
+                            <div class="french">Pain</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🧀</div>
+                            <div class="english">Cheese</div>
+                            <div class="french">Fromage</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🥛</div>
+                            <div class="english">Milk</div>
+                            <div class="french">Lait</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">💧</div>
+                            <div class="english">Water</div>
+                            <div class="french">Eau</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🍕</div>
+                            <div class="english">Pizza</div>
+                            <div class="french">Pizza</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🍦</div>
+                            <div class="english">Ice cream</div>
+                            <div class="french">Glace</div>
+                        </div>
+                    </div>
+
+                    <div class="dialogue-box">
+                        <h4 style="margin-bottom: 15px;">🍽️ At the restaurant:</h4>
+                        <div class="dialogue-line speaker-a">
+                            <span class="avatar">👨‍🍳</span>
+                            <div class="text">
+                                <strong>Waiter:</strong>
+                                What would you like to eat?
+                            </div>
+                        </div>
+                        <div class="dialogue-line speaker-b">
+                            <span class="avatar">👧</span>
+                            <div class="text">
+                                <strong>Customer:</strong>
+                                I'd like a pizza and some water, please.
+                            </div>
+                        </div>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say 'fromage' in English?",
+                        options: ["Bread", "Cheese", "Milk", "Butter"],
+                        correct: 1
+                    },
+                    {
+                        question: "What do you say when you're thirsty?",
+                        options: ["I'm hungry", "I'm thirsty", "I'm tired", "I'm happy"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which drink comes from a cow?",
+                        options: ["Water", "Orange juice", "Milk", "Tea"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "At School",
+                content: `
+                    <p>Let's learn the <strong>classroom vocabulary</strong>! These words are useful for your daily school life.</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">📚</div>
+                            <div class="english">Book</div>
+                            <div class="french">Livre</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">✏️</div>
+                            <div class="english">Pencil</div>
+                            <div class="french">Crayon</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🖊️</div>
+                            <div class="english">Pen</div>
+                            <div class="french">Stylo</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">📓</div>
+                            <div class="english">Notebook</div>
+                            <div class="french">Cahier</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🎒</div>
+                            <div class="english">Schoolbag</div>
+                            <div class="french">Cartable</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">📏</div>
+                            <div class="english">Ruler</div>
+                            <div class="french">Règle</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🪑</div>
+                            <div class="english">Chair</div>
+                            <div class="french">Chaise</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🪟</div>
+                            <div class="english">Window</div>
+                            <div class="french">Fenêtre</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>👩‍🏫 People at school:</strong>
+                        <p style="margin-top: 10px;">Teacher (professeur) • Student (élève) • Headteacher (directeur) • Friend (ami)</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>📝 School subjects:</strong>
+                        <p style="margin-top: 10px;">English (anglais) • Maths (mathématiques) • Science (sciences) • Art (arts plastiques) • Music (musique) • P.E. (éducation physique)</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How do you say 'cahier' in English?",
+                        options: ["Book", "Notebook", "Pen", "Ruler"],
+                        correct: 1
+                    },
+                    {
+                        question: "What do you use to write?",
+                        options: ["Ruler", "Schoolbag", "Pen", "Chair"],
+                        correct: 2
+                    },
+                    {
+                        question: "Who teaches in a classroom?",
+                        options: ["Student", "Teacher", "Friend", "Parent"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "My Body",
+                content: `
+                    <p>Let's learn the parts of the <strong>body</strong> in English! Point to each part as you learn the words.</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">🗣️</div>
+                            <div class="english">Head</div>
+                            <div class="french">Tête</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👀</div>
+                            <div class="english">Eyes</div>
+                            <div class="french">Yeux</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👂</div>
+                            <div class="english">Ears</div>
+                            <div class="french">Oreilles</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👃</div>
+                            <div class="english">Nose</div>
+                            <div class="french">Nez</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👄</div>
+                            <div class="english">Mouth</div>
+                            <div class="french">Bouche</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">✋</div>
+                            <div class="english">Hand</div>
+                            <div class="french">Main</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🦶</div>
+                            <div class="english">Foot</div>
+                            <div class="french">Pied</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">💪</div>
+                            <div class="english">Arm</div>
+                            <div class="french">Bras</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>🔢 Singular and Plural:</strong>
+                        <p style="margin-top: 10px;">One foot → Two feet • One tooth → Many teeth • One eye → Two eyes</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🎵 Song tip:</strong> Learn the song "Head, Shoulders, Knees and Toes" to remember body parts!
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "What do you use to see?",
+                        options: ["Ears", "Nose", "Eyes", "Mouth"],
+                        correct: 2
+                    },
+                    {
+                        question: "How do you say 'pieds' (plural) in English?",
+                        options: ["Foots", "Feet", "Feets", "Foot"],
+                        correct: 1
+                    },
+                    {
+                        question: "Which body part do you use to hear?",
+                        options: ["Eyes", "Nose", "Mouth", "Ears"],
+                        correct: 3
+                    }
+                ]
+            },
+            {
+                title: "Clothes and Weather",
+                content: `
+                    <p>Learning about <strong>clothes</strong> and <strong>weather</strong> helps you describe what you wear and talk about the weather!</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">👕</div>
+                            <div class="english">T-shirt</div>
+                            <div class="french">T-shirt</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👖</div>
+                            <div class="english">Trousers</div>
+                            <div class="french">Pantalon</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👗</div>
+                            <div class="english">Dress</div>
+                            <div class="french">Robe</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🧥</div>
+                            <div class="english">Coat</div>
+                            <div class="french">Manteau</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👟</div>
+                            <div class="english">Shoes</div>
+                            <div class="french">Chaussures</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🧢</div>
+                            <div class="english">Hat</div>
+                            <div class="french">Chapeau</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>🌤️ Weather expressions:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>It's sunny ☀️ (Il fait soleil)</li>
+                            <li>It's rainy 🌧️ (Il pleut)</li>
+                            <li>It's cloudy ☁️ (Il fait nuageux)</li>
+                            <li>It's windy 💨 (Il y a du vent)</li>
+                            <li>It's snowy ❄️ (Il neige)</li>
+                            <li>It's hot 🔥 (Il fait chaud)</li>
+                            <li>It's cold 🥶 (Il fait froid)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>👔 Describing clothes:</strong>
+                        <p style="margin-top: 10px;">I'm wearing a blue T-shirt and black trousers. It's sunny today, so I don't need a coat!</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "What do you wear when it's cold?",
+                        options: ["T-shirt", "Shorts", "Coat", "Dress"],
+                        correct: 2
+                    },
+                    {
+                        question: "How do you say 'il pleut' in English?",
+                        options: ["It's sunny", "It's rainy", "It's windy", "It's cloudy"],
+                        correct: 1
+                    },
+                    {
+                        question: "What do you wear on your feet?",
+                        options: ["Hat", "Trousers", "Shoes", "T-shirt"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Simple Present Tense",
+                content: `
+                    <p>The <strong>Simple Present</strong> is used to talk about habits, facts, and regular actions. It's one of the most important tenses in English!</p>
+                    
+                    <div class="info-box">
+                        <strong>📝 How to form it:</strong>
+                        <p style="margin-top: 10px;">I/You/We/They + verb (base form)</p>
+                        <p>He/She/It + verb + <strong>S</strong></p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>✅ Examples:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>I <strong>play</strong> football every Saturday.</li>
+                            <li>She <strong>plays</strong> the piano.</li>
+                            <li>We <strong>eat</strong> breakfast at 7 o'clock.</li>
+                            <li>He <strong>watches</strong> TV in the evening.</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>❓ Questions and Negatives:</strong>
+                        <p style="margin-top: 10px;">Do/Does + subject + verb?</p>
+                        <p><em>Do you like pizza?</em> / <em>Does she speak French?</em></p>
+                        <p style="margin-top: 10px;">Subject + do/does + not + verb</p>
+                        <p><em>I don't like spiders.</em> / <em>He doesn't play tennis.</em></p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Choose the correct sentence:",
+                        options: ["She play tennis.", "She plays tennis.", "She playes tennis.", "She playing tennis."],
+                        correct: 1
+                    },
+                    {
+                        question: "Complete: '... you like chocolate?'",
+                        options: ["Does", "Do", "Is", "Are"],
+                        correct: 1
+                    },
+                    {
+                        question: "Complete: 'He ... watch TV every day.'",
+                        options: ["don't", "doesn't", "isn't", "aren't"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Questions: What, Where, Who, When",
+                content: `
+                    <p>Learning <strong>question words</strong> helps you ask for information in English. Let's discover the most common ones!</p>
+                    
+                    <div class="vocab-grid">
+                        <div class="vocab-card">
+                            <div class="emoji">❓</div>
+                            <div class="english">What</div>
+                            <div class="french">Quoi / Que</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">📍</div>
+                            <div class="english">Where</div>
+                            <div class="french">Où</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">👤</div>
+                            <div class="english">Who</div>
+                            <div class="french">Qui</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🕐</div>
+                            <div class="english">When</div>
+                            <div class="french">Quand</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">🤔</div>
+                            <div class="english">Why</div>
+                            <div class="french">Pourquoi</div>
+                        </div>
+                        <div class="vocab-card">
+                            <div class="emoji">⚙️</div>
+                            <div class="english">How</div>
+                            <div class="french">Comment</div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>📝 Example questions:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>What</strong> is your name? → My name is Emma.</li>
+                            <li><strong>Where</strong> do you live? → I live in Paris.</li>
+                            <li><strong>Who</strong> is your teacher? → Mrs. Smith is my teacher.</li>
+                            <li><strong>When</strong> is your birthday? → My birthday is in May.</li>
+                            <li><strong>Why</strong> are you happy? → Because it's sunny!</li>
+                            <li><strong>How</strong> are you? → I'm fine, thank you.</li>
+                        </ul>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Which word do you use to ask about a place?",
+                        options: ["What", "Who", "Where", "When"],
+                        correct: 2
+                    },
+                    {
+                        question: "Complete: '... is your best friend?'",
+                        options: ["What", "Where", "When", "Who"],
+                        correct: 3
+                    },
+                    {
+                        question: "Which word asks about time?",
+                        options: ["What", "Where", "When", "Why"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Short Stories Reading",
+                content: `
+                    <p>Reading <strong>short stories</strong> is a great way to learn English! Let's practice with a simple story.</p>
+                    
+                    <div class="dialogue-box">
+                        <h4 style="margin-bottom: 15px;">📖 "Tom's Birthday"</h4>
+                        <p style="margin-bottom: 10px; line-height: 1.8;">
+                            Today is Tom's birthday. He is <strong>ten years old</strong>. His family is having a party for him.
+                        </p>
+                        <p style="margin-bottom: 10px; line-height: 1.8;">
+                            Tom's mother makes a big <strong>chocolate cake</strong>. His father gives him a <strong>new bicycle</strong>. It is red and blue.
+                        </p>
+                        <p style="margin-bottom: 10px; line-height: 1.8;">
+                            Tom's friends come to the party. They play games and eat cake. Tom is very <strong>happy</strong>.
+                        </p>
+                        <p style="line-height: 1.8;">
+                            "Thank you everyone!" says Tom. "This is the best birthday ever!"
+                        </p>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>📚 Reading tips:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Read slowly and carefully</li>
+                            <li>Look for words you know</li>
+                            <li>Try to understand the main idea</li>
+                            <li>Don't worry about every unknown word</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>📖 New vocabulary from the story:</strong>
+                        <p style="margin-top: 10px;">birthday (anniversaire) • party (fête) • cake (gâteau) • bicycle (vélo) • friends (amis) • games (jeux)</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How old is Tom?",
+                        options: ["Eight years old", "Nine years old", "Ten years old", "Eleven years old"],
+                        correct: 2
+                    },
+                    {
+                        question: "What does Tom's father give him?",
+                        options: ["A cake", "A bicycle", "A book", "A toy"],
+                        correct: 1
+                    },
+                    {
+                        question: "How does Tom feel at the end?",
+                        options: ["Sad", "Angry", "Tired", "Happy"],
+                        correct: 3
+                    }
+                ]
+            },
+            {
+                title: "General Review",
+                content: `
+                    <p><strong>Congratulations!</strong> You've completed all the lessons! Let's review what you've learned.</p>
+                    
+                    <div class="info-box">
+                        <strong>📚 What you've learned:</strong>
+                        <ol style="margin-top: 10px; padding-left: 20px;">
+                            <li>The alphabet and phonics</li>
+                            <li>Greetings and introductions</li>
+                            <li>Numbers 1-100</li>
+                            <li>Colors and shapes</li>
+                            <li>Family members</li>
+                            <li>Days, months and seasons</li>
+                            <li>Animals and pets</li>
+                            <li>Food and drinks</li>
+                            <li>School vocabulary</li>
+                            <li>Body parts</li>
+                            <li>Clothes and weather</li>
+                            <li>Simple Present tense</li>
+                            <li>Question words</li>
+                            <li>Reading comprehension</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🎯 Key phrases to remember:</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Hello! My name is... What's your name?</li>
+                            <li>How are you? I'm fine, thank you.</li>
+                            <li>I like... / I don't like...</li>
+                            <li>What's the weather like? It's sunny/rainy/cold...</li>
+                            <li>Do you have...? Yes, I do. / No, I don't.</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>💪 Keep practicing!</strong>
+                        <p style="margin-top: 10px;">The best way to improve your English is to practice every day. Listen to English songs, watch English videos, and try to speak as much as you can!</p>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "How many letters are in the English alphabet?",
+                        options: ["24", "25", "26", "27"],
+                        correct: 2
+                    },
+                    {
+                        question: "What is the correct way to say '45' in English?",
+                        options: ["Fourty-five", "Forty-five", "Fortyfive", "Four-five"],
+                        correct: 1
+                    },
+                    {
+                        question: "Complete: 'She ... to school every day.'",
+                        options: ["go", "goes", "going", "gos"],
+                        correct: 1
+                    }
+                ]
+            }
+        ];
+
+        let completedLessons = new Set();
+        let lessonScores = {};
+
+        function init() {
+            renderNav();
+            renderLessons();
+            goToLesson(0);
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('lessonNav');
+            nav.innerHTML = '<h3>📖 Contents</h3>';
+            lessons.forEach((lesson, index) => {
+                const div = document.createElement('div');
+                div.className = 'nav-item';
+                div.id = `nav-${index}`;
+                div.innerHTML = `
+                    <span>${index + 1}. ${lesson.title}</span>
+                    <span class="status" id="status-${index}">○</span>
+                `;
+                div.onclick = () => goToLesson(index);
+                nav.appendChild(div);
+            });
+        }
+
+        function renderLessons() {
+            const main = document.getElementById('contentArea');
+            main.innerHTML = '';
+            
+            lessons.forEach((lesson, index) => {
+                const div = document.createElement('div');
+                div.className = 'lesson';
+                div.id = `lesson-${index}`;
+                
+                let exercisesHtml = lesson.exercises.map((ex, exIndex) => `
+                    <div class="question" id="q-${index}-${exIndex}">
+                        <p>${exIndex + 1}. ${ex.question}</p>
+                        <div class="options">
+                            ${ex.options.map((opt, optIndex) => `
+                                <label class="option" id="opt-${index}-${exIndex}-${optIndex}">
+                                    <input type="radio" name="q${index}-${exIndex}" value="${optIndex}">
+                                    ${opt}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                
+                div.innerHTML = `
+                    <h2>Lesson ${index + 1}: ${lesson.title}</h2>
+                    <div class="lesson-content">${lesson.content}</div>
+                    <div class="exercise-section">
+                        <h3>📝 Exercises</h3>
+                        ${exercisesHtml}
+                        <button class="validate-btn" onclick="validateLesson(${index})">Check my answers</button>
+                        <div class="feedback" id="feedback-${index}"></div>
+                    </div>
+                `;
+                main.appendChild(div);
+            });
+
+            // Certificate
+            const cert = document.createElement('div');
+            cert.className = 'certificate';
+            cert.id = 'certificate';
+            cert.innerHTML = `
+                <h2>🎉 Certificate of Achievement 🎉</h2>
+                <p>Congratulations! You have completed the</p>
+                <h3>Interactive English Manual - Cambridge Style</h3>
+                <div class="trophy">🏆</div>
+                <p>Final Score:</p>
+                <div class="score" id="finalScore">0%</div>
+                <div class="badge" id="finalBadge">English Learner</div>
+                <p style="margin-top: 20px; opacity: 0.7;">Keep learning and practicing English!</p>
+            `;
+            main.appendChild(cert);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-toggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.textContent = '🌙 Dark mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ Light mode';
+            }
+        }
+
+        function goToLesson(index) {
+            document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`lesson-${index}`).classList.add('active');
+            document.getElementById(`nav-${index}`).classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateLesson(lessonIndex) {
+            const lesson = lessons[lessonIndex];
+            let correct = 0;
+            
+            lesson.exercises.forEach((ex, exIndex) => {
+                const selected = document.querySelector(`input[name="q${lessonIndex}-${exIndex}"]:checked`);
+                const options = document.querySelectorAll(`[id^="opt-${lessonIndex}-${exIndex}-"]`);
+                
+                options.forEach((opt, optIndex) => {
+                    opt.classList.remove('correct', 'incorrect', 'selected');
+                    if (optIndex === ex.correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+                
+                if (selected) {
+                    const selectedIndex = parseInt(selected.value);
+                    if (selectedIndex === ex.correct) {
+                        correct++;
+                    } else {
+                        document.getElementById(`opt-${lessonIndex}-${exIndex}-${selectedIndex}`).classList.add('incorrect');
+                    }
+                }
+            });
+            
+            const percentage = Math.round((correct / lesson.exercises.length) * 100);
+            const feedback = document.getElementById(`feedback-${lessonIndex}`);
+            
+            if (percentage >= 70) {
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `<strong>🎉 Excellent!</strong> You got ${correct}/${lesson.exercises.length} (${percentage}%). You can move on to the next lesson!`;
+                completedLessons.add(lessonIndex);
+                lessonScores[lessonIndex] = percentage;
+                document.getElementById(`status-${lessonIndex}`).textContent = '✓';
+                document.getElementById(`nav-${lessonIndex}`).classList.add('completed');
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<strong>😕 Keep trying!</strong> You got ${correct}/${lesson.exercises.length} (${percentage}%). Review the lesson and try again!`;
+            }
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (completedLessons.size / lessons.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${completedLessons.size}/${lessons.length} lessons`;
+            
+            if (completedLessons.size === lessons.length) {
+                showCertificate();
+            }
+        }
+
+        function showCertificate() {
+            const totalScore = Object.values(lessonScores).reduce((a, b) => a + b, 0);
+            const avgScore = Math.round(totalScore / lessons.length);
+            
+            document.getElementById('finalScore').textContent = avgScore + '%';
+            
+            let badge = 'English Learner';
+            if (avgScore >= 90) badge = '🥇 English Master';
+            else if (avgScore >= 80) badge = '🥈 English Expert';
+            else if (avgScore >= 70) badge = '🥉 English Apprentice';
+            
+            document.getElementById('finalBadge').textContent = badge;
+            document.getElementById('certificate').classList.add('show');
+            
+            document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+            document.getElementById('certificate').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        init();
+    </script>
+</body>
+</html>
