@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuel Interactif Histoire-Géographie - Primaire (CP-CM2)</title>
+    <style>
+        :root {
+            --primary: #8b4513;
+            --primary-light: #deb887;
+            --primary-dark: #654321;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --bg: #faf8f5;
+            --text: #2c3e50;
+            --card-bg: #ffffff;
+            --border: #e0d5c8;
+        }
+
+        [data-theme="dark"] {
+            --bg: #1a1612;
+            --text: #ecf0f1;
+            --card-bg: #2d2520;
+            --border: #4a3f35;
+            --primary-light: #a0522d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .progress-container {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        nav {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        nav h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            gap: 10px;
+        }
+
+        .nav-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-item.completed {
+            border-left: 4px solid var(--success);
+        }
+
+        .nav-item .status {
+            margin-left: auto;
+            font-size: 1.2rem;
+        }
+
+        .lesson {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .lesson.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lesson h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary-light);
+        }
+
+        .lesson-content {
+            margin-bottom: 30px;
+        }
+
+        .lesson-content p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.05));
+            border-left: 4px solid var(--info);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(243, 156, 18, 0.05));
+            border-left: 4px solid var(--warning);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .example-box {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.1), rgba(139, 69, 19, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .exercise-section {
+            background: linear-gradient(135deg, rgba(139, 69, 19, 0.05), rgba(222, 184, 135, 0.1));
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .exercise-section h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question p {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background: rgba(139, 69, 19, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(139, 69, 19, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(39, 174, 96, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .option input {
+            margin-right: 12px;
+            accent-color: var(--primary);
+        }
+
+        .validate-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+
+        .validate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .validate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feedback.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.1);
+            border: 2px solid var(--success);
+            color: var(--success);
+        }
+
+        .feedback.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .certificate {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(135deg, #faf8f5, #fff8e7);
+            border: 4px solid var(--primary);
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+
+        .certificate.show {
+            display: block;
+            animation: fadeIn 1s ease;
+        }
+
+        .certificate h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .certificate .trophy {
+            font-size: 5rem;
+            margin: 20px 0;
+        }
+
+        .certificate .score {
+            font-size: 3rem;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .certificate .badge {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            margin-top: 20px;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid var(--card-bg);
+        }
+
+        .timeline-item strong {
+            color: var(--primary);
+        }
+
+        @media print {
+            .controls, nav, .exercise-section, .validate-btn {
+                display: none;
+            }
+            .certificate {
+                border: 2px solid #8b4513;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📜 Manuel Interactif Histoire-Géographie</h1>
+            <p>Découvre l'histoire et la géographie du CP au CM2 - 15 leçons passionnantes avec exercices interactifs</p>
+        </header>
+
+        <div class="controls">
+            <button class="theme-toggle" onclick="toggleTheme()">🌙 Mode sombre</button>
+            <div class="progress-container">
+                <div style="display: flex; justify-content: space-between;">
+                    <span>Progression globale</span>
+                    <span id="progressText">0/15 leçons</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <nav id="lessonNav"></nav>
+            <main id="contentArea"></main>
+        </div>
+    </div>
+
+    <script>
+        const lessons = [
+            {
+                title: "La frise chronologique",
+                content: `
+                    <p>Une <strong>frise chronologique</strong> est une ligne qui représente le temps qui passe. Elle nous permet de situer les événements dans l'ordre où ils se sont produits.</p>
+                    
+                    <div class="info-box">
+                        <strong>📅 À retenir :</strong> Sur une frise, le temps avance de gauche à droite. Les événements les plus anciens sont à gauche, les plus récents à droite.
+                    </div>
+
+                    <p>Pour lire une frise chronologique, il faut d'abord repérer les dates importantes et les périodes qu'elle représente.</p>
+
+                    <div class="example-box">
+                        <strong>🏛️ Les grandes périodes de l'histoire :</strong>
+                        <div class="timeline">
+                            <div class="timeline-item"><strong>La Préhistoire</strong> - Avant l'invention de l'écriture</div>
+                            <div class="timeline-item"><strong>L'Antiquité</strong> - De -3000 à 476</div>
+                            <div class="timeline-item"><strong>Le Moyen Âge</strong> - De 476 à 1492</div>
+                            <div class="timeline-item"><strong>Les Temps modernes</strong> - De 1492 à 1789</div>
+                            <div class="timeline-item"><strong>L'époque contemporaine</strong> - De 1789 à nos jours</div>
+                        </div>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Dans quel sens lit-on une frise chronologique ?",
+                        options: ["De droite à gauche", "De gauche à droite", "De haut en bas", "De bas en haut"],
+                        correct: 1
+                    },
+                    {
+                        question: "Où se trouvent les événements les plus anciens sur une frise ?",
+                        options: ["À droite", "Au milieu", "À gauche", "En haut"],
+                        correct: 2
+                    },
+                    {
+                        question: "Quelle période vient après le Moyen Âge ?",
+                        options: ["L'Antiquité", "La Préhistoire", "Les Temps modernes", "L'époque contemporaine"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Ma ville, mon quartier",
+                content: `
+                    <p>Tu habites quelque part : dans une ville, un village ou un quartier. C'est ton <strong>espace proche</strong>, celui que tu connais le mieux.</p>
+                    
+                    <div class="info-box">
+                        <strong>🏘️ À retenir :</strong> Un quartier est une partie d'une ville. Chaque quartier a ses caractéristiques : des maisons, des commerces, des écoles, des parcs...
+                    </div>
+
+                    <p>Pour se repérer dans son quartier, on utilise des <strong>points de repère</strong> : la mairie, l'église, l'école, le supermarché...</p>
+
+                    <div class="example-box">
+                        <strong>🗺️ Les éléments d'un quartier :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Les habitations (maisons, immeubles)</li>
+                            <li>Les commerces (boulangerie, pharmacie...)</li>
+                            <li>Les services publics (école, mairie, poste)</li>
+                            <li>Les espaces verts (parcs, jardins)</li>
+                            <li>Les voies de circulation (rues, routes)</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🧭 Conseil :</strong> Apprends à lire un plan de ton quartier pour mieux te repérer !
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Qu'est-ce qu'un quartier ?",
+                        options: ["Une région de France", "Une partie d'une ville", "Un pays", "Un continent"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quel élément ne trouve-t-on généralement PAS dans un quartier ?",
+                        options: ["Des maisons", "Une école", "Un océan", "Une boulangerie"],
+                        correct: 2
+                    },
+                    {
+                        question: "À quoi servent les points de repère ?",
+                        options: ["À se perdre", "À se repérer et s'orienter", "À jouer", "À manger"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "La France et ses régions",
+                content: `
+                    <p>La France est un pays d'Europe. Elle est divisée en <strong>13 régions métropolitaines</strong> et <strong>5 régions d'outre-mer</strong>.</p>
+                    
+                    <div class="info-box">
+                        <strong>🇫🇷 À retenir :</strong> La capitale de la France est Paris. C'est la plus grande ville du pays.
+                    </div>
+
+                    <p>Chaque région a ses particularités : son climat, ses paysages, ses traditions et sa gastronomie.</p>
+
+                    <div class="example-box">
+                        <strong>🗺️ Quelques régions de France :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>Île-de-France</strong> - La région de Paris</li>
+                            <li><strong>Provence-Alpes-Côte d'Azur</strong> - Le sud ensoleillé</li>
+                            <li><strong>Bretagne</strong> - La région des crêpes et de la mer</li>
+                            <li><strong>Nouvelle-Aquitaine</strong> - La plus grande région</li>
+                            <li><strong>Auvergne-Rhône-Alpes</strong> - Les montagnes et les volcans</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🌍 Outre-mer :</strong> La Guadeloupe, la Martinique, la Guyane, La Réunion et Mayotte sont les régions d'outre-mer.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quelle est la capitale de la France ?",
+                        options: ["Lyon", "Marseille", "Paris", "Bordeaux"],
+                        correct: 2
+                    },
+                    {
+                        question: "Combien y a-t-il de régions métropolitaines en France ?",
+                        options: ["10", "13", "15", "20"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quelle région est connue pour ses crêpes ?",
+                        options: ["Provence", "Bretagne", "Alsace", "Corse"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Les continents et océans",
+                content: `
+                    <p>Notre planète Terre est composée de <strong>6 continents</strong> et de <strong>5 océans</strong>. Les continents sont de grandes étendues de terre, les océans sont de vastes étendues d'eau salée.</p>
+                    
+                    <div class="info-box">
+                        <strong>🌍 Les 6 continents :</strong>
+                        <ol style="margin-top: 10px; padding-left: 20px;">
+                            <li>L'Europe (où se trouve la France)</li>
+                            <li>L'Asie (le plus grand continent)</li>
+                            <li>L'Afrique</li>
+                            <li>L'Amérique (du Nord et du Sud)</li>
+                            <li>L'Océanie (Australie et îles du Pacifique)</li>
+                            <li>L'Antarctique (le continent glacé)</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🌊 Les 5 océans :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>Océan Pacifique</strong> - Le plus grand</li>
+                            <li><strong>Océan Atlantique</strong> - Entre l'Europe et l'Amérique</li>
+                            <li><strong>Océan Indien</strong> - Au sud de l'Asie</li>
+                            <li><strong>Océan Arctique</strong> - Au pôle Nord</li>
+                            <li><strong>Océan Antarctique</strong> - Autour de l'Antarctique</li>
+                        </ul>
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Combien y a-t-il de continents sur Terre ?",
+                        options: ["4", "5", "6", "7"],
+                        correct: 2
+                    },
+                    {
+                        question: "Quel est le plus grand océan ?",
+                        options: ["Atlantique", "Indien", "Pacifique", "Arctique"],
+                        correct: 2
+                    },
+                    {
+                        question: "Sur quel continent se trouve la France ?",
+                        options: ["Asie", "Afrique", "Europe", "Amérique"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "La Préhistoire",
+                content: `
+                    <p>La <strong>Préhistoire</strong> est la période la plus longue de l'histoire de l'humanité. Elle commence avec l'apparition des premiers humains et se termine avec l'invention de l'écriture (vers -3000).</p>
+                    
+                    <div class="info-box">
+                        <strong>🦴 Les premiers hommes :</strong> Nos ancêtres vivaient de la chasse, de la pêche et de la cueillette. Ils étaient nomades, c'est-à-dire qu'ils se déplaçaient pour trouver leur nourriture.
+                    </div>
+
+                    <p>Au fil du temps, les hommes préhistoriques ont inventé des outils, découvert le feu et appris à cultiver la terre.</p>
+
+                    <div class="example-box">
+                        <strong>🔥 Les grandes découvertes de la Préhistoire :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Les premiers outils en pierre (bifaces)</li>
+                            <li>La maîtrise du feu (il y a 400 000 ans)</li>
+                            <li>L'art rupestre (peintures dans les grottes)</li>
+                            <li>L'agriculture et l'élevage (Néolithique)</li>
+                            <li>La poterie et le tissage</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🎨 À savoir :</strong> La grotte de Lascaux, en France, contient des peintures préhistoriques célèbres datant de 17 000 ans !
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quand se termine la Préhistoire ?",
+                        options: ["Avec l'apparition du feu", "Avec l'invention de l'écriture", "Avec la construction des pyramides", "Avec la naissance de Jésus"],
+                        correct: 1
+                    },
+                    {
+                        question: "Comment vivaient les premiers hommes ?",
+                        options: ["Dans des maisons", "De façon nomade", "Dans des châteaux", "Dans des immeubles"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quelle grotte française est célèbre pour ses peintures ?",
+                        options: ["Grotte de Lascaux", "Grotte de Versailles", "Grotte de Paris", "Grotte de Nice"],
+                        correct: 0
+                    }
+                ]
+            },
+            {
+                title: "L'Antiquité",
+                content: `
+                    <p>L'<strong>Antiquité</strong> est la période qui suit la Préhistoire. Elle commence avec l'invention de l'écriture (vers -3000) et se termine avec la chute de l'Empire romain (476).</p>
+                    
+                    <div class="info-box">
+                        <strong>🏛️ Les grandes civilisations de l'Antiquité :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>L'Égypte ancienne</strong> - Pyramides et pharaons</li>
+                            <li><strong>La Grèce antique</strong> - Démocratie et philosophie</li>
+                            <li><strong>Rome</strong> - Un immense empire</li>
+                            <li><strong>Les Gaulois</strong> - Nos ancêtres en France</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🏺 Héritages de l'Antiquité :</strong>
+                        <p style="margin-top: 10px;">Les civilisations antiques nous ont laissé beaucoup de choses : l'alphabet, les mathématiques, l'architecture, les jeux olympiques, la démocratie...</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚔️ En Gaule :</strong> En 52 avant J.-C., Vercingétorix, chef gaulois, est vaincu par Jules César à Alésia. La Gaule devient romaine !
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Avec quoi commence l'Antiquité ?",
+                        options: ["La découverte du feu", "L'invention de l'écriture", "La construction de Paris", "La Révolution française"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quelle civilisation a construit les pyramides ?",
+                        options: ["Les Romains", "Les Grecs", "Les Égyptiens", "Les Gaulois"],
+                        correct: 2
+                    },
+                    {
+                        question: "Qui était Vercingétorix ?",
+                        options: ["Un empereur romain", "Un chef gaulois", "Un pharaon", "Un roi grec"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Le Moyen Âge",
+                content: `
+                    <p>Le <strong>Moyen Âge</strong> est une période qui dure environ 1000 ans, de 476 à 1492. C'est l'époque des châteaux forts, des chevaliers et des seigneurs.</p>
+                    
+                    <div class="info-box">
+                        <strong>🏰 La société médiévale :</strong> La société était divisée en trois ordres :
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>Ceux qui prient</strong> - Le clergé (moines, prêtres)</li>
+                            <li><strong>Ceux qui combattent</strong> - Les seigneurs et chevaliers</li>
+                            <li><strong>Ceux qui travaillent</strong> - Les paysans (la majorité)</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>⚔️ La vie au Moyen Âge :</strong>
+                        <p style="margin-top: 10px;">Les paysans travaillaient la terre pour le seigneur. En échange, le seigneur les protégeait dans son château fort en cas de danger.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>👑 Personnages importants :</strong> Charlemagne (800), Jeanne d'Arc (1429), les croisades, la construction des cathédrales...
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Combien de temps a duré le Moyen Âge environ ?",
+                        options: ["100 ans", "500 ans", "1000 ans", "2000 ans"],
+                        correct: 2
+                    },
+                    {
+                        question: "Qui travaillait la terre au Moyen Âge ?",
+                        options: ["Les chevaliers", "Les paysans", "Les rois", "Les moines"],
+                        correct: 1
+                    },
+                    {
+                        question: "Où les seigneurs habitaient-ils ?",
+                        options: ["Dans des grottes", "Dans des châteaux forts", "Dans des immeubles", "Dans des tentes"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "La Renaissance",
+                content: `
+                    <p>La <strong>Renaissance</strong> est une période de grands changements qui commence en Italie au XVe siècle et se répand en Europe. C'est une époque de renouveau artistique et scientifique.</p>
+                    
+                    <div class="info-box">
+                        <strong>🎨 L'art de la Renaissance :</strong> Les artistes redécouvrent l'art de l'Antiquité. Ils peignent des tableaux plus réalistes et construisent de magnifiques bâtiments.
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🖼️ Artistes célèbres :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>Léonard de Vinci</strong> - La Joconde, inventeur génial</li>
+                            <li><strong>Michel-Ange</strong> - La chapelle Sixtine</li>
+                            <li><strong>Raphaël</strong> - Peintre italien</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🏰 En France :</strong> Le roi François Ier fait construire les châteaux de la Loire (Chambord, Chenonceau) et invite Léonard de Vinci en France.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Où la Renaissance a-t-elle commencé ?",
+                        options: ["En France", "En Espagne", "En Italie", "En Angleterre"],
+                        correct: 2
+                    },
+                    {
+                        question: "Qui a peint La Joconde ?",
+                        options: ["Michel-Ange", "Raphaël", "Léonard de Vinci", "Picasso"],
+                        correct: 2
+                    },
+                    {
+                        question: "Quel roi français a fait construire les châteaux de la Loire ?",
+                        options: ["Louis XIV", "François Ier", "Napoléon", "Charlemagne"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Les grandes découvertes",
+                content: `
+                    <p>Aux XVe et XVIe siècles, les Européens partent explorer le monde. C'est l'époque des <strong>grandes découvertes</strong> : de nouveaux continents, de nouvelles routes maritimes.</p>
+                    
+                    <div class="info-box">
+                        <strong>⛵ Les grands explorateurs :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>Christophe Colomb</strong> (1492) - Découvre l'Amérique</li>
+                            <li><strong>Vasco de Gama</strong> (1498) - Route maritime vers l'Inde</li>
+                            <li><strong>Magellan</strong> (1519-1522) - Premier tour du monde</li>
+                            <li><strong>Jacques Cartier</strong> (1534) - Explore le Canada</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🌍 Pourquoi ces voyages ?</strong>
+                        <p style="margin-top: 10px;">Les Européens cherchaient une nouvelle route vers l'Asie pour le commerce des épices, de la soie et de l'or.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Conséquences :</strong> Ces découvertes ont aussi eu des conséquences tragiques : colonisation, esclavage, disparition de civilisations amérindiennes.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "En quelle année Christophe Colomb a-t-il découvert l'Amérique ?",
+                        options: ["1392", "1492", "1592", "1692"],
+                        correct: 1
+                    },
+                    {
+                        question: "Qui a réalisé le premier tour du monde ?",
+                        options: ["Christophe Colomb", "Vasco de Gama", "Magellan", "Jacques Cartier"],
+                        correct: 2
+                    },
+                    {
+                        question: "Que cherchaient les explorateurs européens ?",
+                        options: ["Du pétrole", "Des épices et de l'or", "Des voitures", "Du charbon"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "La Révolution française",
+                content: `
+                    <p>La <strong>Révolution française</strong> commence en 1789. C'est un événement majeur qui transforme la France et inspire le monde entier.</p>
+                    
+                    <div class="info-box">
+                        <strong>📅 Dates importantes :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>14 juillet 1789</strong> - Prise de la Bastille</li>
+                            <li><strong>26 août 1789</strong> - Déclaration des droits de l'homme</li>
+                            <li><strong>1792</strong> - Proclamation de la République</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>⚖️ Les idées de la Révolution :</strong>
+                        <p style="margin-top: 10px;"><em>"Liberté, Égalité, Fraternité"</em> - Cette devise résume les idéaux de la Révolution. Tous les citoyens deviennent égaux devant la loi.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🏛️ Héritage :</strong> La Révolution nous a donné la Déclaration des droits de l'homme, le drapeau tricolore et les bases de notre République actuelle.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "En quelle année a commencé la Révolution française ?",
+                        options: ["1689", "1789", "1889", "1989"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quel événement s'est passé le 14 juillet 1789 ?",
+                        options: ["La mort de Louis XVI", "La prise de la Bastille", "La bataille de Waterloo", "Le sacre de Napoléon"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quelle est la devise de la France ?",
+                        options: ["Travail, Famille, Patrie", "Liberté, Égalité, Fraternité", "Honneur et Courage", "Vive le Roi"],
+                        correct: 1
+                    }
+                ]
+            },
+            {
+                title: "Le XIXe siècle industriel",
+                content: `
+                    <p>Le XIXe siècle est marqué par la <strong>révolution industrielle</strong>. De nouvelles machines sont inventées, les usines se développent et les villes grandissent.</p>
+                    
+                    <div class="info-box">
+                        <strong>⚙️ Les grandes inventions :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>La machine à vapeur</li>
+                            <li>Le train (1827 en France)</li>
+                            <li>L'électricité</li>
+                            <li>Le téléphone (1876)</li>
+                            <li>La photographie</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🏭 La vie des ouvriers :</strong>
+                        <p style="margin-top: 10px;">Les ouvriers travaillaient dans des conditions très difficiles : journées de 12 à 16 heures, salaires très bas, travail des enfants. Peu à peu, des lois ont amélioré leurs conditions.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🗼 Symbole :</strong> La Tour Eiffel, construite en 1889 pour l'Exposition universelle, symbolise le progrès technique du XIXe siècle.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quel siècle est celui de la révolution industrielle ?",
+                        options: ["Le XVIIe siècle", "Le XVIIIe siècle", "Le XIXe siècle", "Le XXe siècle"],
+                        correct: 2
+                    },
+                    {
+                        question: "Quel monument a été construit en 1889 ?",
+                        options: ["L'Arc de Triomphe", "La Tour Eiffel", "Notre-Dame", "Le Louvre"],
+                        correct: 1
+                    },
+                    {
+                        question: "Combien d'heures les ouvriers travaillaient-ils par jour ?",
+                        options: ["7 heures", "8 heures", "12 à 16 heures", "20 heures"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Les deux guerres mondiales",
+                content: `
+                    <p>Le XXe siècle a été marqué par deux <strong>guerres mondiales</strong> terribles qui ont causé des millions de morts et changé le monde.</p>
+                    
+                    <div class="info-box">
+                        <strong>⚔️ La Première Guerre mondiale (1914-1918) :</strong>
+                        <p style="margin-top: 10px;">Appelée aussi "la Grande Guerre". Elle oppose principalement la France, le Royaume-Uni et la Russie contre l'Allemagne et l'Autriche-Hongrie. Les soldats combattent dans les tranchées.</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>💣 La Seconde Guerre mondiale (1939-1945) :</strong>
+                        <p style="margin-top: 10px;">L'Allemagne nazie d'Hitler envahit l'Europe. La France est occupée de 1940 à 1944. Le 6 juin 1944 (Jour J), les Alliés débarquent en Normandie pour libérer la France.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🕊️ Devoir de mémoire :</strong> Le 11 novembre (1918) et le 8 mai (1945) sont des jours fériés pour commémorer la fin de ces guerres et honorer les victimes.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quand a eu lieu la Première Guerre mondiale ?",
+                        options: ["1904-1908", "1914-1918", "1924-1928", "1934-1938"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quel événement s'est passé le 6 juin 1944 ?",
+                        options: ["La fin de la guerre", "Le débarquement en Normandie", "La prise de Berlin", "La signature de l'armistice"],
+                        correct: 1
+                    },
+                    {
+                        question: "Quel jour commémore la fin de la Seconde Guerre mondiale ?",
+                        options: ["Le 14 juillet", "Le 11 novembre", "Le 8 mai", "Le 1er janvier"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "L'Union Européenne",
+                content: `
+                    <p>Après les guerres mondiales, les pays européens ont voulu construire la paix ensemble. C'est ainsi qu'est née l'<strong>Union Européenne</strong>.</p>
+                    
+                    <div class="info-box">
+                        <strong>🇪🇺 Dates clés :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>1957</strong> - Traité de Rome, 6 pays fondateurs</li>
+                            <li><strong>1992</strong> - Traité de Maastricht, naissance de l'UE</li>
+                            <li><strong>2002</strong> - L'euro devient notre monnaie</li>
+                            <li><strong>Aujourd'hui</strong> - 27 pays membres</li>
+                        </ul>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🌟 Les symboles de l'UE :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>Le drapeau bleu aux 12 étoiles</li>
+                            <li>L'hymne européen (L'Ode à la joie)</li>
+                            <li>La devise : "Unie dans la diversité"</li>
+                            <li>La monnaie : l'euro (€)</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🛂 Avantages :</strong> Les citoyens européens peuvent voyager, étudier et travailler librement dans tous les pays de l'UE.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quand l'euro est-il devenu notre monnaie ?",
+                        options: ["1992", "1997", "2002", "2007"],
+                        correct: 2
+                    },
+                    {
+                        question: "Combien d'étoiles y a-t-il sur le drapeau européen ?",
+                        options: ["6", "12", "27", "50"],
+                        correct: 1
+                    },
+                    {
+                        question: "Combien de pays font partie de l'UE aujourd'hui ?",
+                        options: ["12", "20", "27", "35"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Les enjeux du monde actuel",
+                content: `
+                    <p>Aujourd'hui, le monde fait face à de nombreux <strong>défis</strong> que nous devons relever ensemble : le réchauffement climatique, la protection de l'environnement, la paix...</p>
+                    
+                    <div class="info-box">
+                        <strong>🌍 Le réchauffement climatique :</strong>
+                        <p style="margin-top: 10px;">La température de la Terre augmente à cause des activités humaines (voitures, usines, déforestation). Cela provoque la fonte des glaces, la montée des eaux et des catastrophes naturelles.</p>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>♻️ Le développement durable :</strong>
+                        <p style="margin-top: 10px;">C'est développer nos sociétés en respectant l'environnement et en pensant aux générations futures. Cela passe par le recyclage, les énergies renouvelables, la protection de la biodiversité.</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🤝 Agir ensemble :</strong> Chacun peut agir : économiser l'énergie, trier ses déchets, utiliser les transports en commun, protéger la nature...
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Qu'est-ce qui provoque le réchauffement climatique ?",
+                        options: ["Le soleil uniquement", "Les activités humaines", "Les océans", "Les volcans"],
+                        correct: 1
+                    },
+                    {
+                        question: "Qu'est-ce que le développement durable ?",
+                        options: ["Construire plus de routes", "Développer en respectant l'environnement", "Produire plus de plastique", "Utiliser plus de pétrole"],
+                        correct: 1
+                    },
+                    {
+                        question: "Que peut-on faire pour aider la planète ?",
+                        options: ["Gaspiller l'eau", "Jeter tous les déchets ensemble", "Trier ses déchets et recycler", "Utiliser plus de plastique"],
+                        correct: 2
+                    }
+                ]
+            },
+            {
+                title: "Révision générale",
+                content: `
+                    <p>Bravo ! Tu as parcouru toute l'histoire et la géographie du primaire. Voici un <strong>résumé</strong> de ce que tu as appris.</p>
+                    
+                    <div class="info-box">
+                        <strong>📚 Les grandes périodes de l'histoire :</strong>
+                        <ol style="margin-top: 10px; padding-left: 20px;">
+                            <li>La Préhistoire - Les premiers hommes</li>
+                            <li>L'Antiquité - Égypte, Grèce, Rome, Gaule</li>
+                            <li>Le Moyen Âge - Châteaux et chevaliers</li>
+                            <li>La Renaissance - Art et découvertes</li>
+                            <li>Les Temps modernes - Révolution française</li>
+                            <li>L'époque contemporaine - Nos jours</li>
+                        </ol>
+                    </div>
+
+                    <div class="example-box">
+                        <strong>🗺️ Ce qu'il faut retenir en géographie :</strong>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>6 continents, 5 océans</li>
+                            <li>La France : 13 régions + 5 outre-mer</li>
+                            <li>Capitale : Paris</li>
+                            <li>L'Union Européenne : 27 pays</li>
+                        </ul>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>🎯 Les valeurs à retenir :</strong> Liberté, Égalité, Fraternité - Le devoir de mémoire - La protection de l'environnement - La construction européenne pour la paix.
+                    </div>
+                `,
+                exercises: [
+                    {
+                        question: "Quelle période vient après l'Antiquité ?",
+                        options: ["La Préhistoire", "Le Moyen Âge", "La Renaissance", "L'époque contemporaine"],
+                        correct: 1
+                    },
+                    {
+                        question: "Combien de continents y a-t-il sur Terre ?",
+                        options: ["4", "5", "6", "7"],
+                        correct: 2
+                    },
+                    {
+                        question: "Quelle est la devise de la France ?",
+                        options: ["Travail et Progrès", "Paix et Prospérité", "Liberté, Égalité, Fraternité", "Force et Honneur"],
+                        correct: 2
+                    }
+                ]
+            }
+        ];
+
+        let completedLessons = new Set();
+        let lessonScores = {};
+
+        function init() {
+            renderNav();
+            renderLessons();
+            goToLesson(0);
+        }
+
+        function renderNav() {
+            const nav = document.getElementById('lessonNav');
+            nav.innerHTML = '<h3>📖 Sommaire</h3>';
+            lessons.forEach((lesson, index) => {
+                const div = document.createElement('div');
+                div.className = 'nav-item';
+                div.id = `nav-${index}`;
+                div.innerHTML = `
+                    <span>${index + 1}. ${lesson.title}</span>
+                    <span class="status" id="status-${index}">○</span>
+                `;
+                div.onclick = () => goToLesson(index);
+                nav.appendChild(div);
+            });
+        }
+
+        function renderLessons() {
+            const main = document.getElementById('contentArea');
+            main.innerHTML = '';
+            
+            lessons.forEach((lesson, index) => {
+                const div = document.createElement('div');
+                div.className = 'lesson';
+                div.id = `lesson-${index}`;
+                
+                let exercisesHtml = lesson.exercises.map((ex, exIndex) => `
+                    <div class="question" id="q-${index}-${exIndex}">
+                        <p>${exIndex + 1}. ${ex.question}</p>
+                        <div class="options">
+                            ${ex.options.map((opt, optIndex) => `
+                                <label class="option" id="opt-${index}-${exIndex}-${optIndex}">
+                                    <input type="radio" name="q${index}-${exIndex}" value="${optIndex}">
+                                    ${opt}
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                
+                div.innerHTML = `
+                    <h2>Leçon ${index + 1} : ${lesson.title}</h2>
+                    <div class="lesson-content">${lesson.content}</div>
+                    <div class="exercise-section">
+                        <h3>📝 Exercices</h3>
+                        ${exercisesHtml}
+                        <button class="validate-btn" onclick="validateLesson(${index})">Valider mes réponses</button>
+                        <div class="feedback" id="feedback-${index}"></div>
+                    </div>
+                `;
+                main.appendChild(div);
+            });
+
+            // Certificate
+            const cert = document.createElement('div');
+            cert.className = 'certificate';
+            cert.id = 'certificate';
+            cert.innerHTML = `
+                <h2>🎉 Certificat de Réussite 🎉</h2>
+                <p>Félicitations ! Tu as terminé le</p>
+                <h3>Manuel Interactif Histoire-Géographie Primaire</h3>
+                <div class="trophy">🏆</div>
+                <p>Score final :</p>
+                <div class="score" id="finalScore">0%</div>
+                <div class="badge" id="finalBadge">Historien en herbe</div>
+                <p style="margin-top: 20px; opacity: 0.7;">Continue à explorer l'histoire et la géographie !</p>
+            `;
+            main.appendChild(cert);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-toggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.textContent = '🌙 Mode sombre';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ Mode clair';
+            }
+        }
+
+        function goToLesson(index) {
+            document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`lesson-${index}`).classList.add('active');
+            document.getElementById(`nav-${index}`).classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateLesson(lessonIndex) {
+            const lesson = lessons[lessonIndex];
+            let correct = 0;
+            
+            lesson.exercises.forEach((ex, exIndex) => {
+                const selected = document.querySelector(`input[name="q${lessonIndex}-${exIndex}"]:checked`);
+                const options = document.querySelectorAll(`[id^="opt-${lessonIndex}-${exIndex}-"]`);
+                
+                options.forEach((opt, optIndex) => {
+                    opt.classList.remove('correct', 'incorrect', 'selected');
+                    if (optIndex === ex.correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+                
+                if (selected) {
+                    const selectedIndex = parseInt(selected.value);
+                    if (selectedIndex === ex.correct) {
+                        correct++;
+                    } else {
+                        document.getElementById(`opt-${lessonIndex}-${exIndex}-${selectedIndex}`).classList.add('incorrect');
+                    }
+                }
+            });
+            
+            const percentage = Math.round((correct / lesson.exercises.length) * 100);
+            const feedback = document.getElementById(`feedback-${lessonIndex}`);
+            
+            if (percentage >= 70) {
+                feedback.className = 'feedback success';
+                feedback.innerHTML = `<strong>🎉 Excellent !</strong> Tu as obtenu ${correct}/${lesson.exercises.length} (${percentage}%). Tu peux passer à la leçon suivante !`;
+                completedLessons.add(lessonIndex);
+                lessonScores[lessonIndex] = percentage;
+                document.getElementById(`status-${lessonIndex}`).textContent = '✓';
+                document.getElementById(`nav-${lessonIndex}`).classList.add('completed');
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<strong>😕 Continue tes efforts !</strong> Tu as obtenu ${correct}/${lesson.exercises.length} (${percentage}%). Relis la leçon et réessaie !`;
+            }
+            
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = (completedLessons.size / lessons.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `${completedLessons.size}/${lessons.length} leçons`;
+            
+            if (completedLessons.size === lessons.length) {
+                showCertificate();
+            }
+        }
+
+        function showCertificate() {
+            const totalScore = Object.values(lessonScores).reduce((a, b) => a + b, 0);
+            const avgScore = Math.round(totalScore / lessons.length);
+            
+            document.getElementById('finalScore').textContent = avgScore + '%';
+            
+            let badge = 'Explorateur curieux';
+            if (avgScore >= 90) badge = '🥇 Maître historien';
+            else if (avgScore >= 80) badge = '🥈 Expert du passé';
+            else if (avgScore >= 70) badge = '🥉 Historien en herbe';
+            
+            document.getElementById('finalBadge').textContent = badge;
+            document.getElementById('certificate').classList.add('show');
+            
+            document.querySelectorAll('.lesson').forEach(l => l.classList.remove('active'));
+            document.getElementById('certificate').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        init();
+    </script>
+</body>
+</html>
