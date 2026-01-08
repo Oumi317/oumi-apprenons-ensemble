@@ -881,12 +881,18 @@
                            '💪 Révise encore un peu et réessaie !';
             
             alert(message + '\nScore : ' + score + '%');
+            
+            // Synchroniser avec l'application parent
+            syncProgressToParent();
         }
         
         function updateProgress() {
             const progress = Math.round((completedLessons.size / lessons.length) * 100);
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').textContent = progress + '%';
+            
+            // Sauvegarder dans localStorage
+            saveProgressToStorage();
         }
         
         function showCertificate() {
@@ -919,9 +925,78 @@
             
             document.getElementById('certificateMessage').textContent = message;
             document.getElementById('levelBadge').textContent = level;
+            
+            // Synchroniser le certificat obtenu
+            syncProgressToParent();
         }
         
+        // Fonction pour synchroniser la progression avec l'application parent
+        function syncProgressToParent() {
+            const avgScore = completedLessons.size > 0 
+                ? Math.round(Object.values(lessonScores).reduce((a, b) => a + b, 0) / completedLessons.size) 
+                : 0;
+            
+            const progressData = {
+                type: 'CREADOC_PROGRESS_UPDATE',
+                completedLessons: Array.from(completedLessons),
+                lessonScores: lessonScores,
+                totalLessons: lessons.length,
+                completedCount: completedLessons.size,
+                averageScore: avgScore,
+                certificateEarned: completedLessons.size === lessons.length
+            };
+            
+            // Envoyer au parent (l'application React)
+            if (window.parent !== window) {
+                window.parent.postMessage(progressData, '*');
+            }
+        }
+        
+        // Sauvegarder dans localStorage
+        function saveProgressToStorage() {
+            const data = {
+                completedLessons: Array.from(completedLessons),
+                lessonScores: lessonScores
+            };
+            localStorage.setItem('creadoc_maths_primaire', JSON.stringify(data));
+        }
+        
+        // Charger depuis localStorage
+        function loadProgressFromStorage() {
+            const saved = localStorage.getItem('creadoc_maths_primaire');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    completedLessons = new Set(data.completedLessons || []);
+                    lessonScores = data.lessonScores || {};
+                    
+                    // Mettre à jour l'UI
+                    data.completedLessons.forEach(index => {
+                        const navItems = document.querySelectorAll('.nav-item');
+                        if (navItems[index]) {
+                            navItems[index].classList.add('completed');
+                            navItems[index].querySelector('.nav-status').textContent = '✓';
+                        }
+                    });
+                    updateProgress();
+                } catch (e) {
+                    console.error('Erreur chargement progression:', e);
+                }
+            }
+        }
+        
+        // Écouter les messages du parent pour demander la synchronisation
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'REQUEST_PROGRESS') {
+                syncProgressToParent();
+            }
+        });
+        
         init();
+        loadProgressFromStorage();
+        
+        // Envoyer la progression initiale au parent
+        setTimeout(syncProgressToParent, 500);
     </script>
 </body>
 </html>

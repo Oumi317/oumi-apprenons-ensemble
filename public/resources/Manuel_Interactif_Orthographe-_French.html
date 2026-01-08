@@ -2333,6 +2333,7 @@
             
             result.style.display = "block";
             updateStats();
+            syncProgressToParent();
         }
         
         // Fonction pour afficher le certificat
@@ -2350,10 +2351,15 @@
             
             certificate.classList.add('show');
             
+            // Marquer comme certificat obtenu
+            gameState.lesson15Score = percentage;
+            
             // Scroll vers le certificat
             setTimeout(() => {
                 certificate.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
+            
+            syncProgressToParent();
         }
         
         // Fonction pour imprimer le certificat
@@ -2366,7 +2372,81 @@
             window.print();
         }
         
+        function syncProgressToParent() {
+            const totalLessons = 15;
+            const completedCount = gameState.completedLessons.length;
+            const avgScore = gameState.totalQuestions > 0 
+                ? Math.round((gameState.correctAnswers / gameState.totalQuestions) * 100) 
+                : 0;
+            
+            // Construire les scores par leçon
+            const lessonScores = {};
+            gameState.completedLessons.forEach(lessonNum => {
+                lessonScores[lessonNum - 1] = 100; // Score estimé pour leçons complétées
+            });
+            
+            const progressData = {
+                type: 'CREADOC_PROGRESS_UPDATE',
+                completedLessons: gameState.completedLessons.map(n => n - 1), // Convertir en indices 0-based
+                lessonScores: lessonScores,
+                totalLessons: totalLessons,
+                completedCount: completedCount,
+                averageScore: avgScore,
+                certificateEarned: completedCount === totalLessons && gameState.lesson15Score >= 70
+            };
+            
+            if (window.parent !== window) {
+                window.parent.postMessage(progressData, '*');
+            }
+        }
+        
+        function saveProgressToStorage() {
+            localStorage.setItem('creadoc_orthographe_french', JSON.stringify(gameState));
+        }
+        
+        function loadProgressFromStorage() {
+            const saved = localStorage.getItem('creadoc_orthographe_french');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    gameState = { ...gameState, ...data };
+                    
+                    // Mettre à jour l'UI
+                    gameState.completedLessons.forEach(lessonNum => {
+                        const navBtn = document.querySelectorAll('.nav-btn')[lessonNum - 1];
+                        if (navBtn) {
+                            navBtn.classList.add('completed');
+                        }
+                    });
+                    updateStats();
+                } catch (e) {
+                    console.error('Erreur chargement progression:', e);
+                }
+            }
+        }
+        
+        // Surcharger updateStats pour sauvegarder
+        const originalUpdateStats = updateStats;
+        function updateStats() {
+            document.getElementById('totalQuestions').textContent = gameState.totalQuestions;
+            document.getElementById('correctAnswers').textContent = gameState.correctAnswers;
+            document.getElementById('completedLessons').textContent = gameState.completedLessons.length + '/15';
+            
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = ((gameState.completedLessons.length / 15) * 100) + '%';
+            
+            saveProgressToStorage();
+        }
+        
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'REQUEST_PROGRESS') {
+                syncProgressToParent();
+            }
+        });
+        
+        loadProgressFromStorage();
         updateStats();
+        setTimeout(syncProgressToParent, 500);
     </script>
 </body>
 </html>

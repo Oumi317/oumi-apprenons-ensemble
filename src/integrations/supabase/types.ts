@@ -243,6 +243,69 @@ export type Database = {
           },
         ]
       }
+      interactive_resource_progress: {
+        Row: {
+          average_score: number | null
+          certificate_date: string | null
+          certificate_earned: boolean | null
+          completed_count: number | null
+          completed_lessons: Json | null
+          created_at: string | null
+          id: string
+          last_accessed_at: string | null
+          lesson_scores: Json | null
+          resource_id: string
+          student_id: string
+          total_lessons: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          average_score?: number | null
+          certificate_date?: string | null
+          certificate_earned?: boolean | null
+          completed_count?: number | null
+          completed_lessons?: Json | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          lesson_scores?: Json | null
+          resource_id: string
+          student_id: string
+          total_lessons?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          average_score?: number | null
+          certificate_date?: string | null
+          certificate_earned?: boolean | null
+          completed_count?: number | null
+          completed_lessons?: Json | null
+          created_at?: string | null
+          id?: string
+          last_accessed_at?: string | null
+          lesson_scores?: Json | null
+          resource_id?: string
+          student_id?: string
+          total_lessons?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interactive_resource_progress_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "interactive_resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "interactive_resource_progress_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       interactive_resources: {
         Row: {
           created_at: string | null
