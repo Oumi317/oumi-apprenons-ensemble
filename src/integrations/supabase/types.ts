@@ -249,7 +249,7 @@ export type Database = {
           description: string | null
           file_url: string
           id: string
-          lesson_id: string
+          lesson_id: string | null
           ordre_affichage: number | null
           slug: string
           titre: string
@@ -261,7 +261,7 @@ export type Database = {
           description?: string | null
           file_url: string
           id?: string
-          lesson_id: string
+          lesson_id?: string | null
           ordre_affichage?: number | null
           slug: string
           titre: string
@@ -273,7 +273,7 @@ export type Database = {
           description?: string | null
           file_url?: string
           id?: string
-          lesson_id?: string
+          lesson_id?: string | null
           ordre_affichage?: number | null
           slug?: string
           titre?: string
