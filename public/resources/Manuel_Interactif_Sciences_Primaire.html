@@ -773,12 +773,17 @@
             
             updateProgress();
             alert((score === 100 ? '🌟 Parfait !' : score >= 80 ? '👏 Très bien !' : score >= 70 ? '👍 Bien !' : '💪 Révise encore !') + '\nScore : ' + score + '%');
+            
+            // Synchroniser avec l'application parent
+            syncProgressToParent();
         }
         
         function updateProgress() {
             const progress = Math.round((completedLessons.size / lessons.length) * 100);
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressText').textContent = progress + '%';
+            
+            saveProgressToStorage();
         }
         
         function showCertificate() {
@@ -801,9 +806,68 @@
             
             document.getElementById('certificateMessage').textContent = message;
             document.getElementById('levelBadge').textContent = level;
+            
+            syncProgressToParent();
         }
         
+        function syncProgressToParent() {
+            const avgScore = completedLessons.size > 0 
+                ? Math.round(Object.values(lessonScores).reduce((a, b) => a + b, 0) / completedLessons.size) 
+                : 0;
+            
+            const progressData = {
+                type: 'CREADOC_PROGRESS_UPDATE',
+                completedLessons: Array.from(completedLessons),
+                lessonScores: lessonScores,
+                totalLessons: lessons.length,
+                completedCount: completedLessons.size,
+                averageScore: avgScore,
+                certificateEarned: completedLessons.size === lessons.length
+            };
+            
+            if (window.parent !== window) {
+                window.parent.postMessage(progressData, '*');
+            }
+        }
+        
+        function saveProgressToStorage() {
+            localStorage.setItem('creadoc_sciences_primaire', JSON.stringify({
+                completedLessons: Array.from(completedLessons),
+                lessonScores: lessonScores
+            }));
+        }
+        
+        function loadProgressFromStorage() {
+            const saved = localStorage.getItem('creadoc_sciences_primaire');
+            if (saved) {
+                try {
+                    const data = JSON.parse(saved);
+                    completedLessons = new Set(data.completedLessons || []);
+                    lessonScores = data.lessonScores || {};
+                    
+                    data.completedLessons.forEach(index => {
+                        const navItems = document.querySelectorAll('.nav-item');
+                        if (navItems[index]) {
+                            navItems[index].classList.add('completed');
+                            navItems[index].querySelector('.nav-status').textContent = '✓';
+                        }
+                    });
+                    updateProgress();
+                } catch (e) {
+                    console.error('Erreur chargement progression:', e);
+                }
+            }
+        }
+        
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'REQUEST_PROGRESS') {
+                syncProgressToParent();
+            }
+        });
+        
         init();
+        loadProgressFromStorage();
+        setTimeout(syncProgressToParent, 500);
     </script>
 </body>
 </html>
