@@ -28,6 +28,8 @@ import { Footer } from "@/components/Footer";
 import { SessionHistory } from "@/components/SessionHistory";
 import { ProgressPDFExport } from "@/components/ProgressPDFExport";
 import { ReferralSystem } from "@/components/ReferralSystem";
+import { CREADOCProgressCard } from "@/components/CREADOCProgressCard";
+import { useChildrenResourceProgress } from "@/hooks/useResourceProgress";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -38,6 +40,11 @@ const ParentDashboard = () => {
   const [totalSessions, setTotalSessions] = useState(0);
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  
+  // Hook for CREADOC manual progress
+  const { progress: creadocProgress, loading: creadocLoading } = useChildrenResourceProgress(
+    children.map(c => c.id)
+  );
 
   useEffect(() => {
     checkUser();
@@ -390,6 +397,16 @@ const ParentDashboard = () => {
                     averageGrade={14.5}
                   />
                 )}
+
+                {/* CREADOC Interactive Manuals Progress */}
+                {children.map((child) => (
+                  <CREADOCProgressCard
+                    key={child.id}
+                    studentName={child.prenom}
+                    progress={creadocProgress[child.id] || []}
+                    loading={creadocLoading}
+                  />
+                ))}
 
                 {/* Activity Feed */}
                 <ActivityFeed activities={recentActivities} />
