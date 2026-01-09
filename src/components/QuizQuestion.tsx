@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -24,6 +24,12 @@ interface QuizQuestionProps {
 export function QuizQuestion({ question, selectedAnswer, onAnswer }: QuizQuestionProps) {
   const [tempAnswer, setTempAnswer] = useState(selectedAnswer || "");
   const [showFeedback, setShowFeedback] = useState(!!selectedAnswer);
+
+  // Synchroniser les états quand la question change
+  useEffect(() => {
+    setTempAnswer(selectedAnswer || "");
+    setShowFeedback(!!selectedAnswer);
+  }, [question.id, selectedAnswer]);
 
   const handleSubmit = () => {
     if (!tempAnswer) return;

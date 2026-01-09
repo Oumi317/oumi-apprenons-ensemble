@@ -159,6 +159,7 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
       </CardHeader>
       <CardContent className="space-y-6">
         <QuizQuestion
+          key={currentQuestion.id}
           question={currentQuestion}
           selectedAnswer={answers[currentQuestion.id]?.answer}
           onAnswer={(answer, isCorrect) => handleAnswer(currentQuestion.id, answer, isCorrect)}
