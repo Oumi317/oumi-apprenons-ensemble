@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Lock, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -43,7 +43,9 @@ export function AddChildDialog({ onChildAdded }: AddChildDialogProps) {
     niveau_scolaire: "",
     besoins_specifiques: "",
     objectifs_apprentissage: "",
+    pin_code: "",
   });
+  const [showPin, setShowPin] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,7 +58,7 @@ export function AddChildDialog({ onChildAdded }: AddChildDialogProps) {
         throw new Error("Utilisateur non connecté");
       }
 
-      const { error } = await supabase
+      const { data: insertedStudent, error } = await supabase
         .from("students")
         .insert([{
           parent_id: user.id,
@@ -65,9 +67,19 @@ export function AddChildDialog({ onChildAdded }: AddChildDialogProps) {
           niveau_scolaire: formData.niveau_scolaire as any,
           besoins_specifiques: formData.besoins_specifiques || null,
           objectifs_apprentissage: formData.objectifs_apprentissage || null,
-        }]);
+        }])
+        .select('id')
+        .single();
 
       if (error) throw error;
+
+      // Si un PIN a été défini, le sauvegarder
+      if (formData.pin_code && formData.pin_code.length === 4 && insertedStudent) {
+        await supabase.rpc('set_student_pin', {
+          student_uuid: insertedStudent.id,
+          pin: formData.pin_code,
+        });
+      }
 
       toast({
         title: "Enfant ajouté avec succès !",
@@ -80,6 +92,7 @@ export function AddChildDialog({ onChildAdded }: AddChildDialogProps) {
         niveau_scolaire: "",
         besoins_specifiques: "",
         objectifs_apprentissage: "",
+        pin_code: "",
       });
       
       setOpen(false);
@@ -177,6 +190,44 @@ export function AddChildDialog({ onChildAdded }: AddChildDialogProps) {
               onChange={(e) => setFormData({ ...formData, objectifs_apprentissage: e.target.value })}
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="pin_code" className="flex items-center gap-2">
+              <Lock className="h-4 w-4" />
+              Code PIN (4 chiffres)
+            </Label>
+            <p className="text-xs text-muted-foreground mb-2">
+              Ce code permettra à votre enfant d'accéder à son espace d'apprentissage
+            </p>
+            <div className="relative">
+              <Input
+                id="pin_code"
+                type={showPin ? "text" : "password"}
+                inputMode="numeric"
+                pattern="\d{4}"
+                maxLength={4}
+                placeholder="● ● ● ●"
+                value={formData.pin_code}
+                onChange={(e) => setFormData({ 
+                  ...formData, 
+                  pin_code: e.target.value.replace(/\D/g, '').slice(0, 4) 
+                })}
+                className="text-center text-xl tracking-[0.5em] pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full"
+                onClick={() => setShowPin(!showPin)}
+              >
+                {showPin ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
+            {formData.pin_code && formData.pin_code.length !== 4 && (
+              <p className="text-xs text-warning">Le code PIN doit contenir 4 chiffres</p>
+            )}
           </div>
 
           <div className="flex gap-3 justify-end pt-4">

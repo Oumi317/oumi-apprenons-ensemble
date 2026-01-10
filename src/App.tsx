@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { PWAInstallPrompt } from "@/components/PWAInstallPrompt";
+import { ChildSessionProvider } from "@/contexts/ChildSessionContext";
 import Home from "./pages/Home";
 import Auth from "./pages/Auth";
 import ParentDashboard from "./pages/ParentDashboard";
@@ -27,18 +28,20 @@ import Notifications from "./pages/Notifications";
 import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import StudentDashboard from "./pages/StudentDashboard";
+import ChildProfiles from "./pages/ChildProfiles";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <ThemeProvider defaultTheme="light" storageKey="oumi-school-theme" attribute="class">
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <PWAInstallPrompt />
-        <BrowserRouter>
-          <Routes>
+      <ChildSessionProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <PWAInstallPrompt />
+          <BrowserRouter>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route 
@@ -139,8 +142,14 @@ const App = () => (
             <Route 
               path="/student-dashboard" 
               element={
-                <ProtectedRoute requiredRole="student">
-                  <StudentDashboard />
+                <StudentDashboard />
+              } 
+            />
+            <Route 
+              path="/child-profiles" 
+              element={
+                <ProtectedRoute requiredRole="parent">
+                  <ChildProfiles />
                 </ProtectedRoute>
               } 
             />
@@ -149,6 +158,7 @@ const App = () => (
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+      </ChildSessionProvider>
     </QueryClientProvider>
   </ThemeProvider>
 );
