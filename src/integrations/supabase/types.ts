@@ -1286,6 +1286,7 @@ export type Database = {
           niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage: string | null
           parent_id: string
+          pin_code: string | null
           prenom: string
           updated_at: string | null
           user_id: string | null
@@ -1302,6 +1303,7 @@ export type Database = {
           niveau_scolaire: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage?: string | null
           parent_id: string
+          pin_code?: string | null
           prenom: string
           updated_at?: string | null
           user_id?: string | null
@@ -1318,6 +1320,7 @@ export type Database = {
           niveau_scolaire?: Database["public"]["Enums"]["niveau_scolaire"]
           objectifs_apprentissage?: string | null
           parent_id?: string
+          pin_code?: string | null
           prenom?: string
           updated_at?: string | null
           user_id?: string | null
@@ -1852,6 +1855,14 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      set_student_pin: {
+        Args: { pin: string; student_uuid: string }
+        Returns: boolean
+      }
+      verify_student_pin: {
+        Args: { pin: string; student_uuid: string }
         Returns: boolean
       }
     }

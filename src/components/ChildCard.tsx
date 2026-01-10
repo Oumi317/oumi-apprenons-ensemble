@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Calendar, BookOpen, TrendingUp, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
+import { User, Calendar, BookOpen, TrendingUp, Sparkles, Play, Lock, Settings } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { SetPinDialog } from "./SetPinDialog";
 
 interface ChildCardProps {
   child: {
@@ -11,10 +13,15 @@ interface ChildCardProps {
     date_naissance: string;
     niveau_scolaire: string;
     besoins_specifiques?: string;
+    pin_code?: string | null;
   };
+  onPinUpdated?: () => void;
 }
 
-export function ChildCard({ child }: ChildCardProps) {
+export function ChildCard({ child, onPinUpdated }: ChildCardProps) {
+  const navigate = useNavigate();
+  const [showSetPinDialog, setShowSetPinDialog] = useState(false);
+
   const calculateAge = (birthDate: string) => {
     const today = new Date();
     const birth = new Date(birthDate);
@@ -72,6 +79,39 @@ export function ChildCard({ child }: ChildCardProps) {
         </div>
 
         <div className="pt-2 space-y-2">
+          {/* Bouton principal : Accéder à l'espace enfant */}
+          <Button 
+            className="w-full bg-gradient-primary"
+            onClick={() => navigate('/child-profiles')}
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Lancer l'espace enfant
+          </Button>
+
+          {/* Indicateur PIN */}
+          <div className="flex items-center justify-between text-sm">
+            {child.pin_code ? (
+              <span className="flex items-center gap-1 text-success">
+                <Lock className="h-3 w-3" />
+                PIN configuré
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-warning">
+                <Lock className="h-3 w-3" />
+                PIN non configuré
+              </span>
+            )}
+            <Button 
+              variant="ghost" 
+              size="sm"
+              className="h-6 px-2"
+              onClick={() => setShowSetPinDialog(true)}
+            >
+              <Settings className="h-3 w-3 mr-1" />
+              {child.pin_code ? 'Modifier' : 'Configurer'}
+            </Button>
+          </div>
+
           <div className="flex gap-2">
             <Button variant="outline" size="sm" className="flex-1">
               <Calendar className="h-4 w-4 mr-2" />
@@ -90,6 +130,15 @@ export function ChildCard({ child }: ChildCardProps) {
             </Button>
           </Link>
         </div>
+
+        {/* Dialog pour définir/modifier le PIN */}
+        <SetPinDialog
+          open={showSetPinDialog}
+          onOpenChange={setShowSetPinDialog}
+          studentId={child.id}
+          studentName={child.prenom}
+          onSuccess={onPinUpdated}
+        />
       </CardContent>
     </Card>
   );
