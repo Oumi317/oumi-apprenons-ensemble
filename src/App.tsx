@@ -29,6 +29,7 @@ import Onboarding from "./pages/Onboarding";
 import NotFound from "./pages/NotFound";
 import StudentDashboard from "./pages/StudentDashboard";
 import ChildProfiles from "./pages/ChildProfiles";
+import ChildLessons from "./pages/ChildLessons";
 
 const queryClient = new QueryClient();
 
@@ -143,6 +144,12 @@ const App = () => (
               path="/student-dashboard" 
               element={
                 <StudentDashboard />
+              } 
+            />
+            <Route 
+              path="/child-lessons" 
+              element={
+                <ChildLessons />
               } 
             />
             <Route 

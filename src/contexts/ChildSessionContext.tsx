@@ -3,13 +3,14 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 interface ChildSession {
   studentId: string;
   studentName: string;
+  niveauScolaire: string;
   isActive: boolean;
   expiresAt: Date;
 }
 
 interface ChildSessionContextType {
   childSession: ChildSession | null;
-  startChildSession: (studentId: string, studentName: string) => void;
+  startChildSession: (studentId: string, studentName: string, niveauScolaire: string) => void;
   endChildSession: () => void;
   isChildMode: boolean;
   timeRemaining: number; // en minutes
@@ -66,10 +67,11 @@ export function ChildSessionProvider({ children }: { children: React.ReactNode }
     return () => clearInterval(interval);
   }, [childSession]);
 
-  const startChildSession = useCallback((studentId: string, studentName: string) => {
+  const startChildSession = useCallback((studentId: string, studentName: string, niveauScolaire: string) => {
     const session: ChildSession = {
       studentId,
       studentName,
+      niveauScolaire,
       isActive: true,
       expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
     };

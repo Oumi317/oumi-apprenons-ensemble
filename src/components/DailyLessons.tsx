@@ -25,6 +25,7 @@ interface DailyLessonsProps {
   studentId: string;
   niveauScolaire: string;
   onXPGain?: (amount: number) => void;
+  isChildMode?: boolean;
 }
 
 const matiereColors: { [key: string]: string } = {
@@ -41,7 +42,7 @@ const difficulteLabels: { [key: string]: string } = {
   "difficile": "Difficile"
 };
 
-export function DailyLessons({ studentId, niveauScolaire, onXPGain }: DailyLessonsProps) {
+export function DailyLessons({ studentId, niveauScolaire, onXPGain, isChildMode = false }: DailyLessonsProps) {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -207,7 +208,7 @@ export function DailyLessons({ studentId, niveauScolaire, onXPGain }: DailyLesso
         
         {lessons.length > 0 && (
           <div className="pt-4 text-center">
-            <Link to="/lessons">
+            <Link to={isChildMode ? "/child-lessons" : "/lessons"}>
               <Button variant="outline" className="gap-2">
                 <BookOpen className="h-4 w-4" />
                 Voir toutes les leçons

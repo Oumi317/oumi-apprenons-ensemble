@@ -328,6 +328,7 @@ export default function StudentDashboard() {
                   studentId={student.id} 
                   niveauScolaire={student.niveau_scolaire}
                   onXPGain={handleXPGain}
+                  isChildMode={true}
                 />
               </div>
               <div className="space-y-6">
