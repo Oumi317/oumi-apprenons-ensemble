@@ -92,7 +92,7 @@ export default function ChildProfiles() {
 
       if (data) {
         // PIN correct, démarrer la session enfant
-        startChildSession(selectedChild.id, selectedChild.prenom);
+        startChildSession(selectedChild.id, selectedChild.prenom, selectedChild.niveau_scolaire);
         toast.success(`Bienvenue ${selectedChild.prenom} ! 🎉`);
         navigate('/student-dashboard');
       } else {
