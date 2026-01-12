@@ -50,16 +50,25 @@ const TutorProfile = () => {
   const loadTutor = async () => {
     if (!id) return;
 
+    // Select only public-safe fields - exclude notes_admin and user_id for public view
     const { data, error } = await supabase
       .from("tutors")
       .select(`
-        *,
+        id,
+        matieres_enseignees,
+        tarif_horaire_eur,
+        annees_experience,
+        note_moyenne,
+        nombre_sessions,
+        bio,
+        diplomes,
+        certifications,
+        disponibilites,
+        verification_casier,
         profiles:user_id (
           prenom,
           nom,
-          pays,
-          telephone,
-          email
+          pays
         )
       `)
       .eq("id", id)
