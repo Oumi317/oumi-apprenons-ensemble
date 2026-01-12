@@ -75,10 +75,25 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
   };
 
   const submitQuiz = async () => {
+    // Vérifier l'authentification avant de soumettre
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      toast({
+        title: "Session expirée",
+        description: "Veuillez vous reconnecter pour sauvegarder vos résultats",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const score = Object.values(answers).filter((a) => a.is_correct).length;
     const maxScore = questions.length;
     const percentage = (score / maxScore) * 100;
     const timeSpent = Math.floor((Date.now() - startTime) / 1000);
+
+    console.log("Submitting quiz:", { studentId, lessonId, score, maxScore, userId: user.id });
 
     const { error } = await supabase.from("quiz_attempts").insert({
       student_id: studentId,
@@ -91,10 +106,10 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
     });
 
     if (error) {
-      console.error("Error submitting quiz:", error);
+      console.error("Error submitting quiz:", error.message, error.code, error.details, error.hint);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder les résultats",
+        description: error.message || "Impossible de sauvegarder les résultats",
         variant: "destructive",
       });
       return;
