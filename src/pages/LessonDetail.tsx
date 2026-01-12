@@ -34,6 +34,7 @@ const LessonDetail = () => {
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
   const [currentVideoTime, setCurrentVideoTime] = useState(0);
   const [interactiveResources, setInteractiveResources] = useState<any[]>([]);
+  const [lessonResources, setLessonResources] = useState<any[]>([]);
 
   useEffect(() => {
     checkUser();
@@ -79,9 +80,31 @@ const LessonDetail = () => {
       setLesson(data);
       if (data) {
         await loadInteractiveResources(data.id);
+        await loadLessonResources(data.id);
       }
     }
     setLoading(false);
+  };
+
+  const loadLessonResources = async (lessonId: string) => {
+    const { data } = await supabase
+      .from("lesson_resources")
+      .select("*")
+      .eq("lesson_id", lessonId)
+      .order("ordre_affichage", { ascending: true });
+
+    if (data) {
+      // Transform data to match the expected format for LessonResources component
+      const transformedResources = data.map((resource) => ({
+        id: resource.id,
+        titre: resource.titre,
+        type: resource.type as "pdf" | "document" | "image" | "spreadsheet" | "link" | "interactive",
+        url: resource.file_url,
+        taille: resource.taille,
+        description: resource.description,
+      }));
+      setLessonResources(transformedResources);
+    }
   };
 
   const loadInteractiveResources = async (lessonId: string) => {
@@ -405,26 +428,9 @@ const LessonDetail = () => {
                   )}
 
                   {/* Lesson Resources */}
-                  <LessonResources
-                    resources={[
-                      {
-                        id: "1",
-                        titre: "Fiche de révision - " + lesson.titre,
-                        type: "pdf" as const,
-                        url: "#",
-                        taille: "2.5 MB",
-                        description: "Résumé des points clés de la leçon",
-                      },
-                      {
-                        id: "2",
-                        titre: "Exercices pratiques",
-                        type: "document" as const,
-                        url: "#",
-                        taille: "1.8 MB",
-                        description: "Exercices d'application pour s'entraîner",
-                      },
-                    ]}
-                  />
+                  {lessonResources.length > 0 && (
+                    <LessonResources resources={lessonResources} />
+                  )}
                 </TabsContent>
 
                 <TabsContent value="quiz" className="mt-6">

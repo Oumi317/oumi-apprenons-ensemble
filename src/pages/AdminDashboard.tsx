@@ -8,12 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
-import { Users, GraduationCap, BookOpen, Calendar, ArrowLeft, Sparkles, Wand2 } from "lucide-react";
+import { Users, GraduationCap, BookOpen, Calendar, Sparkles, Wand2, FileText } from "lucide-react";
 import AdminResourceUpload from "@/components/AdminResourceUpload";
 import AdminResourceGenerator from "@/components/AdminResourceGenerator";
 import AdminLessonManager from "@/components/AdminLessonManager";
 import AdminTutorManager from "@/components/AdminTutorManager";
 import AdminUserManager from "@/components/AdminUserManager";
+import AdminLessonResourceUpload from "@/components/AdminLessonResourceUpload";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { Footer } from "@/components/Footer";
 
@@ -255,6 +256,10 @@ export default function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="lessons-list">Liste des leçons</TabsTrigger>
             <TabsTrigger value="sessions">Sessions</TabsTrigger>
+            <TabsTrigger value="lesson-resources">
+              <FileText className="h-4 w-4 mr-2" />
+              Ressources PDF
+            </TabsTrigger>
             <TabsTrigger value="resources">
               <Sparkles className="h-4 w-4 mr-2" />
               Ressources interactives
@@ -371,6 +376,13 @@ export default function AdminDashboard() {
                 </Table>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="lesson-resources">
+            <AdminLessonResourceUpload 
+              lessons={lessons}
+              onUploadSuccess={fetchAdminData}
+            />
           </TabsContent>
 
           <TabsContent value="resources">

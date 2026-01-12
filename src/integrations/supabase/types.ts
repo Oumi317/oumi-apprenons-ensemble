@@ -451,6 +451,53 @@ export type Database = {
           },
         ]
       }
+      lesson_resources: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_url: string
+          id: string
+          lesson_id: string
+          ordre_affichage: number | null
+          taille: string | null
+          titre: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_url: string
+          id?: string
+          lesson_id: string
+          ordre_affichage?: number | null
+          taille?: string | null
+          titre: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_url?: string
+          id?: string
+          lesson_id?: string
+          ordre_affichage?: number | null
+          taille?: string | null
+          titre?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_resources_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           alignement_socle_commun: string | null
