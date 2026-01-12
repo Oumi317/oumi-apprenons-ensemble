@@ -1,10 +1,37 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.23.8";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const requestSchema = z.object({
+  messages: z.array(z.object({
+    role: z.enum(['user', 'assistant', 'system']),
+    content: z.string().min(1).max(10000)
+  })).min(1).max(100),
+  conversationId: z.string().uuid().optional().nullable(),
+  studentId: z.string().uuid().optional().nullable(),
+  studentName: z.string().max(100).optional().nullable(),
+  mode: z.enum(['explain_simple', 'give_example', 'make_summary', 'quick_quiz', 'default']).optional().nullable()
+});
+
+// Sanitize student name to prevent prompt injection
+function sanitizeStudentName(name: string | null | undefined): string {
+  if (!name) return 'un enfant';
+  
+  // Remove any characters that could be used for prompt injection
+  // Only allow letters (including accented), spaces, hyphens, and apostrophes
+  const sanitized = name
+    .replace(/[^a-zA-ZÀ-ÿ\s\-']/g, '')
+    .substring(0, 50)
+    .trim();
+  
+  return sanitized || 'un enfant';
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,15 +39,30 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, studentId, studentName, mode } = await req.json();
+    const rawBody = await req.json();
     
-    if (!messages || !Array.isArray(messages)) {
-      throw new Error('Messages array is required');
+    // Validate input
+    const parseResult = requestSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      console.error('Validation error:', parseResult.error.errors);
+      return new Response(
+        JSON.stringify({ error: 'Données invalides. Vérifie ta demande ! 📝' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
+    
+    const { messages, conversationId, studentId, studentName, mode } = parseResult.data;
+    
+    // Sanitize the student name to prevent prompt injection
+    const safeName = sanitizeStudentName(studentName);
 
     const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
     if (!LOVABLE_API_KEY) {
-      throw new Error('LOVABLE_API_KEY is not configured');
+      console.error('LOVABLE_API_KEY not configured');
+      return new Response(
+        JSON.stringify({ error: 'Service temporairement indisponible. Réessaie plus tard ! 🔧' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     // Adaptive system prompts based on mode
@@ -29,7 +71,7 @@ serve(async (req) => {
     switch (mode) {
       case 'explain_simple':
         systemPrompt = `Tu es Oumi, un assistant pédagogique adorable et patient pour les enfants de 6 à 12 ans.
-Tu parles à ${studentName || 'un enfant'}.
+Tu parles à ${safeName}.
 
 🎯 TON OBJECTIF: Expliquer les concepts comme si l'enfant avait 6 ans.
 
@@ -48,7 +90,7 @@ Tu parles à ${studentName || 'un enfant'}.
         
       case 'give_example':
         systemPrompt = `Tu es Oumi, un assistant pédagogique créatif pour les enfants.
-Tu parles à ${studentName || 'un enfant'}.
+Tu parles à ${safeName}.
 
 🎯 TON OBJECTIF: Donner des exemples concrets et amusants.
 
@@ -67,7 +109,7 @@ Tu parles à ${studentName || 'un enfant'}.
         
       case 'make_summary':
         systemPrompt = `Tu es Oumi, un assistant qui fait des résumés parfaits pour les enfants.
-Tu parles à ${studentName || 'un enfant'}.
+Tu parles à ${safeName}.
 
 🎯 TON OBJECTIF: Résumer en 3-5 points clés maximum.
 
@@ -87,7 +129,7 @@ Tu parles à ${studentName || 'un enfant'}.
         
       case 'quick_quiz':
         systemPrompt = `Tu es Oumi, un assistant qui adore faire des petits quiz amusants !
-Tu parles à ${studentName || 'un enfant'}.
+Tu parles à ${safeName}.
 
 🎯 TON OBJECTIF: Poser 3 questions faciles et encourageantes.
 
@@ -107,7 +149,7 @@ Tu parles à ${studentName || 'un enfant'}.
       default:
         // Default conversational mode
         systemPrompt = `Tu es Oumi, un assistant pédagogique intelligent, chaleureux et patient pour la plateforme Oumi'School.
-Tu parles à ${studentName || 'un élève'}.
+Tu parles à ${safeName}.
 
 🎯 TON RÔLE: Aider les élèves à apprendre et comprendre leurs leçons.
 
@@ -133,7 +175,7 @@ Tu parles à ${studentName || 'un élève'}.
 - Termine souvent par une question ou un encouragement`;
     }
 
-    console.log(`AI Tutor called - Mode: ${mode || 'default'}, Student: ${studentName}`);
+    console.log(`AI Tutor called - Mode: ${mode || 'default'}, Student: [sanitized]`);
 
     // Call Lovable AI
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -168,9 +210,11 @@ Tu parles à ${studentName || 'un élève'}.
           { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      const errorText = await response.text();
-      console.error('AI Gateway error:', response.status, errorText);
-      throw new Error('Erreur lors de la communication avec l\'IA');
+      console.error('AI Gateway error:', response.status);
+      return new Response(
+        JSON.stringify({ error: 'Erreur lors de la communication avec l\'IA. Réessaie ! 🔧' }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const data = await response.json();
@@ -180,32 +224,35 @@ Tu parles à ${studentName || 'un élève'}.
 
     // Save messages to database if conversationId and studentId provided
     if (conversationId && studentId) {
-      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
+      const supabaseUrl = Deno.env.get('SUPABASE_URL');
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+      
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // Save user message
-      const userMessage = messages[messages.length - 1];
-      await supabase.from('ai_messages').insert({
-        conversation_id: conversationId,
-        role: 'user',
-        content: userMessage.content,
-      });
+        // Save user message
+        const userMessage = messages[messages.length - 1];
+        await supabase.from('ai_messages').insert({
+          conversation_id: conversationId,
+          role: 'user',
+          content: userMessage.content,
+        });
 
-      // Save assistant message
-      await supabase.from('ai_messages').insert({
-        conversation_id: conversationId,
-        role: 'assistant',
-        content: aiMessage,
-      });
+        // Save assistant message
+        await supabase.from('ai_messages').insert({
+          conversation_id: conversationId,
+          role: 'assistant',
+          content: aiMessage,
+        });
 
-      // Update conversation timestamp
-      await supabase
-        .from('ai_conversations')
-        .update({ updated_at: new Date().toISOString() })
-        .eq('id', conversationId);
-        
-      console.log('Messages saved to database');
+        // Update conversation timestamp
+        await supabase
+          .from('ai_conversations')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', conversationId);
+          
+        console.log('Messages saved to database');
+      }
     }
 
     return new Response(
@@ -213,9 +260,9 @@ Tu parles à ${studentName || 'un élève'}.
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
-    console.error('Error in ai-tutor function:', error);
+    console.error('Error in ai-tutor function:', error instanceof Error ? error.message : 'Unknown error');
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Oups ! Quelque chose s\'est mal passé. Réessaie ! 🔧' }),
+      JSON.stringify({ error: 'Oups ! Quelque chose s\'est mal passé. Réessaie ! 🔧' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
