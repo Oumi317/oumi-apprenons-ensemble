@@ -1,13 +1,19 @@
 project_id = "lizcpvxixahyzggwjnnq"
 
 [functions.ai-tutor]
-verify_jwt = true
+verify_jwt = false
 
 [functions.braintree-token]
-verify_jwt = true
+verify_jwt = false
 
 [functions.braintree-payment]
-verify_jwt = true
+verify_jwt = false
 
 [functions.create-tutor]
-verify_jwt = true
+verify_jwt = false
+
+[functions.check-upcoming-sessions]
+verify_jwt = false
+
+[functions.create-message-notification]
+verify_jwt = false
