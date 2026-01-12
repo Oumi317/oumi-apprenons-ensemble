@@ -296,7 +296,7 @@ export default function InteractiveResource() {
         <iframe
           srcDoc={htmlContent}
           className="w-full h-full border-0"
-          sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+          sandbox="allow-scripts allow-forms allow-popups allow-modals"
           title={resource.titre}
         />
       </main>

@@ -214,7 +214,7 @@ export function InteractiveResourceViewer({
             <iframe
               srcDoc={htmlContent}
               className="w-full h-full border-0"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+              sandbox="allow-scripts allow-forms allow-popups allow-modals"
               title={titre}
               style={{ 
                 height: isFullscreen ? "calc(100vh - 80px)" : "calc(90vh - 80px)" 
