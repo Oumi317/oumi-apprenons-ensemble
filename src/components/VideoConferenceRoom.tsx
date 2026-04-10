@@ -43,7 +43,7 @@ export default function VideoConferenceRoom() {
 
   // Timer for session duration
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval>;
     if (sessionStarted) {
       interval = setInterval(() => {
         setTimeElapsed(prev => prev + 1);
