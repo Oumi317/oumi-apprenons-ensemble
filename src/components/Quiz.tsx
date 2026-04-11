@@ -13,8 +13,6 @@ interface Question {
   question: string;
   type: string;
   options?: any;
-  correct_answer: string;
-  explanation?: string;
   points: number;
 }
 
@@ -55,7 +53,7 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
       return;
     }
 
-    setQuestions(data || []);
+    setQuestions((data as any[]) || []);
     setLoading(false);
   };
 
