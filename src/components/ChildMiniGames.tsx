@@ -66,15 +66,14 @@ export function ChildMiniGames({ studentId, niveauScolaire, onXPGain }: ChildMin
 
       // Get random questions from quiz_questions_safe view
       const { data: questionsData } = await supabase
-        .from("quiz_questions_safe" as any)
+        .from("quiz_questions" as any)
         .select("id, question, type, options, points")
         .in("lesson_id", ids)
         .limit(20);
 
       if (questionsData && questionsData.length > 0) {
-        // Shuffle and pick QUIZ_SIZE
-        const shuffled = [...questionsData].sort(() => Math.random() - 0.5);
-        setQuestions(shuffled.slice(0, QUIZ_SIZE));
+        const shuffled = (questionsData as any[]).sort(() => Math.random() - 0.5);
+        setQuestions(shuffled.slice(0, QUIZ_SIZE) as QuizQuestion[]);
       }
     } catch (error) {
       console.error("Error loading questions:", error);
