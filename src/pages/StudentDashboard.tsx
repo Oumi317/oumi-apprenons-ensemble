@@ -118,7 +118,7 @@ export default function StudentDashboard() {
       // Load student data using the session studentId
       const { data: studentData, error: studentError } = await supabase
         .from("students")
-        .select("*")
+        .select("id, parent_id, user_id, prenom, date_naissance, niveau_scolaire, besoins_specifiques, objectifs_apprentissage, niveau, experience_points, current_streak, longest_streak, created_at, updated_at")
         .eq("id", studentId)
         .single();
 
