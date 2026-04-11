@@ -13,8 +13,6 @@ interface Question {
   question: string;
   type: string;
   options?: any;
-  correct_answer: string;
-  explanation?: string;
   points: number;
 }
 
@@ -40,7 +38,7 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
 
   const loadQuestions = async () => {
     const { data, error } = await supabase
-      .from("quiz_questions")
+      .from("quiz_questions_safe" as any)
       .select("*")
       .eq("lesson_id", lessonId)
       .order("ordre", { ascending: true });
@@ -55,7 +53,7 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
       return;
     }
 
-    setQuestions(data || []);
+    setQuestions((data as any[]) || []);
     setLoading(false);
   };
 

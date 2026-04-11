@@ -64,7 +64,7 @@ const ParentDashboard = () => {
   const loadChildren = async (userId: string) => {
     const { data, error } = await supabase
       .from("students")
-      .select("*")
+      .select("id, parent_id, user_id, prenom, date_naissance, niveau_scolaire, besoins_specifiques, objectifs_apprentissage, niveau, experience_points, current_streak, longest_streak, created_at, updated_at")
       .eq("parent_id", userId)
       .order("created_at", { ascending: false });
 

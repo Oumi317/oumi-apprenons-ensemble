@@ -9,7 +9,7 @@ import confetti from "canvas-confetti";
 interface Question {
   id: string;
   question: string;
-  correct_answer: string;
+  correct_answer?: string;
   points: number;
 }
 
