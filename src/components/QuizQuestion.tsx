@@ -31,11 +31,27 @@ export function QuizQuestion({ question, selectedAnswer, onAnswer }: QuizQuestio
     setShowFeedback(!!selectedAnswer);
   }, [question.id, selectedAnswer]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!tempAnswer) return;
     
-    const isCorrect = tempAnswer.toLowerCase().trim() === question.correct_answer.toLowerCase().trim();
-    onAnswer(tempAnswer, isCorrect);
+    // Verify answer server-side via RPC
+    const { data, error } = await supabase.rpc('verify_quiz_answer', {
+      p_question_id: question.id,
+      p_answer: tempAnswer,
+    });
+
+    if (error || !data) {
+      console.error("Error verifying answer:", error);
+      return;
+    }
+
+    const result = data as { is_correct: boolean; correct_answer: string; explanation: string; points: number };
+    setVerifiedAnswer({
+      correct_answer: result.correct_answer,
+      explanation: result.explanation,
+      is_correct: result.is_correct,
+    });
+    onAnswer(tempAnswer, result.is_correct);
     setShowFeedback(true);
   };
 

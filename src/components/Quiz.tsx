@@ -40,7 +40,7 @@ export function Quiz({ lessonId, studentId, onComplete, onXPGain }: QuizProps) {
 
   const loadQuestions = async () => {
     const { data, error } = await supabase
-      .from("quiz_questions")
+      .from("quiz_questions_safe" as any)
       .select("*")
       .eq("lesson_id", lessonId)
       .order("ordre", { ascending: true });
