@@ -1,74 +1,49 @@
 
-## Plan pour sécuriser les fichiers .env
 
-### Problème actuel
-Le fichier `.gitignore` actuel n'exclut pas les fichiers `.env`, ce qui représente un **risque de sécurité majeur** car les clés d'API pourraient être exposées dans le dépôt Git.
+## Refonte de l'espace enfant (Student Dashboard)
 
-### Actions à réaliser
+### Objectif
+Transformer le tableau de bord enfant en un espace structuré avec 4 sections principales : **Planning**, **Mes Leçons**, **Défis & Mini-jeux**, et **Classement & Gamification**.
 
-#### 1. Modifier le fichier `.gitignore`
+### Architecture actuelle
+Le `StudentDashboard.tsx` utilise déjà un système d'onglets (Tabs) avec : Apprendre, Assistant IA, Défis, Classement, Succès. Les composants existants (`DailyLessons`, `WeeklyChallenges`, `StudentLeaderboard`, `AchievementBadges`, etc.) sont fonctionnels.
 
-Ajouter une section dédiée aux variables d'environnement :
+### Plan de refonte
 
-```text
-# Environment variables
-.env
-.env.local
-.env.development
-.env.development.local
-.env.test
-.env.test.local
-.env.production
-.env.production.local
-.env*.local
-```
+#### 1. Nouveau composant `ChildPlanning.tsx`
+- Calendrier visuel de la semaine avec les sessions tuteur à venir (depuis `sessions_tutorat`)
+- Liste des leçons assignées par le parent (depuis `lessons` filtré par `niveau_scolaire`)
+- Code couleur par matière (réutilisation des `matiereColors` existants)
+- Indicateur visuel "aujourd'hui" / "demain" / "cette semaine"
 
-#### 2. Créer le fichier `.env.example`
+#### 2. Refonte du `StudentDashboard.tsx`
+- Restructurer les onglets en 4 sections claires :
+  - **Planning** : nouveau composant `ChildPlanning` (calendrier + sessions + leçons à venir)
+  - **Mes Leçons** : intégrer le contenu de `ChildLessons` directement dans l'onglet (filtrage par matière, progression, accès direct)
+  - **Défis** : conserver `WeeklyChallenges` existant, ajouter une section mini-jeux visuels
+  - **Classement** : combiner `StudentLeaderboard` + `AchievementBadges` + stats de gamification (XP, niveau, streak) dans un onglet unifié
+- Garder la barre de session enfant en haut (timer, nom, bouton quitter)
+- Conserver les stats rapides (Niveau, XP, Streak, Succès)
+- Garder le système XP popup et les subscriptions realtime
 
-Ce fichier servira de template pour les développeurs, avec des valeurs vides ou d'exemple :
+#### 3. Composant `ChildMiniGames.tsx`
+- Section mini-jeux dans l'onglet Défis
+- Quiz rapides aléatoires (réutilisation des `quiz_questions` existantes)
+- Défis chronométrés avec récompenses XP
 
-```text
-# Lovable Cloud Configuration (auto-populated by Lovable)
-VITE_SUPABASE_PROJECT_ID="your_project_id"
-VITE_SUPABASE_PUBLISHABLE_KEY="your_anon_key"
-VITE_SUPABASE_URL="https://your-project.supabase.co"
+#### 4. Mise à jour des routes
+- Conserver `/student-dashboard` comme point d'entrée principal
+- `/child-lessons` redirigera vers le dashboard (onglet leçons) pour éviter la duplication
 
-# Note: Les variables ci-dessus sont automatiquement configurées par Lovable Cloud.
-# Ne modifiez pas ce fichier manuellement.
-```
-
-### Variables d'environnement utilisées dans le projet
-
-| Variable | Utilisation | Stockage |
-|----------|-------------|----------|
-| `VITE_SUPABASE_PROJECT_ID` | ID du projet | `.env` (frontend) |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | Clé publique | `.env` (frontend) |
-| `VITE_SUPABASE_URL` | URL du backend | `.env` (frontend) |
-| `SUPABASE_URL` | URL (edge functions) | Auto-injecté |
-| `SUPABASE_ANON_KEY` | Clé anonyme | Auto-injecté |
-| `SUPABASE_SERVICE_ROLE_KEY` | Clé admin | Auto-injecté |
-| `BRAINTREE_MERCHANT_ID` | Paiements | Secrets Lovable |
-| `BRAINTREE_PUBLIC_KEY` | Paiements | Secrets Lovable |
-| `BRAINTREE_PRIVATE_KEY` | Paiements | Secrets Lovable |
-| `BRAINTREE_ENVIRONMENT` | Environnement | Secrets Lovable |
-| `LOVABLE_API_KEY` | AI Tutor | Secrets Lovable |
-
-### Note importante
-
-Dans Lovable Cloud :
-- Les variables `VITE_*` dans `.env` sont **publiques** (accessibles côté client) - elles contiennent des clés publiables, donc pas de risque
-- Les secrets sensibles (Braintree, etc.) sont stockés dans les **Secrets Lovable** et injectés automatiquement dans les edge functions
-- Le fichier `.env` est auto-généré par Lovable, mais il est préférable de l'exclure du dépôt Git pour les bonnes pratiques
-
-### Fichiers à modifier/créer
+### Fichiers impactés
 
 | Fichier | Action |
 |---------|--------|
-| `.gitignore` | Ajouter les exclusions `.env*` |
-| `.env.example` | Créer avec les variables template |
+| `src/components/ChildPlanning.tsx` | Créer - calendrier hebdo + sessions |
+| `src/components/ChildMiniGames.tsx` | Créer - mini-jeux dans onglet défis |
+| `src/pages/StudentDashboard.tsx` | Refonte - 4 onglets restructurés |
+| `src/pages/ChildLessons.tsx` | Redirection vers dashboard |
 
-### Résultat attendu
+### Aucune migration requise
+Toutes les données nécessaires existent déjà dans les tables `sessions_tutorat`, `lessons`, `student_progress`, `quiz_questions`, `achievements`, `student_challenges`.
 
-- Tous les fichiers `.env` sont exclus du suivi Git
-- Les développeurs ont un template `.env.example` pour comprendre les variables nécessaires
-- Meilleure hygiène de sécurité du dépôt
