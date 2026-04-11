@@ -1878,7 +1878,50 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      quiz_questions_safe: {
+        Row: {
+          created_at: string | null
+          id: string | null
+          lesson_id: string | null
+          options: Json | null
+          ordre: number | null
+          points: number | null
+          question: string | null
+          type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string | null
+          lesson_id?: string | null
+          options?: Json | null
+          ordre?: number | null
+          points?: number | null
+          question?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string | null
+          lesson_id?: string | null
+          options?: Json | null
+          ordre?: number | null
+          points?: number | null
+          question?: string | null
+          type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       apply_referral: {
@@ -1907,6 +1950,10 @@ export type Database = {
       set_student_pin: {
         Args: { pin: string; student_uuid: string }
         Returns: boolean
+      }
+      verify_quiz_answer: {
+        Args: { p_answer: string; p_question_id: string }
+        Returns: Json
       }
       verify_student_pin: {
         Args: { pin: string; student_uuid: string }
