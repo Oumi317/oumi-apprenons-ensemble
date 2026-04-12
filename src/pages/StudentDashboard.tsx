@@ -393,6 +393,7 @@ export default function StudentDashboard() {
       </main>
 
       <Footer />
+      <LessonViewerDialog lessonId={viewerLessonId} open={viewerOpen} onOpenChange={(o) => { setViewerOpen(o); if (!o) setViewerLessonId(null); }} />
       <XPGainPopup amount={xpGain.amount} show={xpGain.show} onComplete={() => setXpGain({ ...xpGain, show: false })} />
     </div>
   );
