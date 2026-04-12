@@ -1,0 +1,1 @@
+UPDATE weekly_challenges SET date_debut = '2026-04-06'::date, date_fin = '2026-04-13'::date;
