@@ -291,7 +291,7 @@ export default function StudentDashboard() {
           <TabsContent value="planning" className="space-y-6">
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2">
-                <ChildPlanning studentId={student.id} niveauScolaire={student.niveau_scolaire} />
+                <ChildPlanning studentId={student.id} niveauScolaire={student.niveau_scolaire} onOpenLesson={(id) => { setViewerLessonId(id); setViewerOpen(true); }} />
               </div>
               <div className="space-y-6">
                 <LevelProgress level={student.niveau} experience={student.experience_points} studentName={student.prenom} />
@@ -330,7 +330,7 @@ export default function StudentDashboard() {
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredLessons.map((lesson, i) => (
                   <motion.div key={lesson.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-                    <Link to={`/lessons/${lesson.id}`}>
+                    <div onClick={() => { setViewerLessonId(lesson.id); setViewerOpen(true); }}>
                       <Card className={`h-full transition-all hover:shadow-md hover:-translate-y-0.5 cursor-pointer ${lesson.completed ? "border-green-300 bg-green-50/30 dark:bg-green-900/10" : "hover:border-primary/50"}`}>
                         <CardHeader className="pb-2">
                           <div className="flex items-start justify-between">
@@ -361,7 +361,7 @@ export default function StudentDashboard() {
                           </Button>
                         </CardContent>
                       </Card>
-                    </Link>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -370,6 +370,7 @@ export default function StudentDashboard() {
 
           {/* DÉFIS */}
           <TabsContent value="defis" className="space-y-6">
+            <ChildRiddle onXPGain={handleXPGain} />
             <div className="grid lg:grid-cols-2 gap-6">
               <WeeklyChallenges studentId={student.id} />
               <ChildMiniGames studentId={student.id} niveauScolaire={student.niveau_scolaire} onXPGain={handleXPGain} />
