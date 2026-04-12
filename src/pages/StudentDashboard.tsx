@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, BookOpen, Trophy, Target, Flame, Users, LogOut, Clock, Calendar, Gamepad2, Play, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
@@ -11,6 +11,8 @@ import { XPGainPopup } from "@/components/XPGainPopup";
 import { StudentLeaderboard } from "@/components/StudentLeaderboard";
 import { ChildPlanning } from "@/components/ChildPlanning";
 import { ChildMiniGames } from "@/components/ChildMiniGames";
+import { ChildRiddle } from "@/components/ChildRiddle";
+import { LessonViewerDialog } from "@/components/LessonViewerDialog";
 import { Footer } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
