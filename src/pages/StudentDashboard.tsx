@@ -89,6 +89,8 @@ export default function StudentDashboard() {
   const [xpGain, setXpGain] = useState<{ amount: number; show: boolean }>({ amount: 0, show: false });
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [selectedMatiere, setSelectedMatiere] = useState<string | null>(null);
+  const [viewerLessonId, setViewerLessonId] = useState<string | null>(null);
+  const [viewerOpen, setViewerOpen] = useState(false);
 
   useEffect(() => {
     if (!isChildMode || !childSession) {
