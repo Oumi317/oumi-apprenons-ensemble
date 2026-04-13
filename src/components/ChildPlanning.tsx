@@ -182,9 +182,10 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
           <div className="grid grid-cols-7 gap-2">
             {weekDays.map((day, i) => {
               const daySessions = getSessionsForDay(day);
+              const dayAssignments = getAssignmentsForDay(day);
               const isPast = isBefore(day, now) && !isToday(day);
               const today = isToday(day);
-              const hasContent = daySessions.length > 0;
+              const hasContent = daySessions.length > 0 || dayAssignments.length > 0;
 
               return (
                 <motion.div
