@@ -61,6 +61,7 @@ const matiereColors: Record<string, string> = {
 export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: ChildPlanningProps) {
   const [sessions, setSessions] = useState<TutorSession[]>([]);
   const [lessons, setLessons] = useState<PlanningLesson[]>([]);
+  const [assignments, setAssignments] = useState<LessonAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<PlanningLesson | null>(null);
