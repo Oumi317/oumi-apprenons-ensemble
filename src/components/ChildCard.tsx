@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { User, Calendar, BookOpen, TrendingUp, Sparkles, Play, Lock, Settings } from "lucide-react";
+import { User, Calendar, BookOpen, TrendingUp, Play, Lock, Settings } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { SetPinDialog } from "./SetPinDialog";
+import { AssignLessonDialog } from "./AssignLessonDialog";
 
 interface ChildCardProps {
   child: {
@@ -123,12 +124,11 @@ export function ChildCard({ child, onPinUpdated }: ChildCardProps) {
               </Button>
             </Link>
           </div>
-          <Link to={`/ai-tutor/${child.id}`} className="block">
-            <Button variant="secondary" size="sm" className="w-full">
-              <Sparkles className="h-4 w-4 mr-2" />
-              Assistant IA
-            </Button>
-          </Link>
+          <AssignLessonDialog
+            childId={child.id}
+            childName={child.prenom}
+            niveauScolaire={child.niveau_scolaire}
+          />
         </div>
 
         {/* Dialog pour définir/modifier le PIN */}

@@ -27,6 +27,16 @@ interface PlanningLesson {
   type_contenu: string;
 }
 
+interface LessonAssignment {
+  id: string;
+  lesson_id: string;
+  consignes: string | null;
+  date_assignation: string;
+  statut: string;
+  lesson_titre: string;
+  lesson_matiere: string;
+}
+
 interface ChildPlanningProps {
   studentId: string;
   niveauScolaire: string;
@@ -51,6 +61,7 @@ const matiereColors: Record<string, string> = {
 export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: ChildPlanningProps) {
   const [sessions, setSessions] = useState<TutorSession[]>([]);
   const [lessons, setLessons] = useState<PlanningLesson[]>([]);
+  const [assignments, setAssignments] = useState<LessonAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<PlanningLesson | null>(null);
@@ -104,6 +115,30 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
       })).filter(l => l.progress < 100) || [];
 
       setLessons(upcoming.slice(0, 5));
+
+      // Load lesson assignments from parent
+      const { data: assignmentsData } = await supabase
+        .from("lesson_assignments")
+        .select("id, lesson_id, consignes, date_assignation, statut")
+        .eq("student_id", studentId)
+        .eq("statut", "assignee")
+        .gte("date_assignation", weekStart.toISOString())
+        .order("date_assignation", { ascending: true });
+
+      if (assignmentsData && assignmentsData.length > 0) {
+        const lessonIds = assignmentsData.map(a => a.lesson_id);
+        const { data: assignedLessons } = await supabase
+          .from("lessons")
+          .select("id, titre, matiere")
+          .in("id", lessonIds);
+
+        const lessonMap = new Map(assignedLessons?.map(l => [l.id, l]) || []);
+        setAssignments(assignmentsData.map(a => ({
+          ...a,
+          lesson_titre: lessonMap.get(a.lesson_id)?.titre || "Leçon",
+          lesson_matiere: lessonMap.get(a.lesson_id)?.matiere || "",
+        })));
+      }
     } catch (error) {
       console.error("Error loading planning:", error);
     } finally {
@@ -113,6 +148,9 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
 
   const getSessionsForDay = (day: Date) =>
     sessions.filter(s => new Date(s.date_heure_debut).toDateString() === day.toDateString());
+
+  const getAssignmentsForDay = (day: Date) =>
+    assignments.filter(a => new Date(a.date_assignation).toDateString() === day.toDateString());
 
   const getDayLabel = (day: Date) => {
     if (isToday(day)) return "Aujourd'hui";
@@ -144,9 +182,10 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
           <div className="grid grid-cols-7 gap-2">
             {weekDays.map((day, i) => {
               const daySessions = getSessionsForDay(day);
+              const dayAssignments = getAssignmentsForDay(day);
               const isPast = isBefore(day, now) && !isToday(day);
               const today = isToday(day);
-              const hasContent = daySessions.length > 0;
+              const hasContent = daySessions.length > 0 || dayAssignments.length > 0;
 
               return (
                 <motion.div
@@ -174,6 +213,15 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
                       <span className="block truncate">{session.matiere}</span>
                       <span className="block text-[10px] opacity-75">
                         {format(new Date(session.date_heure_debut), "HH:mm")}
+                      </span>
+                    </div>
+                  ))}
+                  {dayAssignments.map(a => (
+                    <div key={a.id} className={`text-xs rounded-lg p-1 mb-1 ${matiereColors[a.lesson_matiere] || "bg-muted text-muted-foreground"}`}>
+                      <BookOpen className="h-3 w-3 mx-auto mb-0.5" />
+                      <span className="block truncate">{a.lesson_matiere}</span>
+                      <span className="block text-[10px] opacity-75">
+                        {format(new Date(a.date_assignation), "HH:mm")}
                       </span>
                     </div>
                   ))}
@@ -246,9 +294,10 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
           </DialogHeader>
           {selectedDay && (() => {
             const daySessions = getSessionsForDay(selectedDay);
+            const dayAssignments = getAssignmentsForDay(selectedDay);
             return (
               <div className="space-y-4">
-                {daySessions.length > 0 ? (
+                {daySessions.length > 0 && (
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-foreground">Sessions tuteur</h4>
                     {daySessions.map(s => (
@@ -261,8 +310,24 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">Pas de session prévue ce jour.</p>
+                )}
+                {dayAssignments.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">📝 Leçons assignées</h4>
+                    {dayAssignments.map(a => (
+                      <div key={a.id} className="flex items-center gap-3 p-3 rounded-lg border border-border">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                        <div className="flex-1">
+                          <p className="font-medium text-foreground">{matiereEmoji[a.lesson_matiere] || "📖"} {a.lesson_titre}</p>
+                          <p className="text-sm text-muted-foreground">{format(new Date(a.date_assignation), "HH:mm")}</p>
+                          {a.consignes && <p className="text-xs text-muted-foreground mt-1 italic">"{a.consignes}"</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {daySessions.length === 0 && dayAssignments.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">Rien de prévu ce jour.</p>
                 )}
               </div>
             );

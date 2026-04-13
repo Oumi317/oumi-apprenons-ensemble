@@ -353,6 +353,57 @@ export type Database = {
           },
         ]
       }
+      lesson_assignments: {
+        Row: {
+          consignes: string | null
+          created_at: string | null
+          date_assignation: string
+          id: string
+          lesson_id: string
+          parent_id: string
+          statut: string
+          student_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          consignes?: string | null
+          created_at?: string | null
+          date_assignation: string
+          id?: string
+          lesson_id: string
+          parent_id: string
+          statut?: string
+          student_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          consignes?: string | null
+          created_at?: string | null
+          date_assignation?: string
+          id?: string
+          lesson_id?: string
+          parent_id?: string
+          statut?: string
+          student_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lesson_assignments_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lesson_assignments_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lesson_notes: {
         Row: {
           content: string
