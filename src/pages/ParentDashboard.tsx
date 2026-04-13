@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus, Sparkles, Clock, TrendingUp, Award, Gift } from "lucide-react";
+import { GraduationCap, Users, BookOpen, Calendar, LogOut, Plus, Sparkles, Clock, TrendingUp, Award, Gift, Bot } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AddChildDialog } from "@/components/AddChildDialog";
@@ -29,6 +29,7 @@ import { SessionHistory } from "@/components/SessionHistory";
 import { ProgressPDFExport } from "@/components/ProgressPDFExport";
 import { ReferralSystem } from "@/components/ReferralSystem";
 import { CREADOCProgressCard } from "@/components/CREADOCProgressCard";
+import { QuickAIChat } from "@/components/QuickAIChat";
 import { useChildrenResourceProgress } from "@/hooks/useResourceProgress";
 
 const ParentDashboard = () => {
