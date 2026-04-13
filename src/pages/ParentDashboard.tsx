@@ -235,144 +235,21 @@ const ParentDashboard = () => {
             </div>
           )}
 
-          {/* Quick Actions */}
-          <div className="grid md:grid-cols-2 gap-6">
-            {children.length === 0 && (
-              <Card className="border-2 border-primary/20 hover:border-primary transition-colors">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Users className="h-5 w-5 text-primary" />
-                        Mes enfants
-                      </CardTitle>
-                      <CardDescription className="mt-2">
-                        Ajoutez et gérez les profils de vos enfants
-                      </CardDescription>
-                    </div>
-                    <Plus className="h-6 w-6 text-primary" />
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <AddChildDialog onChildAdded={() => checkUser()} />
-                </CardContent>
-              </Card>
-            )}
-
-            <Card className="border-2 hover:border-secondary transition-all hover:shadow-lg">
+          {/* Quick Actions - simplified */}
+          {children.length === 0 && (
+            <Card className="border-2 border-primary/20 hover:border-primary transition-colors">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-secondary" />
-                      Réserver une session
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      Trouvez un tuteur et réservez un cours en visio
-                    </CardDescription>
-                  </div>
-                </div>
+                <CardTitle className="flex items-center gap-2">
+                  <Users className="h-5 w-5 text-primary" />
+                  Mes enfants
+                </CardTitle>
+                <CardDescription>Ajoutez et gérez les profils de vos enfants</CardDescription>
               </CardHeader>
               <CardContent>
-                <Link to="/tutors">
-                  <Button variant="outline" className="w-full">
-                    Parcourir les tuteurs
-                  </Button>
-                </Link>
+                <AddChildDialog onChildAdded={() => checkUser()} />
               </CardContent>
             </Card>
-
-            <Card className="border-2 hover:border-success transition-all hover:shadow-lg">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <BookOpen className="h-5 w-5 text-success" />
-                      Bibliothèque de ressources
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      Accédez à des milliers de leçons et exercices
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Link to="/lessons">
-                  <Button variant="outline" className="w-full">
-                    Explorer les ressources
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-primary transition-colors cursor-pointer">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <GraduationCap className="h-5 w-5 text-primary" />
-                      Passer à Premium
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      Accès illimité et fonctionnalités avancées
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full bg-gradient-warm">
-                  Découvrir Premium
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Getting Started */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Pour bien démarrer</CardTitle>
-              <CardDescription>
-                Suivez ces étapes pour tirer le meilleur parti d'Oumi'School
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
-                    1
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Ajoutez vos enfants</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Créez un profil pour chacun de vos enfants avec leur niveau scolaire
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
-                    2
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Explorez les ressources</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Parcourez notre bibliothèque de leçons adaptées au programme français
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold flex-shrink-0">
-                    3
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-1">Réservez votre première session</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Profitez de votre première session gratuite de 30 minutes
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          )}
 
           {/* Realtime Metrics Dashboard */}
           {children.length > 0 && (
