@@ -294,9 +294,10 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
           </DialogHeader>
           {selectedDay && (() => {
             const daySessions = getSessionsForDay(selectedDay);
+            const dayAssignments = getAssignmentsForDay(selectedDay);
             return (
               <div className="space-y-4">
-                {daySessions.length > 0 ? (
+                {daySessions.length > 0 && (
                   <div className="space-y-3">
                     <h4 className="text-sm font-semibold text-foreground">Sessions tuteur</h4>
                     {daySessions.map(s => (
@@ -309,8 +310,24 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">Pas de session prévue ce jour.</p>
+                )}
+                {dayAssignments.length > 0 && (
+                  <div className="space-y-3">
+                    <h4 className="text-sm font-semibold text-foreground">📝 Leçons assignées</h4>
+                    {dayAssignments.map(a => (
+                      <div key={a.id} className="flex items-center gap-3 p-3 rounded-lg border border-border">
+                        <BookOpen className="h-5 w-5 text-primary" />
+                        <div className="flex-1">
+                          <p className="font-medium text-foreground">{matiereEmoji[a.lesson_matiere] || "📖"} {a.lesson_titre}</p>
+                          <p className="text-sm text-muted-foreground">{format(new Date(a.date_assignation), "HH:mm")}</p>
+                          {a.consignes && <p className="text-xs text-muted-foreground mt-1 italic">"{a.consignes}"</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {daySessions.length === 0 && dayAssignments.length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">Rien de prévu ce jour.</p>
                 )}
               </div>
             );
