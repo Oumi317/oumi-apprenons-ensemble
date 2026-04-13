@@ -338,6 +338,10 @@ const ParentDashboard = () => {
                   <TabsTrigger value="calendar">Calendrier</TabsTrigger>
                   <TabsTrigger value="chat">Messages</TabsTrigger>
                   <TabsTrigger value="notifications">Notifications</TabsTrigger>
+                  <TabsTrigger value="ai-assistant" className="flex items-center gap-1">
+                    <Bot className="h-4 w-4" />
+                    Assistant IA
+                  </TabsTrigger>
                   <TabsTrigger value="analytics">Analyses</TabsTrigger>
                   <TabsTrigger value="recommendations">Recommandations</TabsTrigger>
                   <TabsTrigger value="history">Historique</TabsTrigger>
