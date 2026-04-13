@@ -115,6 +115,30 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
       })).filter(l => l.progress < 100) || [];
 
       setLessons(upcoming.slice(0, 5));
+
+      // Load lesson assignments from parent
+      const { data: assignmentsData } = await supabase
+        .from("lesson_assignments")
+        .select("id, lesson_id, consignes, date_assignation, statut")
+        .eq("student_id", studentId)
+        .eq("statut", "assignee")
+        .gte("date_assignation", weekStart.toISOString())
+        .order("date_assignation", { ascending: true });
+
+      if (assignmentsData && assignmentsData.length > 0) {
+        const lessonIds = assignmentsData.map(a => a.lesson_id);
+        const { data: assignedLessons } = await supabase
+          .from("lessons")
+          .select("id, titre, matiere")
+          .in("id", lessonIds);
+
+        const lessonMap = new Map(assignedLessons?.map(l => [l.id, l]) || []);
+        setAssignments(assignmentsData.map(a => ({
+          ...a,
+          lesson_titre: lessonMap.get(a.lesson_id)?.titre || "Leçon",
+          lesson_matiere: lessonMap.get(a.lesson_id)?.matiere || "",
+        })));
+      }
     } catch (error) {
       console.error("Error loading planning:", error);
     } finally {
