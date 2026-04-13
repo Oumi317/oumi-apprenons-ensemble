@@ -149,6 +149,9 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
   const getSessionsForDay = (day: Date) =>
     sessions.filter(s => new Date(s.date_heure_debut).toDateString() === day.toDateString());
 
+  const getAssignmentsForDay = (day: Date) =>
+    assignments.filter(a => new Date(a.date_assignation).toDateString() === day.toDateString());
+
   const getDayLabel = (day: Date) => {
     if (isToday(day)) return "Aujourd'hui";
     if (isTomorrow(day)) return "Demain";
