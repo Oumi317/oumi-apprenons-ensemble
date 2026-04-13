@@ -124,12 +124,11 @@ export function ChildCard({ child, onPinUpdated }: ChildCardProps) {
               </Button>
             </Link>
           </div>
-          <Link to={`/ai-tutor/${child.id}`} className="block">
-            <Button variant="secondary" size="sm" className="w-full">
-              <Sparkles className="h-4 w-4 mr-2" />
-              Assistant IA
-            </Button>
-          </Link>
+          <AssignLessonDialog
+            childId={child.id}
+            childName={child.prenom}
+            niveauScolaire={child.niveau_scolaire}
+          />
         </div>
 
         {/* Dialog pour définir/modifier le PIN */}
