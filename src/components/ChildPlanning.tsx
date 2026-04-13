@@ -216,6 +216,15 @@ export function ChildPlanning({ studentId, niveauScolaire, onOpenLesson }: Child
                       </span>
                     </div>
                   ))}
+                  {dayAssignments.map(a => (
+                    <div key={a.id} className={`text-xs rounded-lg p-1 mb-1 ${matiereColors[a.lesson_matiere] || "bg-muted text-muted-foreground"}`}>
+                      <BookOpen className="h-3 w-3 mx-auto mb-0.5" />
+                      <span className="block truncate">{a.lesson_matiere}</span>
+                      <span className="block text-[10px] opacity-75">
+                        {format(new Date(a.date_assignation), "HH:mm")}
+                      </span>
+                    </div>
+                  ))}
                 </motion.div>
               );
             })}
