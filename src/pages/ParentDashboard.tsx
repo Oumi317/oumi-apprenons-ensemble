@@ -366,6 +366,18 @@ const ParentDashboard = () => {
                 <TabsContent value="notifications">
                   <NotificationCenter />
                 </TabsContent>
+                <TabsContent value="ai-assistant">
+                  {children.length > 0 ? (
+                    <QuickAIChat
+                      studentId={children[0].id}
+                      studentName={children[0].prenom}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground text-center py-8">
+                      Ajoutez un enfant pour accéder à l'Assistant IA.
+                    </p>
+                  )}
+                </TabsContent>
                 <TabsContent value="analytics">
                   <PerformanceAnalytics 
                     data={{
