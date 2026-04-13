@@ -27,6 +27,16 @@ interface PlanningLesson {
   type_contenu: string;
 }
 
+interface LessonAssignment {
+  id: string;
+  lesson_id: string;
+  consignes: string | null;
+  date_assignation: string;
+  statut: string;
+  lesson_titre: string;
+  lesson_matiere: string;
+}
+
 interface ChildPlanningProps {
   studentId: string;
   niveauScolaire: string;
