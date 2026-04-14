@@ -34,6 +34,8 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "iframe" | "pdf" | "video">("list");
   const [viewUrl, setViewUrl] = useState("");
+  const [htmlContent, setHtmlContent] = useState("");
+  const [iframeLoading, setIframeLoading] = useState(false);
 
   useEffect(() => {
     if (lessonId && open) {
