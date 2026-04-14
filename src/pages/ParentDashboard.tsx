@@ -276,15 +276,6 @@ const ParentDashboard = () => {
                   />
                 )}
 
-                {/* CREADOC Interactive Manuals Progress */}
-                {children.map((child) => (
-                  <CREADOCProgressCard
-                    key={child.id}
-                    studentName={child.prenom}
-                    progress={creadocProgress[child.id] || []}
-                    loading={creadocLoading}
-                  />
-                ))}
 
                 {/* Activity Feed */}
                 <ActivityFeed activities={recentActivities} />
