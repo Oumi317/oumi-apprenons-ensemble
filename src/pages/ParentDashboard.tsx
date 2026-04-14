@@ -7,8 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { AddChildDialog } from "@/components/AddChildDialog";
 import { ChildCard } from "@/components/ChildCard";
-import { UpcomingSessions } from "@/components/UpcomingSessions";
-import { RecentActivity } from "@/components/RecentActivity";
 import { QuickStats } from "@/components/QuickStats";
 import { SessionCalendar } from "@/components/SessionCalendar";
 import { ActivityFeed } from "@/components/ActivityFeed";
@@ -300,11 +298,6 @@ const ParentDashboard = () => {
             </div>
           )}
 
-          {/* Upcoming Sessions & Recent Activity */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <UpcomingSessions />
-            <RecentActivity />
-          </div>
 
           {/* Advanced Features Tabs */}
           <Card>
