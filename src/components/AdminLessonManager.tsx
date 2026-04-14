@@ -121,7 +121,9 @@ export default function AdminLessonManager({ onUpdate }: AdminLessonManagerProps
         setUploadingContent(true);
         const fileExt = contentFile.name.split(".").pop();
         const fileName = `${Date.now()}.${fileExt}`;
-        const filePath = `${formData.niveau_scolaire}/${formData.matiere}/${fileName}`;
+        const safeNiveau = formData.niveau_scolaire.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+        const safeMatiere = formData.matiere.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9_-]/g, "_");
+        const filePath = `${safeNiveau}/${safeMatiere}/${fileName}`;
 
         const { error: uploadError } = await supabase.storage
           .from("lesson-content")
