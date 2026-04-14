@@ -68,6 +68,20 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
     }
   };
 
+  const fetchAndShowHtml = async (url: string) => {
+    setIframeLoading(true);
+    setViewMode("iframe");
+    try {
+      const response = await fetch(url);
+      const text = await response.text();
+      setHtmlContent(text);
+    } catch (e) {
+      console.error("Error fetching HTML:", e);
+    } finally {
+      setIframeLoading(false);
+    }
+  };
+
   const autoOpen = (url: string, type: string) => {
     if (type === "video" || url.match(/\.(mp4|webm|ogg)$/i)) {
       setViewUrl(url);
@@ -76,8 +90,7 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
       setViewUrl(url);
       setViewMode("pdf");
     } else if (url.match(/\.(html?)$/i) || type === "interactif") {
-      setViewUrl(url);
-      setViewMode("iframe");
+      fetchAndShowHtml(url);
     }
   };
 
