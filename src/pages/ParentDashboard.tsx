@@ -28,9 +28,7 @@ import { Footer } from "@/components/Footer";
 import { SessionHistory } from "@/components/SessionHistory";
 import { ProgressPDFExport } from "@/components/ProgressPDFExport";
 import { ReferralSystem } from "@/components/ReferralSystem";
-import { CREADOCProgressCard } from "@/components/CREADOCProgressCard";
 import { QuickAIChat } from "@/components/QuickAIChat";
-import { useChildrenResourceProgress } from "@/hooks/useResourceProgress";
 
 const ParentDashboard = () => {
   const navigate = useNavigate();
@@ -41,11 +39,6 @@ const ParentDashboard = () => {
   const [totalSessions, setTotalSessions] = useState(0);
   const [upcomingSessions, setUpcomingSessions] = useState<any[]>([]);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
-  
-  // Hook for CREADOC manual progress
-  const { progress: creadocProgress, loading: creadocLoading } = useChildrenResourceProgress(
-    children.map(c => c.id)
-  );
 
   useEffect(() => {
     checkUser();
