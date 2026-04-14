@@ -34,6 +34,8 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState<"list" | "iframe" | "pdf" | "video">("list");
   const [viewUrl, setViewUrl] = useState("");
+  const [htmlContent, setHtmlContent] = useState("");
+  const [iframeLoading, setIframeLoading] = useState(false);
 
   useEffect(() => {
     if (lessonId && open) {
@@ -66,6 +68,20 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
     }
   };
 
+  const fetchAndShowHtml = async (url: string) => {
+    setIframeLoading(true);
+    setViewMode("iframe");
+    try {
+      const response = await fetch(url);
+      const text = await response.text();
+      setHtmlContent(text);
+    } catch (e) {
+      console.error("Error fetching HTML:", e);
+    } finally {
+      setIframeLoading(false);
+    }
+  };
+
   const autoOpen = (url: string, type: string) => {
     if (type === "video" || url.match(/\.(mp4|webm|ogg)$/i)) {
       setViewUrl(url);
@@ -74,8 +90,7 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
       setViewUrl(url);
       setViewMode("pdf");
     } else if (url.match(/\.(html?)$/i) || type === "interactif") {
-      setViewUrl(url);
-      setViewMode("iframe");
+      fetchAndShowHtml(url);
     }
   };
 
@@ -88,8 +103,7 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
       setViewUrl(url);
       setViewMode("pdf");
     } else if (url.match(/\.(html?)$/i)) {
-      setViewUrl(url);
-      setViewMode("iframe");
+      fetchAndShowHtml(url);
     } else {
       window.open(url, "_blank");
     }
@@ -133,8 +147,12 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
         ) : viewMode === "iframe" ? (
           <div className="flex-1 flex flex-col gap-3">
             <Button variant="ghost" size="sm" onClick={() => setViewMode("list")} className="self-start">← Retour</Button>
-            <iframe src={viewUrl} className="flex-1 w-full rounded-lg border border-border min-h-[60vh]"
-              sandbox="allow-scripts allow-forms allow-popups" title="Contenu interactif" />
+            {iframeLoading ? (
+              <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+            ) : (
+              <iframe srcDoc={htmlContent} className="flex-1 w-full rounded-lg border border-border min-h-[60vh]"
+                sandbox="allow-scripts allow-forms allow-popups allow-modals" title="Contenu interactif" />
+            )}
           </div>
         ) : (
           <div className="space-y-4">
