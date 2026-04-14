@@ -103,8 +103,7 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
       setViewUrl(url);
       setViewMode("pdf");
     } else if (url.match(/\.(html?)$/i)) {
-      setViewUrl(url);
-      setViewMode("iframe");
+      fetchAndShowHtml(url);
     } else {
       window.open(url, "_blank");
     }
