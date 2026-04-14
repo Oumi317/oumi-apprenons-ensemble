@@ -66,7 +66,7 @@ export function ChildMiniGames({ studentId, niveauScolaire, onXPGain }: ChildMin
 
       // Get random questions from quiz_questions_safe view
       const { data: questionsData } = await supabase
-        .from("quiz_questions" as any)
+        .from("quiz_questions_safe" as any)
         .select("id, question, type, options, points")
         .in("lesson_id", ids)
         .limit(20);
