@@ -147,8 +147,12 @@ export function LessonViewerDialog({ lessonId, open, onOpenChange }: LessonViewe
         ) : viewMode === "iframe" ? (
           <div className="flex-1 flex flex-col gap-3">
             <Button variant="ghost" size="sm" onClick={() => setViewMode("list")} className="self-start">← Retour</Button>
-            <iframe src={viewUrl} className="flex-1 w-full rounded-lg border border-border min-h-[60vh]"
-              sandbox="allow-scripts allow-forms allow-popups" title="Contenu interactif" />
+            {iframeLoading ? (
+              <div className="flex items-center justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+            ) : (
+              <iframe srcDoc={htmlContent} className="flex-1 w-full rounded-lg border border-border min-h-[60vh]"
+                sandbox="allow-scripts allow-forms allow-popups allow-modals" title="Contenu interactif" />
+            )}
           </div>
         ) : (
           <div className="space-y-4">
